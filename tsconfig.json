@@ -30,10 +30,8 @@
 				"obfuscation": false
 			},
 			{
-				"transform": "rbxts-transform-debug"
-			},
-			{
-				"transform": "rbxts-transformer-switchcase"
+				"transform": "rbxts-transform-debug",
+				"enabled": true
 			}
 		]
 	}
