@@ -8,20 +8,13 @@
 		"project": "./tsconfig.json"
 	},
 	"ignorePatterns": [
-		"/out"
+		"/dist"
 	],
 	"plugins": [
-		"@typescript-eslint",
-		"roblox-ts",
-		"prettier"
+		"@typescript-eslint"
 	],
 	"extends": [
 		"eslint:recommended",
-		"plugin:@typescript-eslint/recommended",
-		"plugin:roblox-ts/recommended",
-		"plugin:prettier/recommended"
-	],
-	"rules": {
-		"prettier/prettier": "warn"
-	}
+		"plugin:@typescript-eslint/recommended"
+	]
 }

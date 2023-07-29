@@ -1,5 +1,5 @@
-type None = undefined | null | void;
-type Maybe<T> = T | None;
+type None = undefined | void;
+type Maybe<T> = T | undefined;
 
 type DeepReadonly<T> =
     T extends (infer R)[] ? DeepReadonlyArray<R> :

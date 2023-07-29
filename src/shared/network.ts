@@ -1,10 +1,17 @@
 import { Networking } from "@flamework/networking";
 
-interface ServerEvents {}
+interface ServerEvents {
+  initializeData(): void;
+  setData(key: string, value: unknown): void;
+}
 
-interface ClientEvents {}
+interface ClientEvents {
+  dataUpdate(key: string, value: unknown): void;
+}
 
-interface ServerFunctions {}
+interface ServerFunctions {
+  getData(key: string): unknown;
+}
 
 interface ClientFunctions {}
 
