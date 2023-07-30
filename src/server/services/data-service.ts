@@ -10,7 +10,7 @@ interface TimeInfo {
 @Service()
 export class DataService implements OnInit {
 	public onInit(): void {
-		DataStore2.Combine("DATA", "timeInfo", "gold", "diamonds", "inventory");
+		DataStore2.Combine("DATA", "timeInfo", "gold", "diamonds", "inventory", "dragons");
 
 		Events.initializeData.connect((player) => this.setup(player));
 		Events.setData.connect((player, key, value) =>
@@ -39,6 +39,7 @@ export class DataService implements OnInit {
     this.initialize(player, "gold", 100);
 		this.initialize(player, "diamonds", 0);
 		this.initialize(player, "inventory", []);
+		this.initialize(player, "dragon", []);
     this.initialize<TimeInfo>(player, "timeInfo", {
       lastDailyClaim: undefined
     });

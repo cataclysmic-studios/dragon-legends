@@ -1,5 +1,5 @@
 {
-	"name": "mineblox",
+	"name": "dragon-legends",
 	"globIgnorePaths": [
 		"**/package.json",
 		"**/tsconfig.json"
