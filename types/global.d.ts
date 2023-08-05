@@ -40,3 +40,5 @@ type DeepPartial<T> = {
     ? DeepPartial<T[P]>
     : T[P];
 };
+
+type ElementTypes<T> = T extends ReadonlyArray<infer U> ? U : never;

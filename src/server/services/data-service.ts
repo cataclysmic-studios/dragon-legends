@@ -2,6 +2,7 @@ import { OnInit, Service } from "@flamework/core";
 import DataStore2 from "@rbxts/datastore2";
 
 import { Events, Functions } from "server/network";
+import { DataKey, DataKeys } from "shared/util";
 
 interface TimeInfo {
   lastDailyClaim?: number;
@@ -10,8 +11,9 @@ interface TimeInfo {
 @Service()
 export class DataService implements OnInit {
 	public onInit(): void {
-		DataStore2.Combine("DATA", "timeInfo", "gold", "diamonds", "inventory", "dragons");
+		DataStore2.Combine("DATA", ...DataKeys);
 
+		print("data service initialized");
 		Events.initializeData.connect((player) => this.setup(player));
 		Events.setData.connect((player, key, value) =>
 			this.set(player, key, value)
@@ -20,26 +22,30 @@ export class DataService implements OnInit {
 		Functions.getData.setCallback((player, key) => this.get(player, key));
 	}
 
-	public increment(player: Player, key: string, amount = 1): void {
+	public increment(player: Player, key: DataKey, amount = 1): void {
 		const value = this.get<number>(player, key) ?? 0;
 		this.set(player, key, value + amount);
 	}
 
-	public get<T = unknown>(player: Player, key: string): Maybe<T> {
+	public get<T = unknown>(player: Player, key: DataKey): Maybe<T> {
 		const store = this.getStore<T>(player, key);
 		return store.Get();
 	}
 
-	public set<T = unknown>(player: Player, key: string, value: T): void {
+	public set<T = unknown>(player: Player, key: DataKey, value: T): void {
 		const store = this.getStore<T>(player, key);
 		store.Set(value);
 	}
 
 	private setup(player: Player): void {
+		print("initializing data");
     this.initialize(player, "gold", 100);
-		this.initialize(player, "diamonds", 0);
+		this.initialize(player, "diamonds", 5);
+		this.initialize(player, "food", 20);
+		this.initialize(player, "level", 1);
+		this.initialize(player, "xp", 0);
 		this.initialize(player, "inventory", []);
-		this.initialize(player, "dragon", []);
+		this.initialize(player, "dragons", []);
     this.initialize<TimeInfo>(player, "timeInfo", {
       lastDailyClaim: undefined
     });
@@ -47,7 +53,7 @@ export class DataService implements OnInit {
 
 	private initialize<T = unknown>(
 		player: Player,
-		key: string,
+		key: DataKey,
 		defaultValue?: T
 	): void {
 		const store = this.getStore(player, key);
@@ -55,13 +61,13 @@ export class DataService implements OnInit {
 		store.OnUpdate((value) => this.sendToClient(player, key, value));
 	}
 
-	private getStore<T = unknown>(player: Player, key: string): DataStore2<T> {
+	private getStore<T = unknown>(player: Player, key: DataKey): DataStore2<T> {
 		return DataStore2<T>(key, player);
 	}
 
 	private sendToClient<T = unknown>(
 		player: Player,
-		key: string,
+		key: DataKey,
 		value: T
 	): void {
 		Events.dataUpdate.fire(player, key, value);

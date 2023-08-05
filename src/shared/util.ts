@@ -5,16 +5,24 @@ const suffixes = <const>["K", "M", "B", "T", "Q"];
 
 export const assets = ReplicatedFirst.Assets;
 
+export type DataKey = ElementTypes<typeof DataKeys>;
+export const DataKeys = <const>[
+	"timeInfo",
+	"gold", "diamonds", "food",
+	"inventory", "dragons",
+	"level", "xp"
+];
+
 export function commaFormat(n: number | string): string {
   let formatted = tostring(n);
   const parts: string[] = [];
 
   while (formatted.size() > 3) {
-    parts.insert(1, formatted.sub(-3));
+    parts.insert(0, formatted.sub(-3));
     formatted = formatted.sub(1, -4);
   }
 
-  parts.insert(1, formatted);
+  parts.insert(0, formatted);
   return parts.join(",");
 }
 
