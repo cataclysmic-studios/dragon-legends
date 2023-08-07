@@ -1,4 +1,5 @@
 import { ReplicatedFirst } from "@rbxts/services";
+import { Exception } from "./exceptions";
 
 const { floor, log } = math;
 const suffixes = <const>["K", "M", "B", "T", "Q"];
@@ -34,4 +35,24 @@ export function suffixedNumber(n: number): string {
   const divisor = 10 ** (index * 3);
   const [ baseNumber ] = "%.1f".format(n / divisor).gsub("%.?0+$", "");
   return commaFormat(baseNumber + (index < 0 ? "" : suffixes[index]));
+}
+
+export function parseSuffixedNumber(suffixed: string): number {
+  const match = suffixed.match("^([0-9,.]+)([KMBT]?)$");
+  if (!match)
+    throw new Exception("InvalidSuffixedNumber", "Invalid suffixed number format");
+
+  let [ numberPart ] = tostring(match[1]).gsub(",", "");
+  const suffix = tostring(match[2]);
+
+  if (suffix !== "" && suffix !== "nil") {
+    const index = (<readonly string[]>suffixes).indexOf(suffix);
+    if (index === -1)
+      throw new Exception("InvalidNumberSuffix", "Invalid suffix in suffixed number");
+
+    const multiplier = 10 ** ((index + 1) * 3);
+    numberPart = tostring(tonumber(numberPart)! * multiplier);
+  }
+
+  return tonumber(numberPart)!;
 }
