@@ -13,7 +13,6 @@ export class DataService implements OnInit {
 	public onInit(): void {
 		DataStore2.Combine("DATA", ...DataKeys);
 
-		print("data service initialized");
 		Events.initializeData.connect((player) => this.setup(player));
 		Events.setData.connect((player, key, value) =>
 			this.set(player, key, value)
@@ -38,7 +37,6 @@ export class DataService implements OnInit {
 	}
 
 	private setup(player: Player): void {
-		print("initializing data");
     this.initialize(player, "gold", 100);
 		this.initialize(player, "diamonds", 5);
 		this.initialize(player, "food", 20);

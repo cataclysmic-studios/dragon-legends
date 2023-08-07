@@ -11,6 +11,12 @@ export class Exception {
 	}
 }
 
+export class MissingAttributeException extends Exception {
+	public constructor(instance: Instance, attributeName: string) {
+		super("MissingAttribute", `Attribute "${attributeName}" is missing from ${instance.ClassName} "${instance.Name}"`);
+	}
+}
+
 export class FlameworkIgnitionException extends Exception {
 	public constructor(public readonly message: string) {
 		super("FlameworkIgnition", message);

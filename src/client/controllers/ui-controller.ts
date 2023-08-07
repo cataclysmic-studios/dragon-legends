@@ -1,5 +1,6 @@
 import { Controller, Dependency } from "@flamework/core";
 import { PlayerController } from "./player-controller";
+import { CollectionService as Collection } from "@rbxts/services";
 
 @Controller()
 export class UIController {
@@ -9,5 +10,13 @@ export class UIController {
     const guis = <ScreenGui[]>this.player.gui.GetChildren();
     for (const gui of guis)
       gui.Enabled = gui.Name === name;
+  }
+
+  public setPage(uiName: string, pageName: string): void {
+    const gui = <ScreenGui>this.player.gui.WaitForChild(uiName);
+    const pages = <GuiObject[]>gui.GetChildren().filter(e => Collection.HasTag(e, "Page"));
+
+    for (const page of pages)
+      page.Visible = page.Name === pageName;
   }
 }
