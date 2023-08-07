@@ -8,8 +8,17 @@ export class UIController {
 
   public open(name: string): void {
     const guis = <ScreenGui[]>this.player.gui.GetChildren();
-    for (const gui of guis)
-      gui.Enabled = gui.Name === name;
+
+    for (const gui of guis) {
+      const on = gui.Name === name;
+      gui.Enabled = on;
+
+      if (on) {
+        const mainPage = <Maybe<string>>gui.GetAttribute("MainPage");
+        if (mainPage)
+          this.setPage(gui.Name, mainPage);
+      }
+    }
   }
 
   public setPage(uiName: string, pageName: string): void {

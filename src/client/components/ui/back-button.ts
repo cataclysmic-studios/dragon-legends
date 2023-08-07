@@ -1,10 +1,10 @@
 import { Dependency, OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
 import { UIController } from "client/controllers/ui-controller";
-import { Exception, MissingAttributeException } from "shared/exceptions";
+import { MissingAttributeException } from "shared/exceptions";
 
 interface Attributes {
-  To: string;
+  To?: string;
 }
 
 @Component({ tag: "BackButton" })
@@ -13,13 +13,13 @@ export class BackButton extends BaseComponent<Attributes, GuiButton> implements 
 
   public onStart(): void {
     const parentGui = this.instance.FindFirstAncestorOfClass("ScreenGui")!;
-    
+
     this.instance.MouseButton1Click.Connect(() => {
-      const mainPage = parentGui.GetAttribute("MainPage");
-      if (!mainPage)
+      const mainPage = <Maybe<string>>parentGui.GetAttribute("MainPage");
+      if (!mainPage && !this.attributes.To)
         throw new MissingAttributeException(parentGui, "MainPage");
 
-      this.ui.setPage(parentGui.Name, "Menu");
+      this.ui.setPage(parentGui.Name, this.attributes.To ?? mainPage!);
     });
   }
 }
