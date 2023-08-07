@@ -15,6 +15,7 @@ export class DataLinkedText extends BaseComponent<Attributes, TextLabel> impleme
 
   public onDataUpdate(key: DataKey, value: unknown): void {
     if (key !== this.attributes.DataKey) return;
+    
     switch (key) {
       case "level":
         this.instance.Text = commaFormat(<number>value);

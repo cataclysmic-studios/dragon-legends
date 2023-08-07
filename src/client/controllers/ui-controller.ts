@@ -28,4 +28,8 @@ export class UIController {
     for (const page of pages)
       page.Visible = page.Name === pageName;
   }
+
+  public getScreen(instance: GuiBase): ScreenGui {
+    return instance.FindFirstAncestorOfClass("ScreenGui")!;
+  }
 }

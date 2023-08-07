@@ -12,14 +12,14 @@ export class BackButton extends BaseComponent<Attributes, GuiButton> implements 
   private readonly ui = Dependency<UIController>();
 
   public onStart(): void {
-    const parentGui = this.instance.FindFirstAncestorOfClass("ScreenGui")!;
+    const gui = this.ui.getScreen(this.instance);
 
     this.instance.MouseButton1Click.Connect(() => {
-      const mainPage = <Maybe<string>>parentGui.GetAttribute("MainPage");
+      const mainPage = <Maybe<string>>gui.GetAttribute("MainPage");
       if (!mainPage && !this.attributes.To)
-        throw new MissingAttributeException(parentGui, "MainPage");
+        return new MissingAttributeException(gui, "MainPage");
 
-      this.ui.setPage(parentGui.Name, this.attributes.To ?? mainPage!);
+      this.ui.setPage(gui.Name, this.attributes.To ?? mainPage!);
     });
   }
 }

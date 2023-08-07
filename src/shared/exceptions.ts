@@ -6,7 +6,7 @@ export class Exception {
 		public readonly message: string,
 		public readonly level?: number
 	) {
-		throw error(`${name}Exception: ${message}`, (level ?? 0) + 1);
+		error(`${name}Exception: ${message}`, (level ?? 0) + 1);
 		// throw $error(`${name}Exception: ${message}`, (level ?? 0) + 1);
 	}
 }
