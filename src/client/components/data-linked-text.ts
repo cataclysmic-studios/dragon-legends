@@ -1,7 +1,7 @@
 import { OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
 import { Events } from "client/network";
-import { DataKey, assets, commaFormat, suffixedNumber } from "shared/util";
+import { DataKey, Assets, commaFormat, suffixedNumber } from "shared/util";
 
 interface Attributes {
   readonly DataKey: DataKey;
@@ -27,7 +27,7 @@ export class DataLinkedText extends BaseComponent<Attributes, TextLabel> impleme
         this.instance.Text = suffixedNumber(<number>value);
         break;
       case "dragons":
-        const dragonCount = assets.Dragons.GetChildren().filter(e => e.IsA("Model")).size();
+        const dragonCount = Assets.Dragons.GetChildren().filter(e => e.IsA("Model")).size();
         this.instance.Text = (<unknown[]>value).size() + "/" + dragonCount;
         break;
     }

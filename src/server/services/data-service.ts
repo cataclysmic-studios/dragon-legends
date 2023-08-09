@@ -31,7 +31,7 @@ export class DataService implements OnInit {
 	}
 
 	private setup(player: Player): void {
-    this.initialize(player, "gold", 100);
+    this.initialize(player, "gold", 250);
 		this.initialize(player, "diamonds", 5);
 		this.initialize(player, "food", 20);
 		this.initialize(player, "level", 1);

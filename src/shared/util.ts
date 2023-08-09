@@ -1,25 +1,14 @@
-import { ReplicatedFirst } from "@rbxts/services";
+import { Players, ReplicatedFirst } from "@rbxts/services";
 import { Exception } from "./exceptions";
-import { Dragon, TimeInfo } from "./data-models";
+import { DataKey } from "./data-models";
 
 const { floor, log } = math;
 const suffixes = <const>["K", "M", "B", "T", "Q"];
 
-export const assets = ReplicatedFirst.Assets;
+export type BuildingCategory = "Decor" | "Buildings" | "Habitats"
 
-interface MainData {
-  timeInfo: TimeInfo;
-  gold: number;
-  diamonds: number;
-  food: number;
-  inventory: unknown[]; // subject to change (obviously)
-  dragons: Dragon[];
-  level: number;
-  xp: number;
-}
-
-export type DataValue = MainData[DataKey];
-export type DataKey = keyof MainData;
+export const Assets = ReplicatedFirst.Assets;
+export const Player = Players.LocalPlayer;
 export const DataKeys: DataKey[] = [
 	"timeInfo",
 	"gold", "diamonds", "food",

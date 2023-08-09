@@ -1,9 +1,11 @@
 import { Networking } from "@flamework/networking";
-import { DataKey, DataValue } from "./util";
+import { DataKey, DataValue } from "./data-models";
+import { BuildingCategory } from "./util";
 
 interface ServerEvents {
   initializeData(): void;
   setData(key: DataKey, value: DataValue): void;
+  placeBuilding(buildingName: string, category: BuildingCategory, position: Vector3, islandName: string): void;
 }
 
 interface ClientEvents {

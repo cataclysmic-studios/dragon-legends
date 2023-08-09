@@ -1,3 +1,17 @@
+interface MainData {
+  timeInfo: TimeInfo;
+  gold: number;
+  diamonds: number;
+  food: number;
+  inventory: unknown[]; // subject to change (obviously)
+  dragons: Dragon[];
+  level: number;
+  xp: number;
+}
+
+export type DataValue = MainData[DataKey];
+export type DataKey = keyof MainData;
+
 export interface TimeInfo {
   lastDailyClaim?: number;
 }
