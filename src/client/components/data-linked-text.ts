@@ -26,7 +26,8 @@ export class DataLinkedText extends BaseComponent<Attributes, TextLabel> impleme
         this.instance.Text = suffixedNumber(<number>value);
         break;
       case "dragons":
-        this.instance.Text = (<unknown[]>value).size() + "/" + assets.Dragons.GetChildren().size();
+        const dragonCount = assets.Dragons.GetChildren().filter(e => e.IsA("Model")).size();
+        this.instance.Text = (<unknown[]>value).size() + "/" + dragonCount;
         break;
     }
   }
