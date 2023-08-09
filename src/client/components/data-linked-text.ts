@@ -20,6 +20,7 @@ export class DataLinkedText extends BaseComponent<Attributes, TextLabel> impleme
       case "level":
         this.instance.Text = commaFormat(<number>value);
         break;
+
       case "gold":
       case "diamonds":
       case "food":

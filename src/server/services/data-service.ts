@@ -2,11 +2,8 @@ import { OnInit, Service } from "@flamework/core";
 import DataStore2 from "@rbxts/datastore2";
 
 import { Events, Functions } from "server/network";
-import { DataKey, DataKeys } from "shared/util";
-
-interface TimeInfo {
-  lastDailyClaim?: number;
-}
+import { TimeInfo } from "shared/data-models";
+import { DataKey, DataKeys, DataValue } from "shared/util";
 
 @Service()
 export class DataService implements OnInit {
@@ -14,10 +11,7 @@ export class DataService implements OnInit {
 		DataStore2.Combine("DATA", ...DataKeys);
 
 		Events.initializeData.connect((player) => this.setup(player));
-		Events.setData.connect((player, key, value) =>
-			this.set(player, key, value)
-		);
-
+		Events.setData.connect((player, key, value) => this.set(player, key, value));
 		Functions.getData.setCallback((player, key) => this.get(player, key));
 	}
 
@@ -26,12 +20,12 @@ export class DataService implements OnInit {
 		this.set(player, key, value + amount);
 	}
 
-	public get<T = unknown>(player: Player, key: DataKey): Maybe<T> {
+	public get<T extends DataValue = DataValue>(player: Player, key: DataKey): T {
 		const store = this.getStore<T>(player, key);
-		return store.Get();
+		return store.Get()!;
 	}
 
-	public set<T = unknown>(player: Player, key: DataKey, value: T): void {
+	public set<T extends DataValue = DataValue>(player: Player, key: DataKey, value: T): void {
 		const store = this.getStore<T>(player, key);
 		store.Set(value);
 	}
@@ -49,21 +43,21 @@ export class DataService implements OnInit {
     });
 	}
 
-	private initialize<T = unknown>(
+	private initialize<T extends DataValue = DataValue>(
 		player: Player,
 		key: DataKey,
-		defaultValue?: T
+		defaultValue: T
 	): void {
 		const store = this.getStore(player, key);
 		this.sendToClient(player, key, store.Get(defaultValue));
 		store.OnUpdate((value) => this.sendToClient(player, key, value));
 	}
 
-	private getStore<T = unknown>(player: Player, key: DataKey): DataStore2<T> {
+	private getStore<T extends DataValue = DataValue>(player: Player, key: DataKey): DataStore2<T> {
 		return DataStore2<T>(key, player);
 	}
 
-	private sendToClient<T = unknown>(
+	private sendToClient<T extends DataValue = DataValue>(
 		player: Player,
 		key: DataKey,
 		value: T

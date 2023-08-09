@@ -1,17 +1,17 @@
 import { Networking } from "@flamework/networking";
-import { DataKey } from "./util";
+import { DataKey, DataValue } from "./util";
 
 interface ServerEvents {
   initializeData(): void;
-  setData(key: DataKey, value: unknown): void;
+  setData(key: DataKey, value: DataValue): void;
 }
 
 interface ClientEvents {
-  dataUpdate(key: DataKey, value: unknown): void;
+  dataUpdate(key: DataKey, value: DataValue): void;
 }
 
 interface ServerFunctions {
-  getData(key: DataKey): unknown;
+  getData(key: DataKey): DataValue;
 }
 
 interface ClientFunctions {}
