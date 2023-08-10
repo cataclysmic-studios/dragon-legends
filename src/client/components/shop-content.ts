@@ -19,6 +19,7 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
       card.Title.Text = item.Name;
 
       const viewportModel = item.Clone();
+      viewportModel.PrimaryPart!.Position = new Vector3;
       viewportModel.Parent = card.Viewport;
 
       const price = <number>item.GetAttribute("Price");
