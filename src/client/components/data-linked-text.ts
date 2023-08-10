@@ -1,7 +1,8 @@
 import { OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
 import { Events } from "client/network";
-import { DataKey, Assets, commaFormat, suffixedNumber } from "shared/util";
+import { Assets, commaFormat, suffixedNumber } from "shared/util";
+import { DataKey, DataValue, Dragon } from "shared/data-models";
 
 interface Attributes {
   readonly DataKey: DataKey;
@@ -13,7 +14,7 @@ export class DataLinkedText extends BaseComponent<Attributes, TextLabel> impleme
     Events.dataUpdate.connect((key, value) => this.onDataUpdate(key, value))
   }
 
-  public onDataUpdate(key: DataKey, value: unknown): void {
+  public onDataUpdate(key: DataKey, value: DataValue): void {
     if (key !== this.attributes.DataKey) return;
     
     switch (key) {
@@ -28,7 +29,7 @@ export class DataLinkedText extends BaseComponent<Attributes, TextLabel> impleme
         break;
       case "dragons":
         const dragonCount = Assets.Dragons.GetChildren().filter(e => e.IsA("Model")).size();
-        this.instance.Text = (<unknown[]>value).size() + "/" + dragonCount;
+        this.instance.Text = (<Dragon[]>value).size() + "/" + dragonCount;
         break;
     }
   }

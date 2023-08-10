@@ -7,7 +7,7 @@ interface MainData {
   dragons: Dragon[];
   level: number;
   xp: number;
-  buildings: BuildingInfo[]
+  buildings: BuildingInfo[];
 }
 
 export type DataValue = MainData[DataKey];
@@ -52,20 +52,22 @@ export type Element =
 	| "Theo" | "Diabolo"; // god, devil
 
 // Perks
-abstract class Perk {
-  public constructor(
-    public readonly name: string,
-    public readonly increment: number,
-    public readonly icon: string
-  ) {}
+const enum PerkType {
+  Character,
+  Combat
+}
+
+interface Perk {
+  readonly name: string;
+  readonly type: PerkType;
+  readonly increment: number;
+  readonly icon: string;
 }
   
-export class CharacterPerk extends Perk {}
-export class CombatPerk extends Perk {}
 export interface Perks {
-  Character: CharacterPerk[];
-  Combat1: CombatPerk[];
-  Combat2: CombatPerk[];
+  Character: Perk[];
+  Combat1: Perk[];
+  Combat2: Perk[];
 }
 
 export interface Ability {
