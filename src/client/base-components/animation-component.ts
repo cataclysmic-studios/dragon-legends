@@ -10,8 +10,7 @@ interface Attributes {
 export default abstract class AnimationComponent<
   A extends object = {},
   I extends GuiButton = GuiButton
-> extends BaseComponent<Attributes & A, I>
-  implements OnStart {
+> extends BaseComponent<Attributes & A, I> {
 
   protected readonly abstract tweenInfo: TweenInfoBuilder
   protected readonly includeClick: boolean = true
@@ -19,7 +18,7 @@ export default abstract class AnimationComponent<
   protected abstract active(): void;
   protected abstract inactive(): void;
 
-  public onStart(): void {
+  public connectEvents(): void {
     this.instance.MouseEnter.Connect(() => this.active());
     this.instance.MouseLeave.Connect(() => this.inactive());
     if (this.includeClick) {
