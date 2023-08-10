@@ -1,6 +1,7 @@
 import { Dependency, OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
 import { PlacementController } from "client/controllers/placement-controller";
+import { UIController } from "client/controllers/ui-controller";
 import { Assets, BuildingCategory, suffixedNumber } from "shared/util";
 import { Events, Functions } from "client/network";
 
@@ -9,6 +10,7 @@ interface Attributes {}
 @Component({ tag: "ShopContent" })
 export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> implements OnStart {
   private readonly placement = Dependency<PlacementController>();
+  private readonly ui = Dependency<UIController>();
 
   public onStart(): void {
     const contentType = <BuildingCategory>this.instance.Parent?.Name!;
@@ -34,6 +36,7 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
         if (price > gold) return;
         Events.setData("gold", gold - price);
         this.placement.place(item.Name, contentType);
+        this.ui.open("Main");
 
         task.wait(0.5);
         db = false;
