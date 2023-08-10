@@ -33,7 +33,7 @@ export class CameraController implements OnInit, OnRender {
   public onRender(dt: number): void {
     const { camera, cameraPart, bounds } = this;
     const mouseDelta = UserInputService.GetMouseDelta().div(20);
-    const movementCorrection = CFrame.Angles(-math.rad(cameraPart.Orientation.X), 0, 0)
+    const movementCorrection = CFrame.Angles(-math.rad(cameraPart.Orientation.X), 0, 0);
     const lookVector = cameraPart.CFrame
       .mul(movementCorrection).LookVector
       .mul(mouseDelta.Y);

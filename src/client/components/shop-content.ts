@@ -34,7 +34,6 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
 
         const gold = <number>(await Functions.getData("gold"));
         if (price > gold) return;
-        Events.setData("gold", gold - price);
         this.placement.place(item.Name, contentType);
         this.ui.open("Main");
 

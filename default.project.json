@@ -39,7 +39,7 @@
 				}
 			}
 		},
-		"Workspace": {
+		"World": {
 			"$className": "Workspace",
 			"$properties": {
 				"FilteringEnabled": true
