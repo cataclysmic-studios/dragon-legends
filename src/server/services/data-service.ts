@@ -3,7 +3,7 @@ import DataStore2 from "@rbxts/datastore2";
 
 import { Events, Functions } from "server/network";
 import { TimeInfo } from "shared/data-models";
-import { DataKey, DataKeys, DataValue } from "shared/util";
+import { DataKey, DataKeys, DataValue } from "shared/data-models";
 
 @Service()
 export class DataService implements OnInit {
@@ -36,6 +36,7 @@ export class DataService implements OnInit {
 		this.initialize(player, "food", 20);
 		this.initialize(player, "level", 1);
 		this.initialize(player, "xp", 0);
+		this.initialize(player, "buildings", []);
 		this.initialize(player, "inventory", []);
 		this.initialize(player, "dragons", []);
     this.initialize<TimeInfo>(player, "timeInfo", {

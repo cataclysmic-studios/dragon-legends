@@ -1,6 +1,5 @@
 import { Players, ReplicatedFirst } from "@rbxts/services";
 import { Exception } from "./exceptions";
-import { DataKey } from "./data-models";
 
 const { floor, log } = math;
 const suffixes = <const>["K", "M", "B", "T", "Q"];
@@ -9,12 +8,6 @@ export type BuildingCategory = "Decor" | "Buildings" | "Habitats"
 
 export const Assets = ReplicatedFirst.Assets;
 export const Player = Players.LocalPlayer;
-export const DataKeys: DataKey[] = [
-	"timeInfo",
-	"gold", "diamonds", "food",
-	"inventory", "dragons",
-	"level", "xp"
-];
 
 export function commaFormat(n: number | string): string {
   let formatted = tostring(n);

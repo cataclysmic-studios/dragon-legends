@@ -1,10 +1,11 @@
 import { Controller, Dependency, OnInit, OnRender } from "@flamework/core";
-import { Context } from "@rbxts/gamejoy";
 import { Janitor } from "@rbxts/janitor";
-import { UserInputService as Input, Workspace as World } from "@rbxts/services";
+import { Workspace as World } from "@rbxts/services";
 import { Events } from "client/network";
 import { Assets, BuildingCategory, Player } from "shared/util";
 import { UIController } from "./ui-controller";
+
+// TODO: grid align, move() method
 
 @Controller()
 export class PlacementController implements OnRender, OnInit {

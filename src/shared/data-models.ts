@@ -3,17 +3,38 @@ interface MainData {
   gold: number;
   diamonds: number;
   food: number;
-  inventory: unknown[]; // subject to change (obviously)
+  inventory: unknown[]; // subject to change (obviously): eggs, perks, etc
   dragons: Dragon[];
   level: number;
   xp: number;
+  buildings: BuildingInfo[]
 }
 
 export type DataValue = MainData[DataKey];
 export type DataKey = keyof MainData;
+export const DataKeys: DataKey[] = [
+	"timeInfo",
+	"gold", "diamonds", "food",
+	"inventory", "dragons",
+	"level", "xp",
+  "buildings"
+];
+
+export interface HabitatInfo extends BuildingInfo {
+  gold: number;
+  dragons: Dragon[];
+  level: number;
+}
+
+export interface BuildingInfo {
+  readonly name: string;
+  island: string;
+  position: Vector3;
+}
 
 export interface TimeInfo {
   lastDailyClaim?: number;
+  lastOnline?: number;
 }
 
 export type CombatBadge = "None"
