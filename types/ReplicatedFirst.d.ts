@@ -6,5 +6,45 @@ interface ReplicatedFirst extends Instance {
 		Dragons: Folder & {
 			[name: string]: Model & { Data: ModuleScript; };
 		};
+		UI: Folder & {
+			ItemCard: Frame & {
+				UIPadding: UIPadding;
+				UICorner: UICorner;
+				UIAspectRatioConstraint: UIAspectRatioConstraint;
+				Title: TextLabel & {
+					UIStroke: UIStroke;
+				};
+				Pattern: ImageLabel & {
+					UIGradient: UIGradient;
+				};
+				Viewport: ViewportFrame & {
+					UIAspectRatioConstraint: UIAspectRatioConstraint;
+					Camera: Camera;
+				};
+				UIStroke: UIStroke & {
+					UIGradient: UIGradient;
+				};
+				Purchase: TextButton & {
+					shadowHolder: Frame & {
+						umbraShadow: ImageLabel;
+						ambientShadow: ImageLabel;
+						penumbraShadow: ImageLabel;
+					};
+					UIGradient: UIGradient;
+					UICorner: UICorner;
+					UIStroke: UIStroke;
+					Container: Frame & {
+						Price: TextLabel & {
+							UIStroke: UIStroke;
+						};
+						Icon: ImageLabel & {
+							UIAspectRatioConstraint: UIAspectRatioConstraint;
+						};
+						UIPadding: UIPadding;
+					};
+				};
+				UIGradient: UIGradient;
+			};
+		}
 	};
 }
