@@ -17,7 +17,7 @@ export class GradientAnimation extends AnimationComponent<Attributes, GuiButton 
   
   protected readonly tweenInfo = new TweenInfoBuilder()
     .SetEasingStyle(EasingStyle.Quad)
-    .SetTime(0.15);
+    .SetTime(0.1);
 
   public onStart(): void {
     this.connectEvents();

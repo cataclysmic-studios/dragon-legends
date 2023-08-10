@@ -1,4 +1,4 @@
-import { Context } from "@rbxts/gamejoy";
+import { Context as InputContext } from "@rbxts/gamejoy";
 import { StarterGui, UserInputService, Workspace as World } from "@rbxts/services";
 
 import { Controller, Dependency, OnInit, OnRender } from "@flamework/core";
@@ -11,7 +11,7 @@ export class CameraController implements OnInit, OnRender {
   private readonly cameraPart = World.Ignore.PlayerCamera;
   private readonly bounds = World.Ignore.CameraBounds;
   private readonly camera = World.CurrentCamera!;
-  private readonly input = new Context({
+  private readonly input = new InputContext({
     ActionGhosting: 0,
     Process: false,
     RunSynchronously: true

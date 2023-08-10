@@ -7,7 +7,7 @@ import { UIController } from "./ui-controller";
 
 // TODO: move() method, green/red aura
 
-const { floor, rad } = math;
+const { floor } = math;
 
 @Controller()
 export class PlacementController implements OnRender, OnInit {
@@ -20,11 +20,16 @@ export class PlacementController implements OnRender, OnInit {
   private targetOnClick?: Instance;
   private mouseDown = false;
 
+  public inPlacementMode(): boolean {
+    return this.currentlyPlacing !== undefined;
+  }
+
   public isDragging(): boolean {
-    return this.mouse.Target?.Parent?.Name === this.currentlyPlacing?.Name;
-  };
+    return this.inPlacementMode() && this.mouse.Target?.Parent?.Name === this.currentlyPlacing!.Name;
+  }
 
   public onInit(): void | Promise<void> {
+    // TODO: (refactor) use gamejoy input context
     this.mouse.TargetFilter = World.Ignore;
     this.mouse.Button1Up.Connect(() => this.mouseDown = false);
     this.mouse.Button1Down.Connect(() => {
@@ -60,11 +65,10 @@ export class PlacementController implements OnRender, OnInit {
     const placementConfirmation = <Frame & {
       Confirm: ImageButton;
       Cancel: ImageButton;
-    }>this.ui.getFrame("Main", "PlacementConfirmation");
+    }>this.ui.setPage("Main", "PlacementConfirmation");
 
-    placementConfirmation.Visible = true;
     this.janitor.Add(this.currentlyPlacing);
-    this.janitor.Add(() => placementConfirmation.Visible = false);
+    this.janitor.Add(() => this.ui.setPage("Main", "Main"));
 
     this.janitor.Add(placementConfirmation.Confirm.MouseButton1Click.Once(async () => {
       const position = this.currentlyPlacing!.PrimaryPart!.Position;

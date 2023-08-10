@@ -5,14 +5,11 @@ import { CollectionService as Collection } from "@rbxts/services";
 @Controller()
 export class UIController {
   private readonly player = Dependency<PlayerController>();
-
-  public toggleFrame(guiName: string, frameName: string, on: boolean): void {
-    const frame = this.getFrame(guiName, frameName);
-    frame.Visible = on;
-  }
+  public current = "Main";
 
   public open(name: string): void {
     const guis = <ScreenGui[]>this.player.gui.GetChildren();
+    this.current = name;
 
     for (const gui of guis) {
       const on = gui.Name === name;
@@ -26,17 +23,14 @@ export class UIController {
     }
   }
 
-  public setPage(guiName: string, pageName: string): void {
+  public setPage(guiName: string, pageName: string): GuiObject {
     const gui = <ScreenGui>this.player.gui.WaitForChild(guiName);
     const pages = <GuiObject[]>gui.GetChildren().filter(e => Collection.HasTag(e, "Page"));
 
     for (const page of pages)
       page.Visible = page.Name === pageName;
-  }
 
-  public getFrame(guiName: string, frameName: string): GuiObject {
-    const gui = <ScreenGui>this.player.gui.WaitForChild(guiName);
-    return <GuiObject>gui.WaitForChild("Frame").WaitForChild(frameName);
+    return pages.find(page => page.Name === pageName)!;
   }
 
   public getScreen(instance: GuiBase): ScreenGui {
