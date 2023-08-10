@@ -7,36 +7,21 @@ import AnimationComponent from "client/base-components/animation-component";
 const { EasingStyle } = Enum;
 
 @Component({ tag: "SpringAnimation" })
-export class SpringAnimation extends AnimationComponent implements OnStart {
+export class SpringAnimation extends AnimationComponent {
   private readonly scale = new Instance("UIScale", this.instance);
   private readonly scaleIncrement = 0.05;
+  
   protected readonly tweenInfo = new TweenInfoBuilder()
     .SetEasingStyle(EasingStyle.Elastic)
     .SetTime(0.35);
 
-  public onStart(): void {
-    this.connectEvents();
-  }
-
-  public onHover(): void {
-    Tween.Create(this.scale, this.tweenInfo.Build(), {
-      Scale: 1 + this.scaleIncrement
-    }).Play();
-  }
-
-  public onLeave(): void {
+  protected inactive(): void {
     Tween.Create(this.scale, this.tweenInfo.Build(), {
       Scale: 1
     }).Play();
   }
 
-  public onDown(): void {
-    Tween.Create(this.scale, this.tweenInfo.Build(), {
-      Scale: 1
-    }).Play();
-  }
-
-  public onUp(): void {
+  protected active(): void {
     Tween.Create(this.scale, this.tweenInfo.Build(), {
       Scale: 1 + this.scaleIncrement
     }).Play();
