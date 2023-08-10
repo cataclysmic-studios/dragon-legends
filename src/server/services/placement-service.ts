@@ -10,8 +10,8 @@ export class PlacementService implements OnInit {
   private readonly data = Dependency<DataService>();
 
   public onInit(): void {
-    Events.placeBuilding.connect((player, buildingName, category, position, islandName) => 
-      this.placeBuilding(player, buildingName, category, position, islandName)
+    Events.placeBuilding.connect((player, buildingName, category, position) => 
+      this.placeBuilding(player, buildingName, category, position)
     );
   }
 
@@ -19,8 +19,7 @@ export class PlacementService implements OnInit {
     player: Player,
     buildingName: string,
     category: BuildingCategory,
-    position: Vector3,
-    islandName: string
+    position: Vector3
   ): void {
 
     const buildings = this.data.get<BuildingInfo[]>(player, "buildings");
@@ -29,7 +28,6 @@ export class PlacementService implements OnInit {
         const info: HabitatInfo = {
           name: buildingName,
           position: position,
-          island: islandName,
           level: 1,
           gold: 0,
           dragons: []
@@ -47,15 +45,13 @@ export class PlacementService implements OnInit {
     player: Player,
     buildingName: string,
     category: BuildingCategory,
-    position: Vector3,
-    islandName: string
+    position: Vector3
   ): void {
 
     const building = Assets[category][buildingName].Clone();
-    building.SetAttribute("Island", islandName);
     building.PrimaryPart!.Position = position;
     building.Parent = World.Buildings;
 
-    this.saveBuildingInfo(player, buildingName, category, position, islandName);
+    this.saveBuildingInfo(player, buildingName, category, position);
   }
 }

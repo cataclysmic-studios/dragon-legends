@@ -14,23 +14,30 @@ export class PlacementController implements OnRender, OnInit {
   private readonly mouse = Player.GetMouse();
 
   private currentlyPlacing?: Model;
+  private targetOnClick?: Instance;
   private mouseDown = false;
 
-  public isPlacing(): boolean {
-    return this.currentlyPlacing !== undefined;
-  }
+  public isDragging(): boolean {
+    return this.mouse.Target?.Parent?.Name === this.currentlyPlacing?.Name;
+  };
 
   public onInit(): void | Promise<void> {
-    this.mouse.TargetFilter = World.CurrentCamera;
-    this.mouse.Button1Down.Connect(() => this.mouseDown = true);
+    // this.mouse.TargetFilter = World.CurrentCamera;
     this.mouse.Button1Up.Connect(() => this.mouseDown = false);
+    this.mouse.Button1Down.Connect(() => {
+      this.mouseDown = true;
+      this.targetOnClick = this.mouse.Target;
+    });
   }
 
   public onRender(dt: number): void {
     if (!this.currentlyPlacing || !this.mouseDown) return;
-    if (this.mouse.Target?.Parent?.Name !== "Islands" && this.mouse.Target?.Parent?.Name !== this.currentlyPlacing.Name) return;
+    
+    const targetName = this.mouse.Target?.Parent?.Name;
+    if (targetName !== this.currentlyPlacing.Name) return;
+    if (targetName !== this.targetOnClick?.Parent?.Name) return;
 
-    const position = this.mouse.Hit.Position
+    const position = this.mouse.Hit.Position;
     this.currentlyPlacing.PrimaryPart!.Position = position.sub(new Vector3(0, position.Y, 0));
   }
 
@@ -50,9 +57,8 @@ export class PlacementController implements OnRender, OnInit {
     this.janitor.Add(() => placementConfirmation.Visible = false);
 
     this.janitor.Add(placementConfirmation.Confirm.MouseButton1Click.Once(() => {
-      const position = this.mouse.Hit.Position;
-      const islandName = this.mouse.Target?.Parent?.Name ?? "Unknown";
-      Events.placeBuilding(buildingName, category, position, islandName);
+      const position = this.currentlyPlacing!.PrimaryPart!.Position;
+      Events.placeBuilding(buildingName, category, position);
       this.cancelPlacement();
     }));
 

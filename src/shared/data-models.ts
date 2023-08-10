@@ -28,7 +28,6 @@ export interface HabitatInfo extends BuildingInfo {
 
 export interface BuildingInfo {
   readonly name: string;
-  island: string;
   position: Vector3;
 }
 

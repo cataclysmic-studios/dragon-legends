@@ -25,14 +25,12 @@ export class CameraController implements OnInit, OnRender {
 
     const mb1 = new Action("MouseButton1");
     this.input.Bind(mb1, () => {
-      if (this.placement.isPlacing()) return;
-      this.mouseDown = true
-    }).BindEvent("onRelease", mb1.Released, () => { this.mouseDown = false });
+      if (this.placement.isDragging()) return;
+      this.mouseDown = true;
+    }).BindEvent("onRelease", mb1.Released, () => { this.mouseDown = false; });
   }
 
   public onRender(dt: number): void {
-    
-
     const { camera, cameraPart, bounds } = this;
     const mouseDelta = UserInputService.GetMouseDelta().div(20);
     const movementCorrection = CFrame.Angles(-math.rad(cameraPart.Orientation.X), 0, 0)

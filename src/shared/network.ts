@@ -5,7 +5,7 @@ import { BuildingCategory } from "./util";
 interface ServerEvents {
   initializeData(): void;
   setData(key: DataKey, value: DataValue): void;
-  placeBuilding(buildingName: string, category: BuildingCategory, position: Vector3, islandName: string): void;
+  placeBuilding(buildingName: string, category: BuildingCategory, position: Vector3): void;
 }
 
 interface ClientEvents {
