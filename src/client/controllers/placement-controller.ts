@@ -45,7 +45,7 @@ export class PlacementController implements OnRender, OnInit {
     this.janitor.Add(placementConfirmation.Confirm.MouseButton1Click.Once(() => {
       const position = this.mouse.Hit.Position;
       const islandName = this.mouse.Target?.Parent?.Name ?? "Unknown";
-      Events.placeBuilding.fire(buildingName, category, position, islandName);
+      Events.placeBuilding(buildingName, category, position, islandName);
       this.cancelPlacement();
     }));
     this.janitor.Add(placementConfirmation.Cancel.MouseButton1Click.Once(

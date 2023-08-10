@@ -7,6 +7,6 @@ export class PlayerController implements OnStart {
   public readonly gui = <PlayerGui>Players.LocalPlayer.WaitForChild("PlayerGui");
   
   public onStart(): void {
-    Events.initializeData.fire();
+    Events.initializeData();
   }
 }

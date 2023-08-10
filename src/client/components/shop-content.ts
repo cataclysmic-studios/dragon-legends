@@ -2,7 +2,7 @@ import { Dependency, OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
 import { PlacementController } from "client/controllers/placement-controller";
 import { Assets, BuildingCategory, suffixedNumber } from "shared/util";
-import { Functions } from "client/network";
+import { Events, Functions } from "client/network";
 
 interface Attributes {}
 
@@ -30,9 +30,10 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
         if (db) return;
         db = true;
 
-        const gold = <number>(await Functions.getData.invoke("gold"));
+        const gold = <number>(await Functions.getData("gold"));
         if (price > gold) return;
-        this.placement.place(item.Name, contentType)
+        Events.setData("gold", gold - price);
+        this.placement.place(item.Name, contentType);
 
         task.wait(0.5);
         db = false;
