@@ -4,6 +4,8 @@ import { Workspace as World } from "@rbxts/services";
 import { Events, Functions } from "client/network";
 import { Assets, BuildingCategory, Player } from "shared/util";
 import { UIController } from "./ui-controller";
+import { Context as InputContext } from "@rbxts/gamejoy";
+import { Action } from "@rbxts/gamejoy/out/Actions";
 
 // TODO: move() method, green/red aura
 
@@ -15,6 +17,12 @@ export class PlacementController implements OnRender, OnInit {
   private readonly janitor = new Janitor;
   private readonly mouse = Player.GetMouse();
   private readonly gridSize = 4;
+
+  private readonly input = new InputContext({
+    ActionGhosting: 0,
+    Process: false,
+    RunSynchronously: true
+  });
 
   private currentlyPlacing?: Model;
   private targetOnClick?: Instance;
@@ -31,11 +39,16 @@ export class PlacementController implements OnRender, OnInit {
   public onInit(): void | Promise<void> {
     // TODO: (refactor) use gamejoy input context
     this.mouse.TargetFilter = World.Ignore;
-    this.mouse.Button1Up.Connect(() => this.mouseDown = false);
-    this.mouse.Button1Down.Connect(() => {
-      this.mouseDown = true;
-      this.targetOnClick = this.mouse.Target;
-    });
+
+    const mb1 = new Action("MouseButton1");
+    this.input
+      .Bind(mb1, () => {
+        this.mouseDown = true;
+        this.targetOnClick = this.mouse.Target;
+      })
+      .BindEvent("onRelease", mb1.Released, () => {
+        this.mouseDown = false;
+      });
   }
 
   public onRender(dt: number): void {
