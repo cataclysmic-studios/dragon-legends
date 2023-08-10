@@ -5,7 +5,7 @@ import { Events } from "client/network";
 import { Assets, BuildingCategory, Player } from "shared/util";
 import { UIController } from "./ui-controller";
 
-// TODO: grid align, move() method
+// TODO: grid align, move() method, green/red aura
 
 @Controller()
 export class PlacementController implements OnRender, OnInit {
@@ -16,6 +16,10 @@ export class PlacementController implements OnRender, OnInit {
   private currentlyPlacing?: Model;
   private mouseDown = false;
 
+  public isPlacing(): boolean {
+    return this.currentlyPlacing !== undefined;
+  }
+
   public onInit(): void | Promise<void> {
     this.mouse.TargetFilter = World.CurrentCamera;
     this.mouse.Button1Down.Connect(() => this.mouseDown = true);
@@ -24,8 +28,10 @@ export class PlacementController implements OnRender, OnInit {
 
   public onRender(dt: number): void {
     if (!this.currentlyPlacing || !this.mouseDown) return;
-    if (this.mouse.Target?.Parent?.Name !== "Islands") return;
-    this.currentlyPlacing.PrimaryPart!.Position = this.mouse.Hit.Position;
+    if (this.mouse.Target?.Parent?.Name !== "Islands" && this.mouse.Target?.Parent?.Name !== this.currentlyPlacing.Name) return;
+
+    const position = this.mouse.Hit.Position
+    this.currentlyPlacing.PrimaryPart!.Position = position.sub(new Vector3(0, position.Y, 0));
   }
 
   public place(buildingName: string, category: BuildingCategory): void {
@@ -42,12 +48,14 @@ export class PlacementController implements OnRender, OnInit {
     placementConfirmation.Visible = true;
     this.janitor.Add(this.currentlyPlacing);
     this.janitor.Add(() => placementConfirmation.Visible = false);
+
     this.janitor.Add(placementConfirmation.Confirm.MouseButton1Click.Once(() => {
       const position = this.mouse.Hit.Position;
       const islandName = this.mouse.Target?.Parent?.Name ?? "Unknown";
       Events.placeBuilding(buildingName, category, position, islandName);
       this.cancelPlacement();
     }));
+
     this.janitor.Add(placementConfirmation.Cancel.MouseButton1Click.Once(
       () => this.cancelPlacement()
     ));
