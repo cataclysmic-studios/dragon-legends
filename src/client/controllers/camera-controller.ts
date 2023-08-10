@@ -8,8 +8,8 @@ import { Action } from "@rbxts/gamejoy/out/Actions";
 @Controller()
 export class CameraController implements OnInit, OnRender {
   private readonly placement = Dependency<PlacementController>();
-  private readonly cameraPart = World.PlayerCamera;
-  private readonly bounds = World.CameraBounds;
+  private readonly cameraPart = World.Ignore.PlayerCamera;
+  private readonly bounds = World.Ignore.CameraBounds;
   private readonly camera = World.CurrentCamera!;
   private readonly input = new Context({
     ActionGhosting: 0,
@@ -32,7 +32,7 @@ export class CameraController implements OnInit, OnRender {
 
   public onRender(dt: number): void {
     const { camera, cameraPart, bounds } = this;
-    const mouseDelta = UserInputService.GetMouseDelta().div(20);
+    const mouseDelta = UserInputService.GetMouseDelta().div(16);
     const movementCorrection = CFrame.Angles(-math.rad(cameraPart.Orientation.X), 0, 0);
     const lookVector = cameraPart.CFrame
       .mul(movementCorrection).LookVector
@@ -42,13 +42,13 @@ export class CameraController implements OnInit, OnRender {
       .add(lookVector);
   
     let { X: x, Z: z } = movedPosition;
-    if (x > bounds.Position.X + bounds.Size.X / 2)
+    if (x >= bounds.Position.X + bounds.Size.X / 2)
       x = bounds.Size.X / 2;
-    if (x < bounds.Position.X - bounds.Size.X / 2)
+    if (x <= bounds.Position.X - bounds.Size.X / 2)
       x = -bounds.Size.X / 2;
-    if (z > bounds.Position.Z + bounds.Size.Z / 2)
+    if (z >= bounds.Position.Z + bounds.Size.Z / 2)
       z = bounds.Size.Z / 2;
-    if (z < bounds.Position.Z - bounds.Size.Z / 2)
+    if (z <= bounds.Position.Z - bounds.Size.Z / 2)
       z = -bounds.Size.Z / 2;
   
     cameraPart.Position = new Vector3(x, movedPosition.Y, z);

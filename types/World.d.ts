@@ -4,8 +4,10 @@ interface Island extends Part {
 
 interface Workspace extends Model {
 	Camera: Camera;
-	CameraBounds: Part;
-	PlayerCamera: Part;
+	Ignore: Folder & {
+		CameraBounds: Part;
+		PlayerCamera: Part;
+	};
 	SpawnLocation: SpawnLocation & {
 		Decal: Decal;
 	};

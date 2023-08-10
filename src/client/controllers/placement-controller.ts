@@ -14,7 +14,7 @@ export class PlacementController implements OnRender, OnInit {
   private readonly ui = Dependency<UIController>();
   private readonly janitor = new Janitor;
   private readonly mouse = Player.GetMouse();
-  private readonly gridSize = 2;
+  private readonly gridSize = 4;
 
   private currentlyPlacing?: Model;
   private targetOnClick?: Instance;
@@ -25,7 +25,7 @@ export class PlacementController implements OnRender, OnInit {
   };
 
   public onInit(): void | Promise<void> {
-    // this.mouse.TargetFilter = World.CurrentCamera;
+    this.mouse.TargetFilter = World.Ignore;
     this.mouse.Button1Up.Connect(() => this.mouseDown = false);
     this.mouse.Button1Down.Connect(() => {
       this.mouseDown = true;
@@ -35,10 +35,7 @@ export class PlacementController implements OnRender, OnInit {
 
   public onRender(dt: number): void {
     if (!this.currentlyPlacing || !this.mouseDown) return;
-    
-    const targetName = this.mouse.Target?.Parent?.Name;
-    if (targetName !== this.currentlyPlacing.Name) return;
-    if (targetName !== this.targetOnClick?.Parent?.Name) return;
+    if (this.currentlyPlacing.Name !== this.targetOnClick?.Parent?.Name) return;
 
     const position = this.snap(this.mouse.Hit.Position);
     this.currentlyPlacing.PrimaryPart!.Position = position;
@@ -56,11 +53,8 @@ export class PlacementController implements OnRender, OnInit {
     this.toggleGrid(true);
     this.currentlyPlacing = Assets[category][buildingName].Clone();
 
-    const camCFrame = World.CurrentCamera!.CFrame;
-    const movementCorrection = CFrame.Angles(-rad(camCFrame.Rotation.X), 0, 0);
-    const { Y: y } = this.currentlyPlacing.PrimaryPart!.Position;
-    const { X: newX, Z: newZ } = camCFrame.mul(camCFrame.mul(movementCorrection).LookVector.mul(16));
-    this.currentlyPlacing.PrimaryPart!.Position = new Vector3(newX, y, newZ);
+    const camPosition = World.Ignore.PlayerCamera.Position;
+    this.currentlyPlacing.PrimaryPart!.Position = this.snap(camPosition.add(new Vector3(12, 0, 12)));
     this.currentlyPlacing.Parent = World.CurrentCamera;
 
     const placementConfirmation = <Frame & {
