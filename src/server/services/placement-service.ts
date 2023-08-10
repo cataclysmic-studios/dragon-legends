@@ -9,6 +9,9 @@ import { BuildingInfo, HabitatInfo } from "shared/data-models";
 export class PlacementService implements OnInit {
   private readonly data = Dependency<DataService>();
 
+  // TODO: timer to complete building
+  //    - save timestamp building was placed at
+  //    - when joining, update timer according to new timestamp
   public onInit(): void {
     Events.placeBuilding.connect((player, buildingName, category, position) => 
       this.placeBuilding(player, buildingName, category, position)

@@ -1,8 +1,8 @@
 import { OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
-import { Events } from "client/network";
-import { Assets, commaFormat, suffixedNumber } from "shared/util";
 import { DataKey, DataValue, Dragon } from "shared/data-models";
+import { Assets, commaFormat, suffixedNumber } from "shared/util";
+import { Events } from "client/network";
 
 interface Attributes {
   readonly DataKey: DataKey;
