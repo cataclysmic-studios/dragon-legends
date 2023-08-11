@@ -37,18 +37,18 @@ export class PlacementController implements OnRender, OnInit {
   }
 
   public onInit(): void | Promise<void> {
-    // TODO: (refactor) use gamejoy input context
-    this.mouse.TargetFilter = World.Ignore;
-
     const mb1 = new Action("MouseButton1");
     this.input
       .Bind(mb1, () => {
         this.mouseDown = true;
         this.targetOnClick = this.mouse.Target;
+        this.onRender(0);
       })
       .BindEvent("onRelease", mb1.Released, () => {
         this.mouseDown = false;
       });
+
+    this.mouse.TargetFilter = World.Ignore;
   }
 
   public onRender(dt: number): void {

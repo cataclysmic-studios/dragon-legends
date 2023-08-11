@@ -26,7 +26,9 @@ export interface HabitatInfo extends BuildingInfo {
   level: number;
 }
 
+// unique
 export interface BuildingInfo {
+  readonly id: string;
   readonly name: string;
   position: Vector3;
 }

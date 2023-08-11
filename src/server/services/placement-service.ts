@@ -1,5 +1,5 @@
 import { Service, OnInit, Dependency } from "@flamework/core";
-import { Workspace as World } from "@rbxts/services";
+import { HttpService as HTTP, Workspace as World } from "@rbxts/services";
 import { Events } from "server/network";
 import { Assets, BuildingCategory } from "shared/util";
 import { DataService } from "./data-service";
@@ -20,7 +20,8 @@ export class PlacementService implements OnInit {
 
   private saveBuildingInfo(
     player: Player,
-    buildingName: string,
+    id: string,
+    name: string,
     category: BuildingCategory,
     position: Vector3
   ): void {
@@ -29,8 +30,7 @@ export class PlacementService implements OnInit {
     switch (category) {
       case "Habitats": {
         const info: HabitatInfo = {
-          name: buildingName,
-          position: position,
+          id, name, position,
           level: 1,
           gold: 0,
           dragons: []
@@ -55,6 +55,8 @@ export class PlacementService implements OnInit {
     building.PrimaryPart!.Position = position;
     building.Parent = World.Buildings;
 
-    this.saveBuildingInfo(player, buildingName, category, position);
+    const id = HTTP.GenerateGUID();
+    this.saveBuildingInfo(player, id, buildingName, category, position);
+    building.SetAttribute("ID", id);
   }
 }

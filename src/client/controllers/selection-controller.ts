@@ -7,6 +7,8 @@ import { Player } from "shared/util";
 
 @Controller()
 export class SelectionController implements OnInit {
+  public selectedBuildingID?: string;
+
   private readonly ui = Dependency<UIController>();
   private readonly placement = Dependency<PlacementController>();
 
@@ -27,6 +29,8 @@ export class SelectionController implements OnInit {
       const isBuilding = Collection.HasTag(instance, "Building");
       if (!isBuilding)
         this.deselect();
+      else
+        this.selectedBuildingID = instance.GetAttribute<string>("ID");
 
       return isBuilding
     }
@@ -37,11 +41,13 @@ export class SelectionController implements OnInit {
   }
 
   private select(): void {
-    this.ui.setPage("Main", "BuildingSelect");
+    const buildingSelectFrame = this.ui.setPage("Main", "BuildingSelect");
+    buildingSelectFrame.SetAttribute("ID", this.selectedBuildingID);
   }
 
   private deselect() {
     if (this.ui.current !== "Main") return;
     this.ui.setPage("Main", "Main");
+    this.selectedBuildingID = undefined;
   }
 }
