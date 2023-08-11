@@ -6,6 +6,7 @@ interface ServerEvents {
   initializeData(): void;
   setData(key: DataKey, value: DataValue): void;
   placeBuilding(buildingName: string, category: BuildingCategory, position: Vector3): void;
+  buildingsLoaded(): void;
 }
 
 interface ClientEvents {

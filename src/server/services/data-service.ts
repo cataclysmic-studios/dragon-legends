@@ -4,7 +4,7 @@ import DataStore2 from "@rbxts/datastore2";
 import { Events, Functions } from "server/network";
 import { BuildingInfo, TimeInfo } from "shared/data-models";
 import { DataKey, DataKeys, DataValue } from "shared/data-models";
-import { OnPlayerLeave } from "./player-leave-service";
+import { OnPlayerLeave } from "shared/hooks";
 
 // note: when loading in placed buildings, assign their old ID
 

@@ -1,7 +1,7 @@
 import { Service, OnInit, Dependency } from "@flamework/core";
 import { HttpService as HTTP, Workspace as World } from "@rbxts/services";
 import { Events } from "server/network";
-import { Assets, BuildingCategory } from "shared/util";
+import { Assets, BuildingCategory, toSeconds } from "shared/util";
 import { DataService } from "./data-service";
 import { BuildingInfo, HabitatInfo } from "shared/data-models";
 import { TimerService } from "./timer-service";
@@ -22,7 +22,8 @@ export class PlacementService implements OnInit {
     id: string,
     name: string,
     category: BuildingCategory,
-    position: Vector3
+    position: Vector3,
+    timerLength: number
   ): void {
 
     const buildings = this.data.get<BuildingInfo[]>(player, "buildings");
@@ -40,7 +41,7 @@ export class PlacementService implements OnInit {
       }
     }
     
-    this.timer.addBuildingTimer(player, id);
+    this.timer.addBuildingTimer(player, id, timerLength);
     this.data.set(player, "buildings", buildings);
   }
 
@@ -51,12 +52,13 @@ export class PlacementService implements OnInit {
     position: Vector3
   ): void {
 
+    const id = HTTP.GenerateGUID();
     const building = Assets[category][buildingName].Clone();
     building.PrimaryPart!.Position = position;
     building.Parent = World.Buildings;
-
-    const id = HTTP.GenerateGUID();
-    this.saveBuildingInfo(player, id, buildingName, category, position);
     building.SetAttribute("ID", id);
+
+    const timerLength = building.GetAttribute<string>("PlacementTime");
+    this.saveBuildingInfo(player, id, buildingName, category, position, toSeconds(timerLength));
   }
 }

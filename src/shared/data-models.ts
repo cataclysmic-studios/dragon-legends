@@ -35,6 +35,7 @@ export interface BuildingInfo {
 
 export interface Timer {
   beganAt: number;
+  length: number;
 }
 
 export interface BuildingTimer extends Timer {
