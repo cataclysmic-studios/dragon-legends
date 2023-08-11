@@ -1,11 +1,12 @@
 import { Service, Dependency, OnInit } from "@flamework/core";
 import { Components } from "@flamework/components";
 import { Workspace as World } from "@rbxts/services";
-import { BuildingTimer, TimeInfo, Timer } from "shared/data-models";
+import { BuildingTimer, TimeInfo } from "shared/data-models";
 import { now } from "shared/util";
 
 import { DataService } from "./data-service";
 import { BuildingLoaderService } from "./building-loader-service";
+import { Timer } from "server/components/timer";
 
 @Service()
 export class TimerService implements OnInit {
