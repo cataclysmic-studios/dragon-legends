@@ -3,9 +3,12 @@ import { Component, BaseComponent } from "@flamework/components";
 
 import { PlacementController } from "client/controllers/placement-controller";
 import { UIController } from "client/controllers/ui-controller";
-import { Element } from "shared/data-models";
-import { Assets, Placable, getDragonData, getRarityImage, toSuffixedNumber } from "shared/util";
-import { Functions } from "client/network";
+import { Egg, Element, InventoryItem } from "shared/data-models";
+import { Assets, Placable, getDragonData, getRarityImage, toSeconds, toSuffixedNumber } from "shared/util";
+import { Events, Functions } from "client/network";
+
+const { setData } = Events;
+const { getData } = Functions;
 
 interface Attributes {}
 
@@ -41,7 +44,7 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
         db = true;
         task.delay(1, () => db = false);
 
-        const gold = <number>await Functions.getData("gold");
+        const gold = <number>await getData("gold");
         if (price > gold) return;
         this.onPurchaseClick(item, contentType)
         this.ui.open("Main");
@@ -52,24 +55,33 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
     }
   }
 
-  private onPurchaseClick(item: Model, contentType: Placable): void {
+  private async onPurchaseClick(itemModel: Model, contentType: Placable): Promise<void> {
     switch (contentType) {
       case "Dragons":
-        // TODO: add egg to inventory
+        const inventory = <InventoryItem[]>await getData("inventory");
+        const { hatchTime } = getDragonData(itemModel);
+        const egg: Egg = {
+          name: itemModel.Name + " Egg",
+          stackable: false,
+          hatchTime: toSeconds(hatchTime)
+        };
+
+        inventory.push(egg);
+        setData("inventory", inventory);
         // TODO: call this to place the dragon after hatching the egg
         // this.placement.placeDragon(item);
         break;
 
       default:
-        this.placement.place(item.Name, contentType);
+        this.placement.place(itemModel.Name, contentType);
         break;
     }
   }
 
-  private configureSpecifics(contentType: Placable, card: ItemCard, item: Model): void {
+  private configureSpecifics(contentType: Placable, card: ItemCard, itemModel: Model): void {
     switch (contentType) {
       case "Dragons": {
-        const dragon = getDragonData(item);
+        const dragon = getDragonData(itemModel);
         card.Rarity.Image = getRarityImage(dragon.rarity);
         card.Rarity.Abbreviation.Text = dragon.rarity.sub(1, 1);
         this.addElements(dragon.elements, card.Elements);

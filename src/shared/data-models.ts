@@ -3,7 +3,7 @@ interface MainData {
   gold: number;
   diamonds: number;
   food: number;
-  inventory: unknown[]; // subject to change (obviously): eggs, perks, etc
+  inventory: InventoryItem[]; // subject to change (obviously): eggs, perks, etc
   dragons: Dragon[];
   level: number;
   xp: number;
@@ -121,4 +121,13 @@ export interface Dragon extends Unique {
   combatBadge: CombatBadge;
   perks: Perks;
   abilities: [Ability, Ability, Ability, Ability];
+}
+
+export abstract class InventoryItem {
+  public abstract readonly name: string;
+  public abstract readonly stackable: boolean;
+}
+
+export interface Egg extends InventoryItem {
+  readonly hatchTime: number;
 }
