@@ -2,7 +2,7 @@ import { OnInit, Service } from "@flamework/core";
 import DataStore2 from "@rbxts/datastore2";
 
 import { Events, Functions } from "server/network";
-import { TimeInfo } from "shared/data-models";
+import { BuildingInfo, TimeInfo } from "shared/data-models";
 import { DataKey, DataKeys, DataValue } from "shared/data-models";
 
 @Service()
@@ -13,6 +13,12 @@ export class DataService implements OnInit {
 		Events.initializeData.connect((player) => this.setup(player));
 		Events.setData.connect((player, key, value) => this.set(player, key, value));
 		Functions.getData.setCallback((player, key) => this.get(player, key));
+		Functions.findBuilding.setCallback((player, id) => this.findBuilding(player, id));
+	}
+
+	public findBuilding(player: Player, buildingID: string): Maybe<BuildingInfo> {
+		const buildings = this.get<BuildingInfo[]>(player, "buildings");
+		return buildings.find(building => building.id === buildingID);
 	}
 
 	public increment(player: Player, key: DataKey, amount = 1): void {

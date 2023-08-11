@@ -1,6 +1,6 @@
 import { OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
-import { Events, Functions } from "client/network";
+import { Events } from "client/network";
 import { parseSuffixedNumber } from "shared/util";
 
 interface Attributes {

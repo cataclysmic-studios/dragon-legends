@@ -1,29 +1,39 @@
 import { OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
-import { Events } from "client/network";
 import { BuildingInfo, HabitatInfo, DataKey, DataValue } from "shared/data-models";
 import { suffixedNumber } from "shared/util";
+import { Events, Functions } from "client/network";
 
 interface Attributes {}
 
 @Component({ tag: "HabitatGold" })
 export class HabitatGold extends BaseComponent<Attributes, TextLabel> implements OnStart {
+  private readonly buildingSelectFrame = this.instance.Parent?.Parent?.Parent!;
+
   public onStart(): void {
-    this.instance.Text = "0";
-    Events.dataUpdate.connect((key, value) => this.onDataUpdate(key, value))
+    Events.dataUpdate.connect((key, value) => this.onDataUpdate(key, value));
+    this.buildingSelectFrame.GetAttributeChangedSignal("ID").Connect(async () => {
+      const buildings = <BuildingInfo[]>await Functions.getData("buildings");
+      this.updateGoldText(buildings);
+    });
   }
 
-  public onDataUpdate(key: DataKey, value: DataValue): void {
+  private onDataUpdate(key: DataKey, value: DataValue): void {
     if (key !== "buildings") return;
+    this.updateGoldText(<BuildingInfo[]>value);
+  }
 
-    const buildings = <BuildingInfo[]>value;
-    const buildingSelectFrame = this.instance.Parent?.Parent?.Parent;
-    const id = buildingSelectFrame?.GetAttribute<string>("ID");
-    const habitat = buildings
-      .filter((building): building is HabitatInfo => "gold" in building)
-      .find(building => building.id === id);
-
+  private updateGoldText(buildings: BuildingInfo[]): void {
+    const habitat = this.getHabitat(buildings);
     if (!habitat) return;
     this.instance.Text = suffixedNumber(habitat.gold);
+  }
+
+  private getHabitat(buildings: BuildingInfo[]): Maybe<HabitatInfo> {
+    const id = this.buildingSelectFrame.GetAttribute<string>("ID");
+
+    return buildings
+      .filter((building): building is HabitatInfo => "dragons" in building)
+      .find(building => building.id === id);
   }
 }

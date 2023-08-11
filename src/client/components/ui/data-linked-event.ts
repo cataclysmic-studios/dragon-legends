@@ -13,7 +13,7 @@ export class DataLinkedEvent extends BaseComponent<Attributes, BindableEvent> im
     Events.dataUpdate.connect((key, value) => this.onDataUpdate(key, value))
   }
 
-  public onDataUpdate(key: DataKey, value: DataValue): void {
+  private onDataUpdate(key: DataKey, value: DataValue): void {
     if (key !== this.attributes.DataKey) return;
     this.instance.Fire(value);
   }

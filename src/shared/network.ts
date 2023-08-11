@@ -1,5 +1,5 @@
 import { Networking } from "@flamework/networking";
-import { DataKey, DataValue } from "./data-models";
+import { BuildingInfo, DataKey, DataValue } from "./data-models";
 import { BuildingCategory } from "./util";
 
 interface ServerEvents {
@@ -14,6 +14,7 @@ interface ClientEvents {
 
 interface ServerFunctions {
   getData(key: DataKey): DataValue;
+  findBuilding(id: string): Maybe<BuildingInfo>;
 }
 
 interface ClientFunctions {}

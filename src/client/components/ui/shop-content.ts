@@ -3,7 +3,7 @@ import { Component, BaseComponent } from "@flamework/components";
 import { PlacementController } from "client/controllers/placement-controller";
 import { UIController } from "client/controllers/ui-controller";
 import { Assets, BuildingCategory, suffixedNumber } from "shared/util";
-import { Events, Functions } from "client/network";
+import { Functions } from "client/network";
 
 interface Attributes {}
 
@@ -32,7 +32,7 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
         if (db) return;
         db = true;
 
-        const gold = <number>(await Functions.getData("gold"));
+        const gold = <number>await Functions.getData("gold");
         if (price > gold) return;
         this.placement.place(item.Name, contentType);
         this.ui.open("Main");
