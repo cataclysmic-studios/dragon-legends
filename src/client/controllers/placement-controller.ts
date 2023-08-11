@@ -1,6 +1,6 @@
 import { Controller, Dependency, OnInit, OnRender } from "@flamework/core";
 import { Janitor } from "@rbxts/janitor";
-import { Workspace as World } from "@rbxts/services";
+import { UserInputService, Workspace as World } from "@rbxts/services";
 import { Events, Functions } from "client/network";
 import { Assets, BuildingCategory, Player } from "shared/util";
 import { UIController } from "./ui-controller";
@@ -42,7 +42,6 @@ export class PlacementController implements OnRender, OnInit {
       .Bind(mb1, () => {
         this.mouseDown = true;
         this.targetOnClick = this.mouse.Target;
-        this.onRender(0);
       })
       .BindEvent("onRelease", mb1.Released, () => {
         this.mouseDown = false;

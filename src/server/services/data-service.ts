@@ -4,16 +4,22 @@ import DataStore2 from "@rbxts/datastore2";
 import { Events, Functions } from "server/network";
 import { BuildingInfo, TimeInfo } from "shared/data-models";
 import { DataKey, DataKeys, DataValue } from "shared/data-models";
+import { OnPlayerLeave } from "./player-leave-service";
 
 @Service()
-export class DataService implements OnInit {
+export class DataService implements OnInit, OnPlayerLeave {
 	public onInit(): void {
 		DataStore2.Combine("DATA", ...DataKeys);
-
 		Events.initializeData.connect((player) => this.setup(player));
 		Events.setData.connect((player, key, value) => this.set(player, key, value));
 		Functions.getData.setCallback((player, key) => this.get(player, key));
 		Functions.findBuilding.setCallback((player, id) => this.findBuilding(player, id));
+	}
+
+	public onPlayerLeave(player: Player): void {
+		const timeInfo = this.get<TimeInfo>(player, "timeInfo");
+		timeInfo.lastOnline = tick();
+		this.set(player, "timeInfo", timeInfo);
 	}
 
 	public findBuilding(player: Player, buildingID: string): Maybe<BuildingInfo> {
