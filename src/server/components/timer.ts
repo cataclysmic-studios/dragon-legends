@@ -41,6 +41,6 @@ export class Timer extends BaseComponent<Attributes, Model> implements OnStart {
 
     updateTimer();
     this.maid.GiveTask(timerUI);
-    this.maid.GiveTask(this.scheduler.everySecond.Connect(updateTimer));
+    this.maid.GiveTask(this.scheduler.every.second.Connect(updateTimer));
   }
 }
