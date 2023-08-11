@@ -30,7 +30,7 @@ export class BuildingLoaderService implements OnStart {
     else
       category = "Buildings";
 
-    const model = <Model>Assets[category].WaitForChild(info.name);
+    const model = <Model>Assets[category].WaitForChild(info.name).Clone();
     model.PrimaryPart!.Position = toUsableVector3(info.position);
     model.SetAttribute("ID", info.id);
     model.Parent = World.Buildings;

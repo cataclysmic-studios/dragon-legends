@@ -5,6 +5,8 @@ import { Controller, Dependency, OnInit, OnRender } from "@flamework/core";
 import { PlacementController } from "./placement-controller";
 import { Action } from "@rbxts/gamejoy/out/Actions";
 
+// TODO: scroll to change FOV
+
 @Controller()
 export class CameraController implements OnInit, OnRender {
   private readonly placement = Dependency<PlacementController>();

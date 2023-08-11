@@ -7,6 +7,15 @@ interface ReplicatedFirst extends Instance {
 			[name: string]: Model & { Data: ModuleScript; };
 		};
 		UI: Folder & {
+			Timer: BillboardGui & {
+				Icon: ImageLabel & {
+					UIAspectRatioConstraint: UIAspectRatioConstraint;
+					UIGradient: UIGradient;
+				};
+				RemainingTime: TextLabel & {
+					UIStroke: UIStroke;
+				};
+			};			
 			ItemCard: Frame & {
 				UIPadding: UIPadding;
 				UICorner: UICorner;
