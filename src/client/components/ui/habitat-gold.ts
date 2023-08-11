@@ -1,7 +1,7 @@
 import { OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
 import { BuildingInfo, HabitatInfo, DataKey, DataValue } from "shared/data-models";
-import { suffixedNumber } from "shared/util";
+import { toSuffixedNumber } from "shared/util";
 import { Events, Functions } from "client/network";
 
 interface Attributes {}
@@ -30,7 +30,7 @@ export class HabitatGold extends BaseComponent<Attributes, TextLabel> implements
   private updateGoldText(buildings: BuildingInfo[]): void {
     const habitat = this.getHabitat(buildings);
     if (!habitat) return;
-    this.instance.Text = suffixedNumber(habitat.gold);
+    this.instance.Text = toSuffixedNumber(habitat.gold);
   }
 
   private getHabitat(buildings: BuildingInfo[]): Maybe<HabitatInfo> {

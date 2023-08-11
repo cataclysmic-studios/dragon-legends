@@ -72,7 +72,7 @@ export function commaFormat(n: number | string): string {
   return parts.join(",");
 }
 
-export function suffixedNumber(n: number): string {
+export function toSuffixedNumber(n: number): string {
   if (n < 100_000)
     return commaFormat(n);
   

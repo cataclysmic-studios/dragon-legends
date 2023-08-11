@@ -3,11 +3,12 @@ import { BuildingInfo, DataKey, DataValue } from "./data-models";
 import { BuildingCategory } from "./util";
 
 interface ServerEvents {
+  buildingsLoaded(): void;
   initializeData(): void;
   dataLoaded(): void;
   setData(key: DataKey, value: DataValue): void;
   placeBuilding(buildingName: string, category: BuildingCategory, position: Vector3): void;
-  buildingsLoaded(): void;
+  updateTimerUIs(): void;
 }
 
 interface ClientEvents {
@@ -17,6 +18,7 @@ interface ClientEvents {
 interface ServerFunctions {
   getData(key: DataKey): DataValue;
   findBuilding(id: string): Maybe<BuildingInfo>;
+  isTimerActive(buildingID: string): boolean;
 }
 
 interface ClientFunctions {}

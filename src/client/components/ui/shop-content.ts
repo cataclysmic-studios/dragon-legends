@@ -2,7 +2,7 @@ import { Dependency, OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
 import { PlacementController } from "client/controllers/placement-controller";
 import { UIController } from "client/controllers/ui-controller";
-import { Assets, BuildingCategory, suffixedNumber } from "shared/util";
+import { Assets, BuildingCategory, toSuffixedNumber } from "shared/util";
 import { Functions } from "client/network";
 
 interface Attributes {}
@@ -25,7 +25,7 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
       viewportModel.Parent = card.Viewport;
 
       const price = <number>item.GetAttribute("Price");
-      card.Purchase.Container.Price.Text = suffixedNumber(price);
+      card.Purchase.Container.Price.Text = toSuffixedNumber(price);
 
       let db = false
       card.Purchase.MouseButton1Click.Connect(async () => {

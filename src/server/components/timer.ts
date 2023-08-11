@@ -5,6 +5,7 @@ import { DataService } from "server/services/data-service";
 import { Assets, now, toRemainingTime } from "shared/util";
 import { TimeInfo } from "shared/data-models";
 import { Players } from "@rbxts/services";
+import { Events } from "server/network";
 
 interface Attributes {
   ID: string;
@@ -30,7 +31,7 @@ export class Timer extends BaseComponent<Attributes, Model> implements OnStart {
       const timeElapsed = now() - timer.beganAt;
       const timeRemaining = timer.length - timeElapsed;
       if (timeRemaining <= 0)
-        return this.destroy(); // TODO: completion prompt, reward XP & such
+        return Events.updateTimerUIs.predict(player); // TODO: completion prompt, reward XP & such
 
       timerUI.RemainingTime.Text = toRemainingTime(timeRemaining);
     };

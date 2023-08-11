@@ -42,8 +42,8 @@ export class PlacementService implements OnInit {
       }
     }
     
-    this.timer.addBuildingTimer(player, id, timerLength);
     this.data.set(player, "buildings", buildings);
+    this.timer.addBuildingTimer(player, id, timerLength);
   }
 
   public placeBuilding(
