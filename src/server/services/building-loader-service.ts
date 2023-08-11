@@ -2,10 +2,9 @@ import { Dependency, OnStart, Service } from "@flamework/core";
 import Signal from "@rbxts/signal";
 
 import { DataService } from "./data-service";
-import { BuildingInfo, Buildings } from "shared/data-models";
-import { Assets, toUsableVector3 } from "shared/util";
+import { Building, Buildings } from "shared/data-models";
+import { Assets, getDragonData, toUsableVector3 } from "shared/util";
 import { Events } from "server/network";
-import { Workspace as World } from "@rbxts/services";
 
 @Service()
 export class BuildingLoaderService implements OnStart {
@@ -15,24 +14,26 @@ export class BuildingLoaderService implements OnStart {
 
   public onStart(): void {
     Events.dataLoaded.connect(player => {
-      const buildings = this.data.get<BuildingInfo[]>(player, "buildings");
+      const buildings = this.data.get<Building[]>(player, "buildings");
       for (const building of buildings)
-        this.loadBuilding(building);
+        this.loadBuilding(player, building);
 
       this.onBuildingsLoaded.Fire(player);
     });
   }
 
-  private loadBuilding(info: BuildingInfo): void {
+  private loadBuilding(player: Player, info: Building): void {
     let category: Exclude<keyof typeof Assets, keyof Folder | "UI">;
-    if (Buildings.isHabitat(info))
+    if (Buildings.isHabitat(info)) {
       category = "Habitats";
-    else
+      for (const dragon of info.dragons) {
+        const dragonModel = <Model>Assets.Dragons.WaitForChild(dragon.name);
+        const dragonData = getDragonData(dragonModel);
+        Events.placeDragon.predict(player, dragonData, info.id);
+      }
+    } else
       category = "Buildings";
 
-    const model = <Model>Assets[category].WaitForChild(info.name).Clone();
-    model.PrimaryPart!.Position = toUsableVector3(info.position);
-    model.SetAttribute("ID", info.id);
-    model.Parent = World.Buildings;
+    Events.placeBuilding.predict(player, info.name, category, toUsableVector3(info.position), info.id)
   }
 }

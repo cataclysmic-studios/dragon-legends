@@ -25,7 +25,8 @@ export class UIController {
 
   public setPage(guiName: string, pageName: string): GuiObject {
     const gui = <ScreenGui>this.player.gui.WaitForChild(guiName);
-    const pages = <GuiObject[]>gui.GetChildren().filter(e => Collection.HasTag(e, "Page"));
+    const pages = <GuiObject[]>gui.GetChildren()
+      .filter(e => Collection.HasTag(e, "Page"));
 
     for (const page of pages)
       page.Visible = page.Name === pageName;

@@ -1,6 +1,6 @@
 import { OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
-import { BuildingInfo, DataKey } from "shared/data-models";
+import { Building, DataKey } from "shared/data-models";
 import { Events, Functions } from "client/network";
 
 interface Attributes {}
@@ -32,7 +32,7 @@ export class BuildingTitle extends BaseComponent<Attributes, TextLabel> implemen
     this.instance.Text = building.name + " " + (level ? `(level ${level})` : "");
   }
 
-  private async getBuilding(): Promise<Maybe<BuildingInfo>> {
+  private async getBuilding(): Promise<Maybe<Building>> {
     const id = this.buildingSelectFrame.GetAttribute<string>("ID");
     return Functions.findBuilding(id);
   }

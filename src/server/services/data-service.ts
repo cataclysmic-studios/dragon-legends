@@ -2,7 +2,7 @@ import { OnInit, Service } from "@flamework/core";
 import DataStore2 from "@rbxts/datastore2";
 
 import { Events, Functions } from "server/network";
-import { BuildingInfo, TimeInfo } from "shared/data-models";
+import { Building, TimeInfo } from "shared/data-models";
 import { DataKey, DataKeys, DataValue } from "shared/data-models";
 import { OnPlayerLeave } from "shared/hooks";
 import { now } from "shared/util";
@@ -23,9 +23,9 @@ export class DataService implements OnInit, OnPlayerLeave {
 		this.set(player, "timeInfo", timeInfo);
 	}
 
-	public findBuilding(player: Player, buildingID: string): Maybe<BuildingInfo> {
-		const buildings = this.get<BuildingInfo[]>(player, "buildings");
-		return buildings.find(building => building.id === buildingID);
+	public findBuilding<T extends Building = Building>(player: Player, buildingID: string): Maybe<T> {
+		const buildings = this.get<Building[]>(player, "buildings");
+		return <Maybe<T>>buildings.find(building => building.id === buildingID);
 	}
 
 	public increment(player: Player, key: DataKey, amount = 1): void {

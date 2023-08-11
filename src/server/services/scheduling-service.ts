@@ -1,4 +1,4 @@
-import { Service, OnInit, OnTick } from "@flamework/core";
+import { Service, OnTick } from "@flamework/core";
 import Object from "@rbxts/object-utils";
 import Signal from "@rbxts/signal";
 
@@ -12,17 +12,17 @@ export class SchedulingService implements OnTick {
   public onTick(step: number): void {
     this.counter += step;
     for (const [unit, signal] of Object.entries(this.every)) {
-      let increment: number;
-      switch (unit) {
-        case "second":
-          increment = 1;
-          break;
-      }
-
+      const increment = this.getIncrement(unit);
       if (this.counter >= increment) {
         this.counter -= increment;
         signal.Fire();
       }
+    }
+  }
+
+  private getIncrement(unit: keyof typeof this.every): number {
+    switch (unit) {
+      case "second": return 1;
     }
   }
 }

@@ -1,10 +1,11 @@
 import { Service, OnInit, Dependency } from "@flamework/core";
 import { HttpService as HTTP, Workspace as World } from "@rbxts/services";
-import { Events } from "server/network";
-import { Assets, BuildingCategory, toStorableVector3, toSeconds } from "shared/util";
+
 import { DataService } from "./data-service";
-import { BuildingInfo, HabitatInfo } from "shared/data-models";
 import { TimerService } from "./timer-service";
+import { Assets, Placable, toStorableVector3, toSeconds } from "shared/util";
+import { Building, Dragon, DragonInfo, Habitat } from "shared/data-models";
+import { Events } from "server/network";
 
 @Service()
 export class PlacementService implements OnInit {
@@ -12,24 +13,124 @@ export class PlacementService implements OnInit {
   private readonly timer = Dependency<TimerService>();
 
   public onInit(): void {
-    Events.placeBuilding.connect((player, buildingName, category, position) => 
-      this.placeBuilding(player, buildingName, category, position)
+    Events.placeDragon.connect((player, dragonData, habitatID) =>
+      this.placeDragon(player, dragonData, habitatID)
     );
+    Events.placeBuilding.connect((player, buildingName, category, position, idOverride) => 
+      this.placeBuilding(player, buildingName, category, position, idOverride)
+    );
+  }
+
+  public placeDragon(
+    player: Player,
+    dragonData: DragonInfo,
+    habitatID: string,
+    idOverride?: string
+  ): void {
+
+    const habitat = <Maybe<HabitatModel>>World.Buildings.GetChildren()
+      .find(b => b.GetAttribute<string>("ID") === habitatID);
+
+    if (!habitat)
+      return warn(`Could not find habitat (ID ${habitatID}) when placing dragon "${dragonData.name}"`);
+
+    const id = idOverride ?? HTTP.GenerateGUID();
+    const dragonModel = <Model>Assets.Dragons.WaitForChild(dragonData.name);
+    const offset = new Vector3(0, dragonModel.PrimaryPart!.Size.Y / 2, 0);
+    dragonModel.PrimaryPart!.Position = habitat.PrimaryPart!.Position.add(offset);
+    dragonModel.Parent = habitat.Dragons;
+    dragonModel.SetAttribute("ID", id);
+
+    this.saveDragonInfo(player, id, dragonData, habitatID);
+  }
+
+  public placeBuilding(
+    player: Player,
+    buildingName: string,
+    category: Placable,
+    position: Vector3,
+    idOverride?: string
+  ): void {
+
+    const id = idOverride ?? HTTP.GenerateGUID();
+    const building = <Model>Assets.WaitForChild(category).WaitForChild(buildingName).Clone();
+    building.PrimaryPart!.Position = position;
+    building.Parent = World.Buildings;
+    building.SetAttribute("ID", id);
+
+    const timerLength = building.GetAttribute<string>("PlacementTime");
+    this.saveBuildingInfo(player, id, buildingName, category, position, toSeconds(timerLength));
+  }
+
+  private saveDragonInfo(
+    player: Player,
+    id: string,
+    { name, elements, rarity }: DragonInfo,
+    habitatID: string
+  ): void {
+
+    const buildings = this.data.get<Building[]>(player, "buildings");
+    const dragons = this.data.get<Dragon[]>(player, "dragons");
+    const habitat = this.data.findBuilding<Habitat>(player, habitatID)!;
+    const dragon: Dragon = {
+      id, name, elements, rarity,
+      damage: 100,
+      health: 500,
+      goldGenerationRate: 10,
+      empowerment: 0,
+      power: 5,
+      combatBadge: "None",
+
+      perks: {
+        character: [],
+        combat1: [],
+        combat2: []
+      },
+
+      abilities: [
+        {
+          element: "Physical",
+          level: 1,
+          damage: 100
+        }, {
+          element: "Inferno",
+          level: 1,
+          damage: 250
+        }, {
+          element: "Physical",
+          level: 1,
+          damage: 150
+        }, {
+          element: "Inferno",
+          level: 1,
+          damage: 150
+        }
+      ]
+    };
+
+    habitat.dragons = [...habitat.dragons, dragon ];
+
+    const newBuildings = buildings.filter(b => b.id !== habitatID);
+    newBuildings.push(habitat)
+    dragons.push(dragon);
+
+    this.data.set(player, "buildings", buildings);
+    this.data.set(player, "dragons", dragons);
   }
 
   private saveBuildingInfo(
     player: Player,
     id: string,
     name: string,
-    category: BuildingCategory,
+    category: Placable,
     position: Vector3,
     timerLength: number
   ): void {
 
-    const buildings = this.data.get<BuildingInfo[]>(player, "buildings");
+    const buildings = this.data.get<Building[]>(player, "buildings");
     switch (category) {
       case "Habitats": {
-        const info: HabitatInfo = {
+        const info: Habitat = {
           id, name,
           position: toStorableVector3(position),
           level: 1,
@@ -44,22 +145,5 @@ export class PlacementService implements OnInit {
     
     this.data.set(player, "buildings", buildings);
     this.timer.addBuildingTimer(player, id, timerLength);
-  }
-
-  public placeBuilding(
-    player: Player,
-    buildingName: string,
-    category: BuildingCategory,
-    position: Vector3
-  ): void {
-
-    const id = HTTP.GenerateGUID();
-    const building = Assets[category][buildingName].Clone();
-    building.PrimaryPart!.Position = position;
-    building.Parent = World.Buildings;
-    building.SetAttribute("ID", id);
-
-    const timerLength = building.GetAttribute<string>("PlacementTime");
-    this.saveBuildingInfo(player, id, buildingName, category, position, toSeconds(timerLength));
   }
 }

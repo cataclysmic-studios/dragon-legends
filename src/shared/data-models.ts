@@ -7,7 +7,7 @@ interface MainData {
   dragons: Dragon[];
   level: number;
   xp: number;
-  buildings: BuildingInfo[];
+  buildings: Building[];
 }
 
 export type DataValue = MainData[DataKey];
@@ -32,19 +32,19 @@ export interface StorableVector3 {
   readonly z: number;
 }
 
-export interface BuildingInfo extends Unique {
+export interface Building extends Unique {
   readonly name: string;
   position: StorableVector3;
 }
 
-export interface HabitatInfo extends BuildingInfo {
+export interface Habitat extends Building {
   gold: number;
   dragons: Dragon[];
   level: number;
 }
 
 export class Buildings {
-  public static isHabitat(building: BuildingInfo): building is HabitatInfo {
+  public static isHabitat(building: Building): building is Habitat {
     return "dragons" in building && "gold" in building;
   }
 }
@@ -75,7 +75,7 @@ export type Rarity = "Basic" | "Rare" | "Epic" | "Legendary" | "Mythic";
 export type Element =
 	| "Inferno" | "Hydro" | "Geo" | "Cryo" // fire, water, earth, ice
 	| "Electro" | "Bio" | "Necro" // storm, life, death
-	| "Gloom" | "Radiance" | "Myth" // dark, light
+	| "Lunar" | "Solar" | "Myth" // dark, light
 	| "Theo" | "Diabolo"; // god, devil
 
 // Perks
@@ -92,9 +92,9 @@ interface Perk {
 }
   
 export interface Perks {
-  Character: Perk[];
-  Combat1: Perk[];
-  Combat2: Perk[];
+  character: Perk[];
+  combat1: Perk[];
+  combat2: Perk[];
 }
 
 export interface Ability {
@@ -103,12 +103,18 @@ export interface Ability {
   damage: number;
 }
 
-export interface Dragon {
+export type DragonInfo = Pick<Dragon, "name" | "elements" | "rarity"> & {
+  readonly hatchTime: string;
+  readonly price: number;
+};
+
+export interface Dragon extends Unique {
   readonly name: string;
   readonly elements: Element[];
   readonly rarity: Rarity;
   damage: number;
   health: number;
+  /** gold generated per minute */
   goldGenerationRate: number;
   power: number;
   empowerment: number;

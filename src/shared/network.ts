@@ -1,13 +1,14 @@
 import { Networking } from "@flamework/networking";
-import { BuildingInfo, DataKey, DataValue } from "./data-models";
-import { BuildingCategory } from "./util";
+import { Building, DataKey, DataValue, DragonInfo } from "./data-models";
+import { Placable } from "./util";
 
 interface ServerEvents {
   buildingsLoaded(): void;
   initializeData(): void;
   dataLoaded(): void;
   setData(key: DataKey, value: DataValue): void;
-  placeBuilding(buildingName: string, category: BuildingCategory, position: Vector3): void;
+  placeBuilding(buildingName: string, category: Placable, position: Vector3, idOverride?: string): void;
+  placeDragon(dragonData: DragonInfo, habitatID: string): void;
   updateTimers(): void;
 }
 
@@ -17,7 +18,7 @@ interface ClientEvents {
 
 interface ServerFunctions {
   getData(key: DataKey): DataValue;
-  findBuilding(id: string): Maybe<BuildingInfo>;
+  findBuilding(id: string): Maybe<Building>;
   isTimerActive(buildingID: string): boolean;
 }
 

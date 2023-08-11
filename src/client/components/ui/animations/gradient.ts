@@ -13,7 +13,6 @@ const { EasingStyle } = Enum;
 @Component({ tag: "GradientAnimation" })
 export class GradientAnimation extends AnimationComponent<Attributes, GuiButton & { UIGradient: UIGradient; }> implements OnStart {
   private readonly defaultOffset = this.instance.UIGradient.Offset;
-  protected override readonly includeClick = false;
   
   protected readonly tweenInfo = new TweenInfoBuilder()
     .SetEasingStyle(EasingStyle.Quad)

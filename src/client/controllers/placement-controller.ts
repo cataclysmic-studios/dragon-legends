@@ -1,13 +1,15 @@
 import { Controller, Dependency, OnInit, OnRender } from "@flamework/core";
 import { Janitor } from "@rbxts/janitor";
-import { UserInputService, Workspace as World } from "@rbxts/services";
+import { Workspace as World } from "@rbxts/services";
 import { Events, Functions } from "client/network";
-import { Assets, BuildingCategory, Player } from "shared/util";
+import { Assets, Placable, Player, getDragonData } from "shared/util";
 import { UIController } from "./ui-controller";
 import { Context as InputContext } from "@rbxts/gamejoy";
 import { Action } from "@rbxts/gamejoy/out/Actions";
+import StringUtils from "@rbxts/string-utils";
+import { Element } from "shared/data-models";
 
-// TODO: move() method, green/red aura
+// TODO: move() method, green/red highlight, some damn limits
 
 const { floor } = math;
 
@@ -66,9 +68,47 @@ export class PlacementController implements OnRender, OnInit {
     return new Vector3(this.snapCoord(X), 0, this.snapCoord(Z));
   }
 
-  public place(buildingName: string, category: BuildingCategory): void {
+  public placeDragon(dragonModel: Model): void {
+    this.ui.setPage("Main", "None");
+
+    // TODO: check space left in habitat
+    const dragon = getDragonData(dragonModel);
+    const usableHabitats: HabitatModel[] = [];
+    const habitats = <HabitatModel[]>World.Buildings.GetChildren()
+      .filter(b => StringUtils.endsWith(b.Name, "Habitat"));
+
+    for (const habitat of habitats) {
+      const [ element ] = <[Element, string]>habitat.Name.split(" ");
+      const usable = dragon.elements.includes(element);
+      habitat.Highlight.Enabled = usable;
+
+      if (usable)
+        usableHabitats.push(habitat);
+    }
+
+    this.janitor.Add(this.mouse.Button1Down.Connect(() => {
+      const habitat = <Maybe<HabitatModel>>this.mouse.Target?.Parent;
+      if (!habitat) return;
+      if (!usableHabitats.includes(habitat)) return;
+
+      const habitatID = habitat.GetAttribute<string>("ID");
+      Events.placeDragon(dragon, habitatID);
+      this.janitor.Cleanup();
+    }));
+
+    this.janitor.Add(async () => {
+      const gold = <number>await Functions.getData("gold");
+      Events.setData("gold", gold - dragon.price);
+
+      this.ui.setPage("Main", "Main");
+      for (const habitat of habitats)
+        habitat.Highlight.Enabled = false;
+    });
+  }
+
+  public place(buildingName: string, category: Placable): void {
     this.toggleGrid(true);
-    this.currentlyPlacing = Assets[category][buildingName].Clone();
+    this.currentlyPlacing = <Model>Assets.WaitForChild(category).WaitForChild(buildingName).Clone();
 
     const camPosition = World.Ignore.PlayerCamera.Position;
     this.currentlyPlacing.PrimaryPart!.Position = this.snap(camPosition.add(new Vector3(12, 0, 12)));
@@ -85,7 +125,7 @@ export class PlacementController implements OnRender, OnInit {
     this.janitor.Add(placementConfirmation.Confirm.MouseButton1Click.Once(async () => {
       const position = this.currentlyPlacing!.PrimaryPart!.Position;
       const price = <number>this.currentlyPlacing!.GetAttribute("Price");
-      const gold = <number>(await Functions.getData("gold"));
+      const gold = <number>await Functions.getData("gold");
       Events.setData("gold", gold - price);
       Events.placeBuilding(buildingName, category, position);
       this.cancelPlacement();

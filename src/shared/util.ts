@@ -1,12 +1,13 @@
 import { Players, ReplicatedFirst } from "@rbxts/services";
-import { Exception } from "./exceptions";
 import StringUtils from "@rbxts/string-utils";
-import { StorableVector3 } from "./data-models";
+
+import { Exception } from "./exceptions";
+import { DragonInfo, Rarity, StorableVector3 } from "./data-models";
 
 const { floor, log, round } = math;
 const suffixes = <const>["K", "M", "B", "T", "Q"];
 
-export type BuildingCategory = "Decor" | "Buildings" | "Habitats"
+export type Placable = "Decor" | "Buildings" | "Habitats" | "Dragons";
 
 export const Assets = ReplicatedFirst.Assets;
 export const Player = Players.LocalPlayer;
@@ -27,6 +28,21 @@ const timePatterns = {
   h, hour: h, hours: h,
   d, day: d, days: d,
   w, week: w, weeks: w
+}
+
+export function getDragonData(dragonModel: Model): DragonInfo {
+  const dataModule = <ModuleScript>dragonModel.WaitForChild("Data");
+  return <DragonInfo>require(dataModule);
+}
+
+export function getRarityImage(rarity: Rarity): string {
+  switch (rarity) {
+    case "Basic": return "rbxassetid://14399932656";
+    case "Rare": return "rbxassetid://14400364792";
+    case "Epic": return "rbxassetid://14400364959";
+    case "Legendary": return "rbxassetid://14400365128";
+    case "Mythic": return "rbxassetid://14233300725";
+  }
 }
 
 // Takes a remaining time string (e.g. 1d 5h 10s) and
