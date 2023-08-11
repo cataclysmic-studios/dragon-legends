@@ -1,7 +1,7 @@
 import { Service, OnInit, Dependency } from "@flamework/core";
 import { HttpService as HTTP, Workspace as World } from "@rbxts/services";
 import { Events } from "server/network";
-import { Assets, BuildingCategory, toSeconds } from "shared/util";
+import { Assets, BuildingCategory, toStorableVector3, toSeconds } from "shared/util";
 import { DataService } from "./data-service";
 import { BuildingInfo, HabitatInfo } from "shared/data-models";
 import { TimerService } from "./timer-service";
@@ -30,7 +30,8 @@ export class PlacementService implements OnInit {
     switch (category) {
       case "Habitats": {
         const info: HabitatInfo = {
-          id, name, position,
+          id, name,
+          position: toStorableVector3(position),
           level: 1,
           gold: 0,
           dragons: []

@@ -1,14 +1,19 @@
 import { Players, ReplicatedFirst } from "@rbxts/services";
 import { Exception } from "./exceptions";
 import StringUtils from "@rbxts/string-utils";
+import { StorableVector3 } from "./data-models";
 
-const { floor, log } = math;
+const { floor, log, round } = math;
 const suffixes = <const>["K", "M", "B", "T", "Q"];
 
 export type BuildingCategory = "Decor" | "Buildings" | "Habitats"
 
 export const Assets = ReplicatedFirst.Assets;
 export const Player = Players.LocalPlayer;
+
+export const now = () => round(tick());
+export const toStorableVector3 = ({ X, Y, Z }: Vector3) => ({ x: X, y: Y, z: Z })
+export const toUsableVector3 = ({ x, y, z }: StorableVector3) => new Vector3(x, y, z);
 
 const s = 1,
   m = 60,

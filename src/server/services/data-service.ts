@@ -5,8 +5,7 @@ import { Events, Functions } from "server/network";
 import { BuildingInfo, TimeInfo } from "shared/data-models";
 import { DataKey, DataKeys, DataValue } from "shared/data-models";
 import { OnPlayerLeave } from "shared/hooks";
-
-// note: when loading in placed buildings, assign their old ID
+import { now } from "shared/util";
 
 @Service()
 export class DataService implements OnInit, OnPlayerLeave {
@@ -20,7 +19,7 @@ export class DataService implements OnInit, OnPlayerLeave {
 
 	public onPlayerLeave(player: Player): void {
 		const timeInfo = this.get<TimeInfo>(player, "timeInfo");
-		timeInfo.lastOnline = tick();
+		timeInfo.lastOnline = now();
 		this.set(player, "timeInfo", timeInfo);
 	}
 
@@ -58,7 +57,7 @@ export class DataService implements OnInit, OnPlayerLeave {
       timers: []
     });
 
-		Events.dataInitialized.predict(player);
+		Events.dataLoaded.predict(player);
 	}
 
 	private initialize<T extends DataValue = DataValue>(

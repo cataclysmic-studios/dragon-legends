@@ -2,6 +2,8 @@ import { Service, Dependency, OnInit } from "@flamework/core";
 import { Components } from "@flamework/components";
 import { Workspace as World } from "@rbxts/services";
 import { BuildingTimer, TimeInfo, Timer } from "shared/data-models";
+import { now } from "shared/util";
+
 import { DataService } from "./data-service";
 import { BuildingLoaderService } from "./building-loader-service";
 
@@ -24,7 +26,7 @@ export class TimerService implements OnInit {
         return warn("Could not find building associated with timer. ID " + timer.buildingID);
 
       const components = Dependency<Components>();
-      if (timer.beganAt + timer.length < tick())
+      if (timer.beganAt + timer.length < now())
         components.addComponent<Timer>(building);
       else
         if (components.getComponent<Timer>(building))
@@ -36,7 +38,7 @@ export class TimerService implements OnInit {
     const timeInfo = this.data.get<TimeInfo>(player, "timeInfo");
     const timer: BuildingTimer = {
       buildingID: id,
-      beganAt: tick(),
+      beganAt: now(),
       length
     };
 

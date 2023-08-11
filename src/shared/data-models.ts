@@ -26,9 +26,15 @@ class Unique {
   ) {}
 }
 
+export interface StorableVector3 {
+  readonly x: number;
+  readonly y: number;
+  readonly z: number;
+}
+
 export interface BuildingInfo extends Unique {
   readonly name: string;
-  position: Vector3;
+  position: StorableVector3;
 }
 
 export interface HabitatInfo extends BuildingInfo {

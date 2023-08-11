@@ -3,8 +3,9 @@ import Signal from "@rbxts/signal";
 
 import { DataService } from "./data-service";
 import { BuildingInfo, Buildings } from "shared/data-models";
-import { Assets } from "shared/util";
+import { Assets, toUsableVector3 } from "shared/util";
 import { Events } from "server/network";
+import { Workspace as World } from "@rbxts/services";
 
 @Service()
 export class BuildingLoaderService implements OnStart {
@@ -13,7 +14,7 @@ export class BuildingLoaderService implements OnStart {
   private readonly data = Dependency<DataService>();
 
   public onStart(): void {
-    Events.dataInitialized.connect(player => {
+    Events.dataLoaded.connect(player => {
       const buildings = this.data.get<BuildingInfo[]>(player, "buildings");
       for (const building of buildings)
         this.loadBuilding(building);
@@ -30,7 +31,8 @@ export class BuildingLoaderService implements OnStart {
       category = "Buildings";
 
     const model = <Model>Assets[category].WaitForChild(info.name);
-    model.PrimaryPart!.Position = info.position;
+    model.PrimaryPart!.Position = toUsableVector3(info.position);
     model.SetAttribute("ID", info.id);
+    model.Parent = World.Buildings
   }
 }
