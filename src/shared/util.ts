@@ -33,8 +33,11 @@ const timePatterns = {
 // converts it to the amount of time it represents in seconds.
 export function toSeconds(time: string): number {
   let seconds = 0;
-  for (const [value, unit] of time.gmatch("(%d+)(%a)"))
-    seconds += <number>value * timePatterns[<keyof typeof timePatterns>unit];
+  for (const [value, unit] of time.gsub(" ", "")[0].gmatch("(%d+)(%a)")) {
+    const timeUnit = <keyof typeof timePatterns>unit;
+    const figure = <number>value;
+    seconds += figure * timePatterns[timeUnit];
+  }
 
   return seconds;
 }
@@ -42,19 +45,27 @@ export function toSeconds(time: string): number {
 // Takes a time in seconds (e.g. 310) and converts
 // it to a remaining time string (e.g. 5m 10s)
 export function toRemainingTime(seconds: number): string {
-  const time = DateTime
-    .fromUnixTimestamp(seconds)
-    .ToUniversalTime();
+  const dayDivisor = 60 * 60 * 24;
+  const days = floor(seconds / dayDivisor);
+  seconds %= dayDivisor;
+
+  const hourDivisor = 60 * 60;
+  const hours = floor(seconds / hourDivisor);
+  seconds %= hourDivisor;
+
+  const minuteDivisor = 60;
+  const minutes = floor(seconds / minuteDivisor);
+  seconds %= minuteDivisor;
 
   let remainingTime = "";
-  if (time.Day === 0)
-    remainingTime += "%dd ".format(time.Day);
-  if (time.Hour === 0)
-    remainingTime += "%dh ".format(time.Hour);
-  if (time.Minute === 0)
-    remainingTime += "%dm ".format(time.Minute);
-  if (time.Second === 0)
-    remainingTime += "%ds ".format(time.Second);
+  if (days > 0)
+    remainingTime += "%dd ".format(days);
+  if (hours > 0)
+    remainingTime += "%dh ".format(hours);
+  if (minutes > 0)
+    remainingTime += "%dm ".format(minutes);
+  if (seconds > 0)
+    remainingTime += "%ds ".format(seconds);
 
   return StringUtils.trim(remainingTime);
 }

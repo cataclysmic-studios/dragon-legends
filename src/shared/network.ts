@@ -8,7 +8,7 @@ interface ServerEvents {
   dataLoaded(): void;
   setData(key: DataKey, value: DataValue): void;
   placeBuilding(buildingName: string, category: BuildingCategory, position: Vector3): void;
-  updateTimerUIs(): void;
+  updateTimers(): void;
 }
 
 interface ClientEvents {

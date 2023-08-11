@@ -17,7 +17,7 @@ export class TimerService implements OnInit {
 
   public onInit(): void {
     this.buildingLoader.onBuildingsLoaded.Connect((player) => this.updateTimers(player));
-    Events.updateTimerUIs.connect((player) => this.updateTimers(player))
+    Events.updateTimers.connect((player) => this.updateTimers(player))
     Functions.isTimerActive.setCallback((player, id) => this.isTimerActive(player, id));
   }
 
@@ -28,7 +28,6 @@ export class TimerService implements OnInit {
 
   private async updateTimers(player: Player): Promise<void> {
     const { timers } = this.data.get<TimeInfo>(player, "timeInfo");
-    print(timers)
     for (const timer of timers) {
       const building = World.Buildings.GetChildren()
         .find((building): building is Model => building.GetAttribute<string>("ID") === timer.buildingID);
@@ -39,12 +38,11 @@ export class TimerService implements OnInit {
       const completionTime = timer.beganAt + timer.length;
       if (now() >= completionTime) {
         this.removeTimer(player, timer.buildingID);
-        if (!this.components.getComponent<Timer>(building)) return;
-        this.components.removeComponent<Timer>(building);
-      } else {
-        if (this.components.getComponent<Timer>(building)) return;
-        this.components.addComponent<Timer>(building);
-      }
+        if (this.components.getComponent<Timer>(building))
+          this.components.removeComponent<Timer>(building);
+      } else
+        if (!this.components.getComponent<Timer>(building))
+          this.components.addComponent<Timer>(building);
     }
   }
 
