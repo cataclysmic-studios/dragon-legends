@@ -7,13 +7,16 @@ interface Attributes {}
 
 @Component({ tag: "BuildingTitle" })
 export class BuildingTitle extends BaseComponent<Attributes, TextLabel> implements OnStart {
+
   private readonly buildingSelectFrame = this.instance.Parent!;
 
   public onStart(): void {
-    Events.dataUpdate.connect((key) => this.onDataUpdate(key));
-    this.buildingSelectFrame
-      .GetAttributeChangedSignal("ID")
-      .Connect(() => this.updateTitle());
+    this.maid.GiveTask(Events.dataUpdate.connect((key) => this.onDataUpdate(key)));
+    this.maid.GiveTask(
+      this.buildingSelectFrame
+        .GetAttributeChangedSignal("ID")
+        .Connect(() => this.updateTitle())
+    );
   }
 
   private onDataUpdate(key: DataKey): void {

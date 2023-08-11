@@ -10,8 +10,8 @@ export class PageRouteButton extends BaseComponent<Attributes, GuiButton> implem
 
   public onStart(): void {
     const gui = this.ui.getScreen(this.instance);
-    this.instance.MouseButton1Click.Connect(() => 
+    this.maid.GiveTask(this.instance.MouseButton1Click.Connect(() => 
       this.ui.setPage(gui.Name, this.instance.Name)
-    );
+    ));
   }
 }

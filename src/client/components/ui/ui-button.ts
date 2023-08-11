@@ -12,28 +12,27 @@ export class UIButton extends BaseComponent<Attributes, GuiButton> implements On
   private readonly ui = Dependency<UIController>();
 
   public onStart(): void {
-    this.instance.MouseButton1Click.Connect(() => {
-      switch (this.instance.Name) {
-        case "Back": {
-          const gui = this.ui.getScreen(this.instance);
-          this.instance.MouseButton1Click.Connect(() => {
-            const mainPage = <Maybe<string>>gui.GetAttribute("MainPage");
+    const gui = this.ui.getScreen(this.instance);
+    this.maid.GiveTask(
+      this.instance.MouseButton1Click.Connect(() => {
+        switch (this.instance.Name) {
+          case "Back": {
+            const mainPage = gui.GetAttribute<Maybe<string>>("MainPage");
             if (!mainPage && !this.attributes.To)
               return new MissingAttributeException(gui, "MainPage");
-
+  
             this.ui.setPage(gui.Name, this.attributes.To ?? mainPage!);
-          });
-
-          break;
+            break;
+          }
+          
+          case "Shop":
+            this.ui.open("Shop");
+            break;
+          case "Close":
+            this.ui.open("Main");
+            break;
         }
-        
-        case "Shop":
-          this.ui.open("Shop");
-          break;
-        case "Close":
-          this.ui.open("Main");
-          break;
-      }
-    });
+      })
+    );
   }
 }

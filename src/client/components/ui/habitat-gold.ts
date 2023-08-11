@@ -11,11 +11,15 @@ export class HabitatGold extends BaseComponent<Attributes, TextLabel> implements
   private readonly buildingSelectFrame = this.instance.Parent?.Parent?.Parent!;
 
   public onStart(): void {
-    Events.dataUpdate.connect((key, value) => this.onDataUpdate(key, value));
-    this.buildingSelectFrame.GetAttributeChangedSignal("ID").Connect(async () => {
-      const buildings = <BuildingInfo[]>await Functions.getData("buildings");
-      this.updateGoldText(buildings);
-    });
+    this.maid.GiveTask(Events.dataUpdate.connect((key, value) => this.onDataUpdate(key, value)));
+    this.maid.GiveTask(
+      this.buildingSelectFrame
+        .GetAttributeChangedSignal("ID")
+        .Connect(async () => {
+          const buildings = <BuildingInfo[]>await Functions.getData("buildings");
+          this.updateGoldText(buildings);
+        })
+    );
   }
 
   private onDataUpdate(key: DataKey, value: DataValue): void {

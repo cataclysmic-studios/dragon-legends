@@ -42,6 +42,7 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
       });
 
       card.Parent = this.instance;
+      this.maid.GiveTask(card);
     }
   }
 }

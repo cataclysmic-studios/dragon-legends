@@ -10,12 +10,14 @@ interface Attributes {
 @Component({ tag: "PriceLabel" })
 export class PriceLabel extends BaseComponent<Attributes, TextLabel & { UIStroke: UIStroke; }> implements OnStart {
   public onStart(): void {
-    Events.dataUpdate.connect((key, value) => {
-      if (key !== this.attributes.Currency) return;
+    this.maid.GiveTask(
+      Events.dataUpdate.connect((key, value) => {
+        if (key !== this.attributes.Currency) return;
 
-      const price = parseSuffixedNumber(this.instance.Text);
-      const canAfford = <number>value > price;
-      this.instance.UIStroke.Color = canAfford ? new Color3 : Color3.fromHex("#a13434");
-    });
+        const price = parseSuffixedNumber(this.instance.Text);
+        const canAfford = <number>value > price;
+        this.instance.UIStroke.Color = canAfford ? new Color3 : Color3.fromHex("#a13434");
+      })
+    );
   }
 }

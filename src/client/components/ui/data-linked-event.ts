@@ -10,7 +10,7 @@ interface Attributes {
 @Component({ tag: "DataLinkedEvent" })
 export class DataLinkedEvent extends BaseComponent<Attributes, BindableEvent> implements OnStart {
   public onStart(): void {
-    Events.dataUpdate.connect((key, value) => this.onDataUpdate(key, value))
+    this.maid.GiveTask(Events.dataUpdate.connect((key, value) => this.onDataUpdate(key, value)));
   }
 
   private onDataUpdate(key: DataKey, value: DataValue): void {
