@@ -1,5 +1,6 @@
 import { Players, ReplicatedFirst } from "@rbxts/services";
 import { Exception } from "./exceptions";
+import StringUtils from "@rbxts/string-utils";
 
 const { floor, log } = math;
 const suffixes = <const>["K", "M", "B", "T", "Q"];
@@ -8,6 +9,50 @@ export type BuildingCategory = "Decor" | "Buildings" | "Habitats"
 
 export const Assets = ReplicatedFirst.Assets;
 export const Player = Players.LocalPlayer;
+
+const s = 1,
+  m = 60,
+  h = 3600,
+  d = 86400,
+  w = 604800;
+
+const timePatterns = {
+  s, second: s, seconds: s,
+  m, minute: m, minutes: m,
+  h, hour: h, hours: h,
+  d, day: d, days: d,
+  w, week: w, weeks: w
+}
+
+// Takes a remaining time string (e.g. 1d 5h 10s) and
+// converts it to the amount of time it represents in seconds.
+export function toSeconds(time: string): number {
+  let seconds = 0;
+  for (const [value, unit] of time.gmatch("(%d+)(%a)"))
+    seconds += <number>value * timePatterns[<keyof typeof timePatterns>unit];
+
+  return seconds;
+}
+
+// Takes a time in seconds (e.g. 310) and converts
+// it to a remaining time string (e.g. 5m 10s)
+export function toRemainingTime(seconds: number): string {
+  const time = DateTime
+    .fromUnixTimestamp(seconds)
+    .ToUniversalTime();
+
+  let remainingTime = "";
+  if (time.Day === 0)
+    remainingTime += "%dd ".format(time.Day);
+  if (time.Hour === 0)
+    remainingTime += "%dh ".format(time.Hour);
+  if (time.Minute === 0)
+    remainingTime += "%dm ".format(time.Minute);
+  if (time.Second === 0)
+    remainingTime += "%ds ".format(time.Second);
+
+  return StringUtils.trim(remainingTime);
+}
 
 export function commaFormat(n: number | string): string {
   let formatted = tostring(n);
