@@ -50,12 +50,15 @@ export class DataService implements OnInit, OnPlayerLeave {
 		this.initialize(player, "food", 20);
 		this.initialize(player, "level", 1);
 		this.initialize(player, "xp", 0);
+
 		this.initialize(player, "buildings", []);
 		this.initialize(player, "inventory", []);
 		this.initialize(player, "dragons", []);
     this.initialize<TimeInfo>(player, "timeInfo", {
       timers: []
     });
+
+		Events.dataInitialized.predict(player);
 	}
 
 	private initialize<T extends DataValue = DataValue>(
@@ -63,13 +66,12 @@ export class DataService implements OnInit, OnPlayerLeave {
 		key: DataKey,
 		defaultValue: T
 	): void {
-		const store = this.getStore(player, key);
-		this.sendToClient(player, key, store.Get(defaultValue));
-		store.OnUpdate((value) => this.sendToClient(player, key, value));
-	}
 
-	private getStore<T extends DataValue = DataValue>(player: Player, key: DataKey): DataStore2<T> {
-		return DataStore2<T>(key, player);
+		const store = this.getStore(player, key);
+		const value = store.Get(defaultValue);
+		this.sendToClient(player, key, value);
+		store.OnUpdate((value) => this.sendToClient(player, key, value));
+		store.Set(value);
 	}
 
 	private sendToClient<T extends DataValue = DataValue>(
@@ -77,6 +79,11 @@ export class DataService implements OnInit, OnPlayerLeave {
 		key: DataKey,
 		value: T
 	): void {
-		Events.dataUpdate.fire(player, key, value);
+
+		Events.dataUpdate(player, key, value);
+	}
+
+	private getStore<T extends DataValue = DataValue>(player: Player, key: DataKey): DataStore2<T> {
+		return DataStore2<T>(key, player);
 	}
 }
