@@ -1,7 +1,6 @@
 import { Service, Dependency, OnInit } from "@flamework/core";
 import { Components } from "@flamework/components";
 import { Workspace as World } from "@rbxts/services";
-import { Events } from "server/network";
 import { BuildingTimer, TimeInfo, Timer } from "shared/data-models";
 import { DataService } from "./data-service";
 import { BuildingLoaderService } from "./building-loader-service";

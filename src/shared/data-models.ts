@@ -20,17 +20,27 @@ export const DataKeys: DataKey[] = [
   "buildings"
 ];
 
+class Unique {
+  public constructor(
+    public readonly id: string
+  ) {}
+}
+
+export interface BuildingInfo extends Unique {
+  readonly name: string;
+  position: Vector3;
+}
+
 export interface HabitatInfo extends BuildingInfo {
   gold: number;
   dragons: Dragon[];
   level: number;
 }
 
-// unique
-export interface BuildingInfo {
-  readonly id: string;
-  readonly name: string;
-  position: Vector3;
+export class Buildings {
+  public static isHabitat(building: BuildingInfo): building is HabitatInfo {
+    return "dragons" in building && "gold" in building;
+  }
 }
 
 export interface Timer {
