@@ -26,10 +26,12 @@ export class TimerService implements OnInit {
       if (!building)
         return warn("Could not find building associated with timer. ID " + timer.buildingID);
 
+      print(timer.beganAt + timer.length, now());
       const components = Dependency<Components>();
-      if (timer.beganAt + timer.length < now())
+      if (timer.beganAt + timer.length < now()) {
+        if (components.getComponent<Timer>(building)) return;
         components.addComponent<Timer>(building);
-      else
+      } else
         if (components.getComponent<Timer>(building))
           components.removeComponent<Timer>(building);
     }
@@ -45,5 +47,6 @@ export class TimerService implements OnInit {
 
     timeInfo.timers.push(timer);
     this.data.set(player, "timeInfo", timeInfo);
+    this.updateTimers(player);
   }
 }

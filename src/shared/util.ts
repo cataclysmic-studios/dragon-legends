@@ -77,9 +77,9 @@ export function suffixedNumber(n: number): string {
     return commaFormat(n);
   
   const index = floor(log(n, 1e3)) - 1;
-  const divisor = 10 ** (index * 3);
-  const [ baseNumber ] = "%.1f".format(n / divisor).gsub("%.?0+$", "");
-  return commaFormat(baseNumber + (index < 0 ? "" : suffixes[index]));
+  const divisor = 10 ** ((index + 1) * 3);
+  const [ baseNumber ] = "%.1f".format(floor(n / divisor)).gsub("%.?0+$", "");
+  return baseNumber + (index < 0 ? "" : suffixes[index]);
 }
 
 export function parseSuffixedNumber(suffixed: string): number {

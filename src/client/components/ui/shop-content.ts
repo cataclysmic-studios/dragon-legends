@@ -31,14 +31,12 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
       card.Purchase.MouseButton1Click.Connect(async () => {
         if (db) return;
         db = true;
+        task.delay(1, () => db = false);
 
         const gold = <number>await Functions.getData("gold");
         if (price > gold) return;
         this.placement.place(item.Name, contentType);
         this.ui.open("Main");
-
-        task.wait(0.5);
-        db = false;
       });
 
       card.Parent = this.instance;
