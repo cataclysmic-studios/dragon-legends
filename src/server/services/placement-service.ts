@@ -4,14 +4,13 @@ import { Events } from "server/network";
 import { Assets, BuildingCategory } from "shared/util";
 import { DataService } from "./data-service";
 import { BuildingInfo, HabitatInfo } from "shared/data-models";
+import { TimerService } from "./timer-service";
 
 @Service()
 export class PlacementService implements OnInit {
   private readonly data = Dependency<DataService>();
+  private readonly timer = Dependency<TimerService>();
 
-  // TODO: timer to complete building
-  //    - save timestamp building was placed at
-  //    - when joining, update timer according to new timestamp
   public onInit(): void {
     Events.placeBuilding.connect((player, buildingName, category, position) => 
       this.placeBuilding(player, buildingName, category, position)
@@ -40,7 +39,8 @@ export class PlacementService implements OnInit {
         break;
       }
     }
-
+    
+    this.timer.addBuildingTimer(player, id);
     this.data.set(player, "buildings", buildings);
   }
 

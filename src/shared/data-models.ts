@@ -33,9 +33,18 @@ export interface BuildingInfo {
   position: Vector3;
 }
 
+export interface Timer {
+  beganAt: number;
+}
+
+export interface BuildingTimer extends Timer {
+  readonly buildingID: string;
+}
+
 export interface TimeInfo {
   lastDailyClaim?: number;
   lastOnline?: number;
+  timers: BuildingTimer[];
 }
 
 export type CombatBadge = "None"

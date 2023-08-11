@@ -6,6 +6,8 @@ import { BuildingInfo, TimeInfo } from "shared/data-models";
 import { DataKey, DataKeys, DataValue } from "shared/data-models";
 import { OnPlayerLeave } from "./player-leave-service";
 
+// note: when loading in placed buildings, assign their old ID
+
 @Service()
 export class DataService implements OnInit, OnPlayerLeave {
 	public onInit(): void {
@@ -52,7 +54,7 @@ export class DataService implements OnInit, OnPlayerLeave {
 		this.initialize(player, "inventory", []);
 		this.initialize(player, "dragons", []);
     this.initialize<TimeInfo>(player, "timeInfo", {
-      lastDailyClaim: undefined
+      timers: []
     });
 	}
 
