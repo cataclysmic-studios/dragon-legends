@@ -1,6 +1,6 @@
 import { Dependency, OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
-import { Workspace as World } from "@rbxts/services";
+import { CollectionService as Collection, Workspace as World } from "@rbxts/services";
 
 import { PlacementController } from "client/controllers/placement-controller";
 import { NotificationController, NotificationType } from "client/controllers/notification-controller";
@@ -24,7 +24,7 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
     const contentType = <Placable>this.instance.Parent?.Name!;
     const items = <Model[]>Assets.FindFirstChild(contentType)!
       .GetChildren()
-      .filter(i => i.IsA("Model"));
+      .filter(i => i.IsA("Model") && !Collection.HasTag(i, "NotPurchasable"));
 
     for (const item of items) {
       const card = Assets.UI.ItemCard.Clone();

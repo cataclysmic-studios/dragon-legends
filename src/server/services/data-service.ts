@@ -4,7 +4,7 @@ import DataStore2 from "@rbxts/datastore2";
 import { Building, TimeInfo } from "shared/data-models";
 import { DataKey, DataKeys, DataValue } from "shared/data-models";
 import { OnPlayerLeave } from "shared/hooks";
-import { now } from "shared/util";
+import { Assets, now, toStorableVector3 } from "shared/util";
 import { Events, Functions } from "server/network";
 
 const { initializeData, setData, dataLoaded, dataUpdate } = Events;
@@ -53,12 +53,19 @@ export class DataService implements OnInit, OnPlayerLeave {
 		this.initialize(player, "level", 1);
 		this.initialize(player, "xp", 0);
 
-		this.initialize(player, "buildings", []);
 		this.initialize(player, "inventory", []);
 		this.initialize(player, "dragons", []);
     this.initialize<TimeInfo>(player, "timeInfo", {
       timers: []
     });
+
+		this.initialize<Building[]>(player, "buildings", [
+			{
+				id: "HATCHERY",
+				name: "Hatchery",
+				position: toStorableVector3(Assets.Buildings.Hatchery.PrimaryPart!.Position)
+			}
+		]);
 
 		dataLoaded.predict(player);
 	}
@@ -73,7 +80,6 @@ export class DataService implements OnInit, OnPlayerLeave {
 		const value = store.Get(defaultValue);
 		this.sendToClient(player, key, value);
 		store.OnUpdate((value) => this.sendToClient(player, key, value));
-		store.Set(value);
 	}
 
 	private sendToClient<T extends DataValue = DataValue>(

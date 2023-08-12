@@ -15,7 +15,7 @@ interface Attributes {
 @Component({ tag: "Timer" })
 export class Timer extends BaseComponent<Attributes, Model> implements OnStart {
   private readonly data = Dependency<DataService>();
-  private readonly scheduler = Dependency<SchedulingService>();
+  private readonly schedule = Dependency<SchedulingService>();
 
   public onStart(): void {
     const timerUI = Assets.UI.Timer.Clone();
@@ -41,6 +41,6 @@ export class Timer extends BaseComponent<Attributes, Model> implements OnStart {
 
     updateTimer();
     this.maid.GiveTask(timerUI);
-    this.maid.GiveTask(this.scheduler.every.second.Connect(updateTimer));
+    this.maid.GiveTask(this.schedule.every.second.Connect(updateTimer));
   }
 }

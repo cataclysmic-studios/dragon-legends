@@ -42,13 +42,14 @@ export class SelectionController implements OnInit {
 
   public onInit(): void {
     this.input.Bind("MouseButton1", async () => {
-      // TODO: skip timers
+      // TODO: skipping timers
       if (await isTimerActive(this.selectedBuildingID!)) return;
       this.select();
     });
   }
 
   private select(): void {
+    // TODO: display respective buttons
     const buildingSelectFrame = this.ui.setPage("Main", "BuildingSelect");
     buildingSelectFrame.SetAttribute("ID", this.selectedBuildingID);
   }

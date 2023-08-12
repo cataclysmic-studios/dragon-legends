@@ -111,7 +111,12 @@ interface ReplicatedFirst extends Instance {
 				Root: MeshPart;
 			};
 		};
-		Buildings: Folder;
+		Buildings: Folder & {
+			Hatchery: Model & {
+				Base: UnionOperation;
+				Eggs: Folder;
+			};
+		};	
 		UI: Folder & {
 			InventoryCard: InventoryCard;
 			ItemCard: ItemCard;

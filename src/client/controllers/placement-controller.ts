@@ -69,7 +69,8 @@ export class PlacementController implements OnRender, OnInit {
   }
 
   private snap({ X, Z }: Vector3): Vector3 {
-    return new Vector3(this.snapCoord(X), 0, this.snapCoord(Z));
+    const rootPart = this.currentlyPlacing!.PrimaryPart!;
+    return new Vector3(this.snapCoord(X), rootPart.Size.Y / 2, this.snapCoord(Z));
   }
 
   public placeDragon(dragonModel: Model): void {
