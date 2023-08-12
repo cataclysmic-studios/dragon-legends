@@ -7,7 +7,7 @@ export class UIController {
   public current = "Main";
 
   public constructor(
-    private readonly player: PlayerController,
+    private readonly player: PlayerController
   ) {}
 
   public open(name: string): void {

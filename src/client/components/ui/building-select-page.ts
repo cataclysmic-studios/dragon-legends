@@ -1,10 +1,10 @@
 import { OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
 import { Building, Buildings, DataKey, Habitat } from "shared/data-models";
-import { Events, Functions } from "client/network";
 import { toSuffixedNumber } from "shared/util";
+import { DataLinked } from "client/hooks";
+import { Functions } from "client/network";
 
-const { dataUpdate } = Events;
 const { findBuilding } = Functions;
 const { isUpgradable, isHabitat, isHatchery } = Buildings;
 
@@ -28,16 +28,15 @@ interface BuildingSelectFrame extends Frame {
 }
 
 @Component({ tag: "BuildingSelectPage" })
-export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelectFrame> implements OnStart {
+export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelectFrame> implements OnStart, DataLinked {
   public onStart(): void {
-    this.maid.GiveTask(dataUpdate.connect((key) => this.onUpdate(key)));
     this.maid.GiveTask(
       this.instance.GetAttributeChangedSignal("ID")
-        .Connect(() => this.onUpdate("buildings"))
+        .Connect(() => this.onDataUpdate("buildings"))
     );
   }
 
-  private async onUpdate(key: DataKey): Promise<void> {
+  public async onDataUpdate(key: DataKey): Promise<void> {
     if (key !== "buildings") return;
     const building = await this.getBuilding();
 

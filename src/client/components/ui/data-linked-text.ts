@@ -1,22 +1,15 @@
-import { OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
+import { DataLinked } from "client/hooks";
 import { DataKey, DataValue, Dragon } from "shared/data-models";
 import { Assets, commaFormat, toSuffixedNumber } from "shared/util";
-import { Events } from "client/network";
-
-const { dataUpdate } = Events;
 
 interface Attributes {
   readonly DataKey: DataKey;
 }
 
 @Component({ tag: "DataLinkedText" })
-export class DataLinkedText extends BaseComponent<Attributes, TextLabel> implements OnStart {
-  public onStart(): void {
-    this.maid.GiveTask(dataUpdate.connect((key, value) => this.onDataUpdate(key, value)));
-  }
-
-  private onDataUpdate(key: DataKey, value: DataValue): void {
+export class DataLinkedText extends BaseComponent<Attributes, TextLabel> implements DataLinked {
+  public onDataUpdate(key: DataKey, value: DataValue): void {
     if (key !== this.attributes.DataKey) return;
     
     switch (key) {
