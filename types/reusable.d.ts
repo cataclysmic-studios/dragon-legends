@@ -1,4 +1,4 @@
-type ItemCard = Frame & {
+interface ItemCard extends Frame {
 	UIPadding: UIPadding;
 	UICorner: UICorner;
 	UIAspectRatioConstraint: UIAspectRatioConstraint;
@@ -44,9 +44,9 @@ type ItemCard = Frame & {
 		};
 	};
 	UIGradient: UIGradient;
-};
+}
 
-type InventoryCard = Frame & {
+interface InventoryCard extends Frame {
 	Pattern: ImageLabel & {
 		UIGradient: UIGradient;
 	};
@@ -93,19 +93,19 @@ type InventoryCard = Frame & {
 	Title: TextLabel & {
 		UIStroke: UIStroke;
 	};
-};
+}
 
-type HabitatModel = Model & {
+interface HabitatModel extends Model {
 	Dragons: Folder;
 	Highlight: Highlight;
 	Base: Part;
-};
+}
 
-type HatcheryModel = Model & {
+interface HatcheryModel extends Model {
 	Base: UnionOperation;
 	Eggs: Folder;
 	EggPositions: Folder & {
 		"1": Part;
 		"2": Part;
 	};
-};
+}
