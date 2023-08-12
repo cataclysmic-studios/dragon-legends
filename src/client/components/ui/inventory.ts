@@ -1,8 +1,8 @@
 import { OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
 import { InventoryItem, InventoryItems } from "shared/data-models";
-import { Events } from "client/network";
 import { Assets } from "shared/util";
+import { Events } from "client/network";
 
 const { dataUpdate } = Events;
 const { isEgg } = InventoryItems;

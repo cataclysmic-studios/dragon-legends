@@ -25,8 +25,9 @@ export class UIButton extends BaseComponent<Attributes, GuiButton> implements On
             break;
           }
           
+          case "Inventory":
           case "Shop":
-            this.ui.open("Shop");
+            this.ui.open(this.instance.Name);
             break;
           case "Close":
             this.ui.open("Main");
