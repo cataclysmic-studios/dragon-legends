@@ -45,6 +45,54 @@ type ItemCard = Frame & {
 	UIGradient: UIGradient;
 };
 
+type InventoryCard = Frame & {
+	Pattern: ImageLabel & {
+		UIGradient: UIGradient;
+	};
+	Buttons: Frame & {
+		UIListLayout: UIListLayout;
+		Sell: TextButton & {
+			shadowHolder: Frame & {
+				umbraShadow: ImageLabel;
+				ambientShadow: ImageLabel;
+				penumbraShadow: ImageLabel;
+			};
+			UIGradient: UIGradient;
+			UICorner: UICorner;
+			UIStroke: UIStroke;
+			Title: TextLabel & {
+				UIStroke: UIStroke;
+			};
+		};
+		Use: TextButton & {
+			shadowHolder: Frame & {
+				umbraShadow: ImageLabel;
+				ambientShadow: ImageLabel;
+				penumbraShadow: ImageLabel;
+			};
+			UIGradient: UIGradient;
+			UICorner: UICorner;
+			UIStroke: UIStroke;
+			Title: TextLabel & {
+				UIStroke: UIStroke;
+			};
+		};
+	};
+	UICorner: UICorner;
+	UIAspectRatioConstraint: UIAspectRatioConstraint;
+	UIGradient: UIGradient;
+	Viewport: ViewportFrame & {
+		UIAspectRatioConstraint: UIAspectRatioConstraint;
+	};
+	UIStroke: UIStroke & {
+		UIGradient: UIGradient;
+	};
+	UIPadding: UIPadding;
+	Title: TextLabel & {
+		UIStroke: UIStroke;
+	};
+};
+
 type HabitatModel = Model & {
 	Dragons: Folder;
 	Highlight: Highlight;
@@ -53,6 +101,7 @@ type HabitatModel = Model & {
 
 interface ReplicatedFirst extends Instance {
 	Assets: Folder & {
+		Eggs: Folder;
 		Dragons: Folder & {
 			Types: ModuleScript;
 			["Inferno Dragon"]: Model & {
@@ -62,6 +111,8 @@ interface ReplicatedFirst extends Instance {
 		};
 		Buildings: Folder;
 		UI: Folder & {
+			InventoryCard: InventoryCard;
+			ItemCard: ItemCard;
 			Timer: BillboardGui & {
 				Icon: ImageLabel & {
 					UIAspectRatioConstraint: UIAspectRatioConstraint;
@@ -71,7 +122,6 @@ interface ReplicatedFirst extends Instance {
 					UIStroke: UIStroke;
 				};
 			};
-			ItemCard: ItemCard;
 			ElementBanners: Folder & {
 				Necro: ImageLabel & {
 					Icon: ImageLabel & {

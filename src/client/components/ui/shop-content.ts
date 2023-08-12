@@ -31,7 +31,7 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
       viewportModel.PrimaryPart!.Position = new Vector3;
       viewportModel.Parent = card.Viewport;
 
-      const price = <number>item.GetAttribute("Price");
+      const price = <number>(item.GetAttribute("Price") ?? getDragonData(item).price);
       if (!price)
         return error(`Shop item "${item.Name}" is missing "Price" attribute.`)
 
@@ -39,7 +39,7 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
       this.configureSpecifics(contentType, card, item);
 
       let db = false;
-      card.Purchase.MouseButton1Click.Connect(async () => {
+      this.maid.GiveTask(card.Purchase.MouseButton1Click.Connect(async () => {
         if (db) return;
         db = true;
         task.delay(1, () => db = false);
@@ -48,7 +48,7 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
         if (price > gold) return;
         this.onPurchaseClick(item, contentType)
         this.ui.open("Main");
-      });
+      }));
 
       card.Parent = this.instance;
       this.maid.GiveTask(card);

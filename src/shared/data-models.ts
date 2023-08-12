@@ -43,8 +43,8 @@ export interface Habitat extends Building {
   level: number;
 }
 
-export class Buildings {
-  public static isHabitat(building: Building): building is Habitat {
+export namespace Buildings {
+  export function isHabitat(building: Building): building is Habitat {
     return "dragons" in building && "gold" in building;
   }
 }
@@ -123,9 +123,15 @@ export interface Dragon extends Unique {
   abilities: [Ability, Ability, Ability, Ability];
 }
 
-export abstract class InventoryItem {
-  public abstract readonly name: string;
-  public abstract readonly stackable: boolean;
+export namespace InventoryItems {
+  export function isEgg(item: InventoryItem): item is Egg {
+    return "hatchTime" in item;
+  }
+}
+
+export interface InventoryItem {
+  readonly name: string;
+  readonly stackable: boolean;
 }
 
 export interface Egg extends InventoryItem {

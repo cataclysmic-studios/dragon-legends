@@ -7,6 +7,7 @@ import { Assets, getDragonData, toUsableVector3 } from "shared/util";
 import { Events } from "server/network";
 
 const { dataLoaded, placeBuilding, placeDragon } = Events;
+const { isHabitat } = Buildings;
 
 @Service()
 export class BuildingLoaderService implements OnStart {
@@ -24,18 +25,18 @@ export class BuildingLoaderService implements OnStart {
     });
   }
 
-  private loadBuilding(player: Player, info: Building): void {
+  private loadBuilding(player: Player, building: Building): void {
     let category: Exclude<keyof typeof Assets, keyof Folder | "UI">;
-    if (Buildings.isHabitat(info)) {
+    if (isHabitat(building)) {
       category = "Habitats";
-      for (const dragon of info.dragons) {
+      for (const dragon of building.dragons) {
         const dragonModel = <Model>Assets.Dragons.WaitForChild(dragon.name);
         const dragonData = getDragonData(dragonModel);
-        placeDragon.predict(player, dragonData, info.id);
+        placeDragon.predict(player, dragonData, building.id);
       }
     } else
       category = "Buildings";
 
-    placeBuilding.predict(player, info.name, category, toUsableVector3(info.position), info.id)
+    placeBuilding.predict(player, building.name, category, toUsableVector3(building.position), building.id)
   }
 }
