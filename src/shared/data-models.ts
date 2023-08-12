@@ -37,15 +37,22 @@ export interface Building extends Unique {
   position: StorableVector3;
 }
 
-export interface Habitat extends Building {
+export interface UpgradableBuilding extends Building {
+  level: number;
+}
+
+export interface Habitat extends UpgradableBuilding {
   gold: number;
   dragons: Dragon[];
-  level: number;
 }
 
 export namespace Buildings {
   export function isHabitat(building: Building): building is Habitat {
-    return "dragons" in building && "gold" in building;
+    return "dragons" in building && "gold" in building && isUpgradable(building);
+  }
+
+  export function isUpgradable(building: Building): building is UpgradableBuilding {
+    return "level" in building;
   }
 }
 
