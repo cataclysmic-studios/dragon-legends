@@ -8,6 +8,7 @@ import { Timer } from "server/components/timer";
 import { BuildingTimer, TimeInfo } from "shared/data-models";
 import { now } from "shared/util";
 import { Events, Functions } from "server/network";
+import { MissingBuildingException } from "shared/exceptions";
 
 const { updateTimers } = Events;
 const { isTimerActive } = Functions;
@@ -39,7 +40,7 @@ export class TimerService implements OnInit {
         .find((building): building is Model => building.GetAttribute<string>("ID") === timer.buildingID);
 
       if (!building)
-        return warn("Could not find building associated with timer. ID " + timer.buildingID);
+        throw new MissingBuildingException(timer.buildingID, "Could not find building associated with timer");
 
       const completionTime = timer.beganAt + timer.length;
       if (now() >= completionTime) {

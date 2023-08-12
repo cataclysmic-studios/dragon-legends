@@ -21,7 +21,7 @@ export class UIButton extends BaseComponent<Attributes, GuiButton> implements On
           case "Back": {
             const mainPage = gui.GetAttribute<Maybe<string>>("MainPage");
             if (!mainPage && !this.attributes.To)
-              return new MissingAttributeException(gui, "MainPage");
+              throw new MissingAttributeException(gui, "MainPage");
   
             this.ui.setPage(gui.Name, this.attributes.To ?? mainPage!);
             break;

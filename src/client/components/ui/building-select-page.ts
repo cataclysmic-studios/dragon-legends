@@ -1,9 +1,10 @@
 import { OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
 import { Building, Buildings, DataKey, Habitat } from "shared/data-models";
-import { toSuffixedNumber } from "shared/util";
 import { DataLinked } from "client/hooks";
+import { toSuffixedNumber } from "shared/util";
 import { Functions } from "client/network";
+import { MissingBuildingException } from "shared/exceptions";
 
 const { findBuilding } = Functions;
 const { isUpgradable, isHabitat, isHatchery } = Buildings;
@@ -40,7 +41,9 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
     if (key !== "buildings") return;
     const building = await this.getBuilding();
 
-    if (!building) return;
+    if (!building)
+      throw new MissingBuildingException(this.attributes.ID!, "Failed to find building when updating BuildingSelectPage");
+
     this.updateTitle(building);
     this.updateButtons(building);
     if (isHabitat(building))

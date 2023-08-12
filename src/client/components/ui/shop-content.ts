@@ -8,6 +8,7 @@ import { UIController } from "client/controllers/ui-controller";
 import { Egg, Element, InventoryItem } from "shared/data-models";
 import { Assets, Placable, getDragonData, getRarityImage, toSeconds, toSuffixedNumber } from "shared/util";
 import { Events, Functions } from "client/network";
+import { MissingAttributeException } from "shared/exceptions";
 
 const { setData, addNotificationToButton } = Events;
 const { getData } = Functions;
@@ -44,7 +45,7 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
 
       const price = item.GetAttribute<Maybe<number>>("Price") ?? getDragonData(item).price;
       if (!price)
-        return error(`Shop item "${item.Name}" is missing "Price" attribute.`)
+        throw new MissingAttributeException(item, "Price");
 
       card.Purchase.Container.Price.Text = toSuffixedNumber(price);
       this.configureSpecifics(contentType, card, item);

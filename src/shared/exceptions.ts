@@ -6,19 +6,25 @@ export class Exception {
 		public readonly message: string,
 		public readonly level?: number
 	) {
-		error(`${name}Exception: ${message}`, (level ?? 0) + 1);
+		warn(`${name}Exception: ${message}`, (level ?? 0) + 1);
 		// throw $error(`${name}Exception: ${message}`, (level ?? 0) + 1);
 	}
 }
 
 export class MissingAttributeException extends Exception {
 	public constructor(instance: Instance, attributeName: string) {
-		super("MissingAttribute", `Attribute "${attributeName}" is missing from ${instance.ClassName} "${instance.Name}"`);
+		super("MissingAttribute", `${instance.ClassName} "${instance.Name}" is missing attribute "${attributeName}"`);
 	}
 }
 
 export class FlameworkIgnitionException extends Exception {
 	public constructor(public readonly message: string) {
 		super("FlameworkIgnition", message);
+	}
+}
+
+export class MissingBuildingException extends Exception {
+	public constructor(buildingID: string, message: string) {
+		super("MissingBuilding", `${message} | (Building ID ${buildingID})`);
 	}
 }

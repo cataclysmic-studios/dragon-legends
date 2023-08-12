@@ -7,5 +7,5 @@ try {
 	Flamework.addPaths("src/shared/components");
 	Flamework.ignite();
 } catch (e) {
-	new FlameworkIgnitionException(<string>e);
+	throw new FlameworkIgnitionException(<string>e);
 }
