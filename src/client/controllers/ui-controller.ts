@@ -35,8 +35,8 @@ export class UIController {
 
   public getScreen<Children extends {} = {}>(searchParameter: GuiBase | string): ScreenGui & Children {
     if (typeOf(searchParameter) === "Instance")
-      return (<GuiBase>searchParameter).FindFirstAncestorOfClass("ScreenGui")!;
+      return <ScreenGui & Children>(<GuiBase>searchParameter).FindFirstAncestorOfClass("ScreenGui")!;
     else
-      return <ScreenGui>this.player.gui.WaitForChild(<string>searchParameter);
+      return <ScreenGui & Children>this.player.gui.WaitForChild(<string>searchParameter);
   }
 }

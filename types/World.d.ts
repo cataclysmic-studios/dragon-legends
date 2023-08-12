@@ -4,6 +4,7 @@ interface Island extends Part {
 
 interface Workspace extends Model {
 	Camera: Camera;
+	ViewportCamera: Part;
 	Ignore: Folder & {
 		CameraBounds: Part;
 		PlayerCamera: Part;

@@ -18,6 +18,7 @@ type ItemCard = Frame & {
 		UIGradient: UIGradient;
 	};
 	Viewport: ViewportFrame & {
+		Camera: Camera;
 		UIAspectRatioConstraint: UIAspectRatioConstraint;
 	};
 	UIStroke: UIStroke & {
@@ -82,6 +83,7 @@ type InventoryCard = Frame & {
 	UIAspectRatioConstraint: UIAspectRatioConstraint;
 	UIGradient: UIGradient;
 	Viewport: ViewportFrame & {
+		Camera: Camera;
 		UIAspectRatioConstraint: UIAspectRatioConstraint;
 	};
 	UIStroke: UIStroke & {

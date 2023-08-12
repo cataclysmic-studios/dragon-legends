@@ -1,7 +1,7 @@
 import { Controller, Dependency } from "@flamework/core";
+import { TweenInfoBuilder } from "@rbxts/builders";
 import { UIController } from "./ui-controller";
 import { tween } from "shared/util";
-import { TweenInfoBuilder } from "@rbxts/builders";
 
 const { EasingStyle } = Enum;
 
@@ -22,8 +22,8 @@ export class NotificationController {
     Container: Frame;
   }>("Notifications");
 
-  public dispatch(message: string, type: NotificationType): void {
-    const label = this.createNotificationLabel(message, type);
+  public dispatch(message: string, notificationType: NotificationType): void {
+    const label = this.createNotificationLabel(message, notificationType);
     label.Parent = this.screen.Container;
 
     const tweenInfo = new TweenInfoBuilder()
@@ -36,11 +36,11 @@ export class NotificationController {
       .Completed.Once(() => label.Destroy());
   }
 
-  private createNotificationLabel(text: string, type: NotificationType): NotificationLabel {
+  private createNotificationLabel(text: string, notificationType: NotificationType): NotificationLabel {
     const label = new Instance("TextLabel");
     label.FontFace = new Font("Gotham", Enum.FontWeight.ExtraBold);
     label.Size = UDim2.fromScale(1, 0.1);
-    label.TextColor3 = this.getNotificationColor(type);
+    label.TextColor3 = this.getNotificationColor(notificationType);
     label.TextScaled = true;
     label.Text = text;
     
@@ -51,8 +51,8 @@ export class NotificationController {
     return <NotificationLabel>label;
   }
 
-  private getNotificationColor(type: NotificationType) {
-    switch (type) {
+  private getNotificationColor(notificationType: NotificationType) {
+    switch (notificationType) {
       case NotificationType.Note:
         return Color3.fromRGB(255, 255, 255);
       case NotificationType.Warning:

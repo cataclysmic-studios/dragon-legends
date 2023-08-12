@@ -6,6 +6,7 @@ import { UIController } from "client/controllers/ui-controller";
 import { Egg, Element, InventoryItem } from "shared/data-models";
 import { Assets, Placable, getDragonData, getRarityImage, toSeconds, toSuffixedNumber } from "shared/util";
 import { Events, Functions } from "client/network";
+import { Workspace as World } from "@rbxts/services";
 
 const { setData } = Events;
 const { getData } = Functions;
@@ -26,6 +27,12 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
     for (const item of items) {
       const card = Assets.UI.ItemCard.Clone();
       card.Title.Text = item.Name;
+
+      const viewportCamera = new Instance("Camera");
+      viewportCamera.CFrame = World.ViewportCamera.CFrame;
+      viewportCamera.FieldOfView = contentType === "Habitats" ? 70 : 30;
+      viewportCamera.Parent = card.Viewport;
+      card.Viewport.CurrentCamera = viewportCamera;
 
       const viewportModel = item.Clone();
       viewportModel.PrimaryPart!.Position = new Vector3;
