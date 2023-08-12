@@ -43,6 +43,7 @@ export class PlacementService implements OnInit {
     dragonModel.Parent = habitat.Dragons;
     dragonModel.SetAttribute("ID", id);
 
+    if (idOverride) return;
     this.saveDragonInfo(player, id, dragonData, habitatID);
   }
 
@@ -60,6 +61,7 @@ export class PlacementService implements OnInit {
     building.Parent = World.Buildings;
     building.SetAttribute("ID", id);
 
+    if (idOverride) return;
     const timerLength = building.GetAttribute<string>("PlacementTime");
     this.saveBuildingInfo(player, id, buildingName, category, position, toSeconds(timerLength));
   }
