@@ -3,7 +3,7 @@ import { TweenInfoBuilder } from "@rbxts/builders";
 import { UIController } from "./ui-controller";
 import { tween } from "shared/util";
 
-const { EasingStyle } = Enum;
+const { EasingStyle, Font } = Enum;
 
 export const enum NotificationType {
   Note,
@@ -38,7 +38,8 @@ export class NotificationController {
 
   private createNotificationLabel(text: string, notificationType: NotificationType): NotificationLabel {
     const label = new Instance("TextLabel");
-    label.FontFace = new Font("Gotham", Enum.FontWeight.ExtraBold);
+    label.BackgroundTransparency = 1;
+    label.Font = Font.GothamBlack;
     label.Size = UDim2.fromScale(1, 0.1);
     label.TextColor3 = this.getNotificationColor(notificationType);
     label.TextScaled = true;

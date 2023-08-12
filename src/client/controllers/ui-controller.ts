@@ -11,15 +11,16 @@ export class UIController {
     const guis = <ScreenGui[]>this.player.gui.GetChildren();
     this.current = name;
 
-    for (const gui of guis) {
-      const on = gui.Name === name;
-      gui.Enabled = on;
+    for (const gui of guis)
+      if (!Collection.HasTag(gui, "OverlayScreen")) {
+        const on = gui.Name === name;
+        gui.Enabled = on;
 
-      if (on) {
-        const mainPage = gui.GetAttribute<Maybe<string>>("MainPage") ?? "Main";
-        this.setPage(gui.Name, mainPage);
+        if (on) {
+          const mainPage = gui.GetAttribute<Maybe<string>>("MainPage") ?? "Main";
+          this.setPage(gui.Name, mainPage);
+        }
       }
-    }
   }
 
   public setPage(guiName: string, pageName: string): GuiObject {

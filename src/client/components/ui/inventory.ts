@@ -26,7 +26,7 @@ export class Inventory extends BaseComponent<Attributes, ScrollingFrame> impleme
 
       const viewportCamera = new Instance("Camera");
       viewportCamera.CFrame = World.ViewportCamera.CFrame;
-      viewportCamera.FieldOfView = 60;
+      viewportCamera.FieldOfView = 30;
       viewportCamera.Parent = card.Viewport;
       card.Viewport.CurrentCamera = viewportCamera;
       

@@ -67,7 +67,7 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
   private getViewportFOV(contentType: Placable): number {
     switch (contentType) {
       case "Habitats": return 70;
-      default: return 40;
+      default: return 30;
     }
   }
 
