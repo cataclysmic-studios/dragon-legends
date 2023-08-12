@@ -7,7 +7,7 @@ import StringUtils from "@rbxts/string-utils";
 
 import { UIController } from "./ui-controller";
 import { Element } from "shared/data-models";
-import { Assets, Placable, Player, getDragonData } from "shared/util";
+import { Assets, Placable, Player, getDragonData, getMouseWorldPosition } from "shared/util";
 import { Events, Functions } from "client/network";
 
 const { setData, placeBuilding, placeDragon } = Events;
@@ -60,7 +60,7 @@ export class PlacementController implements OnRender, OnInit {
     if (!this.currentlyPlacing || !this.mouseDown) return;
     if (this.currentlyPlacing.Name !== this.targetOnClick?.Parent?.Name) return;
 
-    const position = this.snap(this.mouse.Hit.Position);
+    const position = this.snap(getMouseWorldPosition());
     this.currentlyPlacing.PrimaryPart!.Position = position;
   }
 

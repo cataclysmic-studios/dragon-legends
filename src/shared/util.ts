@@ -1,5 +1,5 @@
-import { Players, ReplicatedFirst, TweenService } from "@rbxts/services";
-import { TweenInfoBuilder } from "@rbxts/builders";
+import { Players, ReplicatedFirst, TweenService, UserInputService as UIS, Workspace as World } from "@rbxts/services";
+import { RaycastParamsBuilder, TweenInfoBuilder } from "@rbxts/builders";
 import StringUtils from "@rbxts/string-utils";
 
 import { DragonInfo, Rarity, StorableVector3 } from "./data-models";
@@ -15,6 +15,22 @@ export const Player = Players.LocalPlayer;
 export const now = () => round(tick());
 export const toStorableVector3 = ({ X, Y, Z }: Vector3) => ({ x: X, y: Y, z: Z })
 export const toUsableVector3 = ({ x, y, z }: StorableVector3) => new Vector3(x, y, z);
+
+const RAY_DISTANCE = 1000;
+export function getMouseWorldPosition(distance = RAY_DISTANCE): Vector3 {
+  const { X, Y } = UIS.GetMouseLocation();
+  const { Origin, Direction } = World.CurrentCamera!.ViewportPointToRay(X, Y);
+  const raycastParams = new RaycastParamsBuilder()
+    .SetIgnoreWater(true)
+    .AddToFilter(World.Ignore)
+    .Build();
+
+  const raycastResult = World.Raycast(Origin, Direction.mul(distance), raycastParams);
+  if (raycastResult)
+    return raycastResult.Position;
+  else
+    return Origin.add(Direction.mul(distance));
+}
 
 export function tween<T extends Instance = Instance>(
   instance: T,
