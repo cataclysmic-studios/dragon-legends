@@ -5,7 +5,7 @@ import { Events } from "client/network";
 const { dataUpdate } = Events;
 
 @Service()
-export class DataLinkingController implements OnStart {
+export class DataLinkController implements OnStart {
   public onStart(): void {
     const listeners = new Set<DataLinked>();
     Modding.onListenerAdded<DataLinked>((object) => listeners.add(object));
