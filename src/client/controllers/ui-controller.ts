@@ -16,7 +16,7 @@ export class UIController {
       gui.Enabled = on;
 
       if (on) {
-        const mainPage = <Maybe<string>>gui.GetAttribute("MainPage");
+        const mainPage = gui.GetAttribute<Maybe<string>>("MainPage") ?? "Main";
         if (mainPage)
           this.setPage(gui.Name, mainPage);
       }
