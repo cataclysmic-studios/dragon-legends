@@ -1,10 +1,11 @@
 import { OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
 import { Assets } from "shared/util";
+import { Events } from "client/network";
 
-interface Attributes {
-  Amount: number;
-}
+const { addNotificationToButton } = Events;
+
+interface Attributes {}
 
 @Component({ tag: "NotificationButton" })
 export class NotificationButton extends BaseComponent<Attributes, GuiButton> implements OnStart {
@@ -12,23 +13,33 @@ export class NotificationButton extends BaseComponent<Attributes, GuiButton> imp
 
   public onStart(): void {
     this.notificationFrame.Parent = this.instance;
-    this.notificationFrame.Visible = false;
+    addNotificationToButton.connect(buttonName => {
+      if (buttonName !== this.instance.Name) return;
+      this.add();
+    });
+    
     this.notificationFrame.GetAttributeChangedSignal("Amount")
       .Connect(() => {
-        this.notificationFrame.Visible = this.attributes.Amount !== 0;
-        this.notificationFrame.Amount.Text = tostring(this.attributes.Amount);
+        const amount = this.getAmount();
+        this.notificationFrame.Visible = amount > 0;
+        this.notificationFrame.Amount.Text = tostring(amount);
       });
-
+    
     this.maid.GiveTask(this.notificationFrame);
     this.maid.GiveTask(this.instance.MouseButton1Click.Connect(() => this.set(0)));
     this.set(0);
   }
 
+  public getAmount(): number {
+    return this.notificationFrame.GetAttribute<number>("Amount");
+  }
+
   public set(value: number): void {
-    this.attributes.Amount = value;
+    this.notificationFrame.SetAttribute("Amount", value);
   }
 
   public add(value = 1): void {
-    this.attributes.Amount += value;
+    const amount = this.getAmount();
+    this.set(amount + value);
   }
 }

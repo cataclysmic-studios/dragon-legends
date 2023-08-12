@@ -9,7 +9,7 @@ import { Egg, Element, InventoryItem } from "shared/data-models";
 import { Assets, Placable, getDragonData, getRarityImage, toSeconds, toSuffixedNumber } from "shared/util";
 import { Events, Functions } from "client/network";
 
-const { setData } = Events;
+const { setData, addNotificationToButton } = Events;
 const { getData } = Functions;
 
 interface Attributes {}
@@ -95,7 +95,10 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
         inventory.push(egg);
         setData("inventory", inventory);
         setData("gold", gold - price);
-        this.notifications.dispatch("Added egg to your inventory!")
+
+        this.notifications.dispatch("Added egg to your inventory!");
+        addNotificationToButton.predict("Inventory");
+
         // TODO: call this to place the dragon after hatching the egg
         // this.placement.placeDragon(item);
         break;
