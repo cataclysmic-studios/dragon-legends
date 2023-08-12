@@ -126,6 +126,21 @@ interface ReplicatedFirst extends Instance {
 		UI: Folder & {
 			InventoryCard: InventoryCard;
 			ItemCard: ItemCard;
+			ButtonNotification: Frame & {
+				shadowHolder: Frame & {
+					umbraShadow: ImageLabel;
+					ambientShadow: ImageLabel;
+					penumbraShadow: ImageLabel;
+				};
+				Amount: TextLabel & {
+					UIStroke: UIStroke;
+				};
+				UIPadding: UIPadding;
+				UICorner: UICorner;
+				UIStroke: UIStroke;
+				UIAspectRatioConstraint: UIAspectRatioConstraint;
+				UIGradient: UIGradient;
+			};			
 			Timer: BillboardGui & {
 				Icon: ImageLabel & {
 					UIAspectRatioConstraint: UIAspectRatioConstraint;
