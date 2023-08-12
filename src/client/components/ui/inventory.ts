@@ -1,5 +1,6 @@
 import { OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
+import { Workspace as World } from "@rbxts/services";
 import { InventoryItem, InventoryItems } from "shared/data-models";
 import { Assets } from "shared/util";
 import { Events } from "client/network";
@@ -22,6 +23,12 @@ export class Inventory extends BaseComponent<Attributes, ScrollingFrame> impleme
     for (const item of inventory) {
       const card = Assets.UI.InventoryCard.Clone();
       card.Title.Text = item.name;
+
+      const viewportCamera = new Instance("Camera");
+      viewportCamera.CFrame = World.ViewportCamera.CFrame;
+      viewportCamera.FieldOfView = 60;
+      viewportCamera.Parent = card.Viewport;
+      card.Viewport.CurrentCamera = viewportCamera;
       
       if (isEgg(item)) {
         const eggMesh = <MeshPart>Assets.Eggs.WaitForChild(item.name).Clone();

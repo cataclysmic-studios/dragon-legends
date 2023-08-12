@@ -32,7 +32,7 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
 
       const viewportCamera = new Instance("Camera");
       viewportCamera.CFrame = World.ViewportCamera.CFrame;
-      viewportCamera.FieldOfView = contentType === "Habitats" ? 70 : 40;
+      viewportCamera.FieldOfView = this.getViewportFOV(contentType);
       viewportCamera.Parent = card.Viewport;
       card.Viewport.CurrentCamera = viewportCamera;
 
@@ -61,6 +61,13 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
 
       card.Parent = this.instance;
       this.maid.GiveTask(card);
+    }
+  }
+
+  private getViewportFOV(contentType: Placable): number {
+    switch (contentType) {
+      case "Habitats": return 70;
+      default: return 40;
     }
   }
 
