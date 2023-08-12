@@ -1,22 +1,18 @@
-import { OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
 import { Workspace as World } from "@rbxts/services";
-import { InventoryItem, InventoryItems } from "shared/data-models";
+import { DataKey, DataValue, InventoryItem, InventoryItems } from "shared/data-models";
 import { Assets } from "shared/util";
-import { Events } from "client/network";
+import { DataLinked } from "client/hooks";
 
-const { dataUpdate } = Events;
 const { isEgg } = InventoryItems;
 
 interface Attributes {}
 
 @Component({ tag: "Inventory" })
-export class Inventory extends BaseComponent<Attributes, ScrollingFrame> implements OnStart {
-  public async onStart(): Promise<void> {
-    dataUpdate.connect((key, value) => {
-      if (key !== "inventory") return;
-      this.updateItems(<InventoryItem[]>value);
-    });
+export class Inventory extends BaseComponent<Attributes, ScrollingFrame> implements DataLinked {
+  public onDataUpdate(key: DataKey, value: DataValue): void {
+    if (key !== "inventory") return;
+    this.updateItems(<InventoryItem[]>value);
   }
 
   private updateItems(inventory: InventoryItem[]): void {

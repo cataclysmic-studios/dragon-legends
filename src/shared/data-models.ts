@@ -1,4 +1,4 @@
-interface MainData {
+export interface GameDataModel {
   timeInfo: TimeInfo;
   gold: number;
   diamonds: number;
@@ -10,8 +10,8 @@ interface MainData {
   buildings: Building[];
 }
 
-export type DataValue = MainData[DataKey];
-export type DataKey = keyof MainData;
+export type DataValue = GameDataModel[DataKey];
+export type DataKey = keyof GameDataModel;
 export const DataKeys: DataKey[] = [
 	"timeInfo",
 	"gold", "diamonds", "food",

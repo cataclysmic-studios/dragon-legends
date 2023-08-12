@@ -1,6 +1,6 @@
 import { Service, Modding, OnStart } from "@flamework/core";
 import { Players } from "@rbxts/services";
-import { OnPlayerJoin, OnPlayerLeave } from "shared/hooks";
+import { OnPlayerJoin, OnPlayerLeave } from "server/hooks";
 
 @Service()
 export class PlayerService implements OnStart {
@@ -13,8 +13,8 @@ export class PlayerService implements OnStart {
     Modding.onListenerRemoved<OnPlayerLeave>((object) => leaveListeners.delete(object));
 
     Players.PlayerAdded.Connect((player) => {
-        for (const listener of joinListeners)
-          task.spawn(() => listener.onPlayerJoin(player));
+      for (const listener of joinListeners)
+        task.spawn(() => listener.onPlayerJoin(player));
     });
 
     Players.PlayerRemoving.Connect((player) => {
