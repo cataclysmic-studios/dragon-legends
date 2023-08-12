@@ -31,7 +31,7 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
       viewportModel.PrimaryPart!.Position = new Vector3;
       viewportModel.Parent = card.Viewport;
 
-      const price = <number>(item.GetAttribute("Price") ?? getDragonData(item).price);
+      const price = item.GetAttribute<Maybe<number>>("Price") ?? getDragonData(item).price;
       if (!price)
         return error(`Shop item "${item.Name}" is missing "Price" attribute.`)
 

@@ -17,8 +17,7 @@ export class UIController {
 
       if (on) {
         const mainPage = gui.GetAttribute<Maybe<string>>("MainPage") ?? "Main";
-        if (mainPage)
-          this.setPage(gui.Name, mainPage);
+        this.setPage(gui.Name, mainPage);
       }
     }
   }
@@ -34,7 +33,10 @@ export class UIController {
     return pages.find(page => page.Name === pageName)!;
   }
 
-  public getScreen(instance: GuiBase): ScreenGui {
-    return instance.FindFirstAncestorOfClass("ScreenGui")!;
+  public getScreen<Children extends {} = {}>(searchParameter: GuiBase | string): ScreenGui & Children {
+    if (typeOf(searchParameter) === "Instance")
+      return (<GuiBase>searchParameter).FindFirstAncestorOfClass("ScreenGui")!;
+    else
+      return <ScreenGui>this.player.gui.WaitForChild(<string>searchParameter);
   }
 }

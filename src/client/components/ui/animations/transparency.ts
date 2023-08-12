@@ -1,7 +1,8 @@
 import { OnStart } from "@flamework/core";
 import { Component } from "@flamework/components";
-import { TweenService as Tween } from "@rbxts/services";
 import { TweenInfoBuilder } from "@rbxts/builders";
+import { tween } from "shared/util";
+
 import AnimationComponent from "client/base-components/animation-component";
 
 interface Attributes {
@@ -24,14 +25,14 @@ export class TransparencyAnimation extends AnimationComponent<Attributes> implem
   }
 
   public active(): void {
-    Tween.Create(this.instance, this.tweenInfo.Build(), {
+    tween(this.instance, this.tweenInfo, {
       BackgroundTransparency: this.attributes.TransparencyGoal
-    }).Play();
+    });
   }
 
   public inactive(): void {
-    Tween.Create(this.instance, this.tweenInfo.Build(), {
+    tween(this.instance, this.tweenInfo, {
       BackgroundTransparency: this.defaultTransparency
-    }).Play();
+    });
   }
 }

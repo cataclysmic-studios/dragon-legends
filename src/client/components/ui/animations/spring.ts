@@ -1,7 +1,8 @@
 import { OnStart } from "@flamework/core";
 import { Component } from "@flamework/components";
-import { TweenService as Tween } from "@rbxts/services";
 import { TweenInfoBuilder } from "@rbxts/builders";
+
+import { tween } from "shared/util";
 import AnimationComponent from "client/base-components/animation-component";
 
 const { EasingStyle } = Enum;
@@ -20,14 +21,14 @@ export class SpringAnimation extends AnimationComponent implements OnStart {
   }
 
   protected inactive(): void {
-    Tween.Create(this.scale, this.tweenInfo.Build(), {
+    tween(this.scale, this.tweenInfo, {
       Scale: 1
-    }).Play();
+    });
   }
 
   protected active(): void {
-    Tween.Create(this.scale, this.tweenInfo.Build(), {
+    tween(this.scale, this.tweenInfo, {
       Scale: 1 + this.scaleIncrement
-    }).Play();
+    });
   }
 }

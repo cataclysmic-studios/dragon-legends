@@ -1,8 +1,9 @@
-import { Players, ReplicatedFirst } from "@rbxts/services";
+import { Players, ReplicatedFirst, TweenService } from "@rbxts/services";
+import { TweenInfoBuilder } from "@rbxts/builders";
 import StringUtils from "@rbxts/string-utils";
 
-import { Exception } from "./exceptions";
 import { DragonInfo, Rarity, StorableVector3 } from "./data-models";
+import { Exception } from "./exceptions";
 
 const { floor, log, round } = math;
 const suffixes = <const>["K", "M", "B", "T", "Q"];
@@ -16,18 +17,18 @@ export const now = () => round(tick());
 export const toStorableVector3 = ({ X, Y, Z }: Vector3) => ({ x: X, y: Y, z: Z })
 export const toUsableVector3 = ({ x, y, z }: StorableVector3) => new Vector3(x, y, z);
 
-const s = 1,
-  m = 60,
-  h = 3600,
-  d = 86400,
-  w = 604800;
+export function tween<T extends Instance = Instance>(
+  instance: T,
+  tweenInfo: TweenInfo | TweenInfoBuilder,
+  goal: Partial<ExtractMembers<T, Tweenable>>
+): Tween {
 
-const timePatterns = {
-  s, second: s, seconds: s,
-  m, minute: m, minutes: m,
-  h, hour: h, hours: h,
-  d, day: d, days: d,
-  w, week: w, weeks: w
+  if ("Build" in tweenInfo)
+    tweenInfo = tweenInfo.Build();
+
+  const tween = TweenService.Create(instance, tweenInfo, goal);
+  tween.Play();
+  return tween;
 }
 
 export function getDragonData(dragonModel: Model): DragonInfo {
@@ -44,6 +45,20 @@ export function getRarityImage(rarity: Rarity): string {
     case "Mythic": return "rbxassetid://14233300725";
   }
 }
+
+const s = 1,
+  m = 60,
+  h = 3600,
+  d = 86400,
+  w = 604800;
+
+const timePatterns = {
+  s, second: s, seconds: s,
+  m, minute: m, minutes: m,
+  h, hour: h, hours: h,
+  d, day: d, days: d,
+  w, week: w, weeks: w
+};
 
 // Takes a remaining time string (e.g. 1d 5h 10s) and
 // converts it to the amount of time it represents in seconds.
