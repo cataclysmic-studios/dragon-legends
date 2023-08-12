@@ -6,7 +6,6 @@ import { DragonInfo, Rarity, StorableVector3 } from "./data-models";
 import { Exception } from "./exceptions";
 
 const { floor, log, round } = math;
-const suffixes = <const>["K", "M", "B", "T", "Q"];
 
 export type Placable = "Decor" | "Buildings" | "Habitats" | "Dragons";
 
@@ -114,6 +113,7 @@ export function commaFormat(n: number | string): string {
   return parts.join(",");
 }
 
+const suffixes = <const>["K", "M", "B", "T", "Q"];
 export function toSuffixedNumber(n: number): string {
   if (n < 100_000)
     return commaFormat(n);
@@ -125,15 +125,15 @@ export function toSuffixedNumber(n: number): string {
 }
 
 export function parseSuffixedNumber(suffixed: string): number {
-  const match = suffixed.match("^([0-9,.]+)([KMBT]?)$");
+  const match = suffixed.gsub(",", "")[0].match("^([0-9,.]+)([KMBT]?)$");
   if (!match)
     throw new Exception("InvalidSuffixedNumber", "Invalid suffixed number format");
 
-  let [ numberPart ] = tostring(match[1]).gsub(",", "");
-  const suffix = tostring(match[2]);
+  let numberPart = tostring(match[0]);
+  const suffix = tostring(match[1]);
 
-  if (suffix !== "" && suffix !== "nil") {
-    const index = (<readonly string[]>suffixes).indexOf(suffix);
+  if (suffix && suffix !== "" && suffix !== "nil") {
+    const index = (<readonly string[]>suffixes).indexOf(suffix.lower());
     if (index === -1)
       throw new Exception("InvalidNumberSuffix", "Invalid suffix in suffixed number");
 

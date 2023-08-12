@@ -3,7 +3,7 @@ import { Component, BaseComponent } from "@flamework/components";
 import { Workspace as World } from "@rbxts/services";
 
 import { PlacementController } from "client/controllers/placement-controller";
-import { NotificationController, NotificationType } from "client/controllers/notification-controller";
+import { NotificationController } from "client/controllers/notification-controller";
 import { UIController } from "client/controllers/ui-controller";
 import { Egg, Element, InventoryItem } from "shared/data-models";
 import { Assets, Placable, getDragonData, getRarityImage, toSeconds, toSuffixedNumber } from "shared/util";
@@ -54,7 +54,9 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
         task.delay(1, () => db = false);
 
         const gold = <number>await getData("gold");
-        if (price > gold) return;
+        if (price > gold)
+          return this.notifications.dispatch(`You need ${toSuffixedNumber(price - gold)} more gold to purchase this.`);
+
         this.onPurchaseClick(item, contentType, price, gold);
         this.ui.open("Main");
       }));
