@@ -119,7 +119,6 @@ export class PlacementController implements OnRender, OnInit {
     this.currentlyPlacing.PrimaryPart!.Position = this.snap(camPosition.add(new Vector3(12, 0, 12)));
     this.currentlyPlacing.Parent = World.CurrentCamera;
 
-    print("set page to confirmation")
     const placementConfirmation = <Frame & {
       Confirm: ImageButton;
       Cancel: ImageButton;
@@ -127,7 +126,6 @@ export class PlacementController implements OnRender, OnInit {
 
     this.janitor.Add(this.currentlyPlacing);
     this.janitor.Add(() => this.ui.setPage("Main", "Main"));
-
     this.janitor.Add(placementConfirmation.Confirm.MouseButton1Click.Once(async () => {
       const position = this.currentlyPlacing!.PrimaryPart!.Position;
       const price = <number>this.currentlyPlacing!.GetAttribute("Price");

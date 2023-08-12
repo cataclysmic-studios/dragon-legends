@@ -9,7 +9,7 @@ const { findBuilding } = Functions;
 const { isUpgradable, isHabitat } = Buildings;
 
 interface Attributes {
-  ID: string;
+  ID?: string;
 }
 
 interface BuildingSelectFrame extends Frame {
@@ -31,7 +31,10 @@ interface BuildingSelectFrame extends Frame {
 export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelectFrame> implements OnStart {
   public onStart(): void {
     this.maid.GiveTask(dataUpdate.connect((key) => this.onUpdate(key)));
-    this.maid.GiveTask(this.onAttributeChanged("ID", () => this.onUpdate("buildings")));
+    this.maid.GiveTask(
+      this.instance.GetAttributeChangedSignal("ID")
+        .Connect(() => this.onUpdate("buildings"))
+    );
   }
 
   private async onUpdate(key: DataKey): Promise<void> {
@@ -60,6 +63,6 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
   }
 
   private async getBuilding(): Promise<Maybe<Building>> {
-    return findBuilding(this.attributes.ID);
+    return findBuilding(this.attributes.ID!);
   }
 }

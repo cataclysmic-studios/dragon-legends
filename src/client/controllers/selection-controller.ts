@@ -49,7 +49,6 @@ export class SelectionController implements OnInit {
   }
 
   private select(): void {
-    // TODO: display respective buttons
     const buildingSelectFrame = this.ui.setPage("Main", "BuildingSelect");
     buildingSelectFrame.SetAttribute("ID", this.selectedBuildingID);
   }

@@ -1,7 +1,7 @@
 import { OnInit, Service } from "@flamework/core";
 import DataStore2 from "@rbxts/datastore2";
 
-import { Building, TimeInfo } from "shared/data-models";
+import { Building, TimeInfo, UpgradableBuilding } from "shared/data-models";
 import { DataKey, DataKeys, DataValue } from "shared/data-models";
 import { OnPlayerLeave } from "shared/hooks";
 import { Assets, now, toStorableVector3 } from "shared/util";
@@ -60,10 +60,11 @@ export class DataService implements OnInit, OnPlayerLeave {
     });
 
 		this.initialize<Building[]>(player, "buildings", [
-			{
+			<UpgradableBuilding>{
 				id: "HATCHERY",
 				name: "Hatchery",
-				position: toStorableVector3(Assets.Buildings.Hatchery.PrimaryPart!.Position)
+				position: toStorableVector3(Assets.Buildings.Hatchery.PrimaryPart!.Position),
+				level: 1
 			}
 		]);
 
