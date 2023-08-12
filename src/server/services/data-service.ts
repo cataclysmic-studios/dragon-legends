@@ -1,20 +1,23 @@
 import { OnInit, Service } from "@flamework/core";
 import DataStore2 from "@rbxts/datastore2";
 
-import { Events, Functions } from "server/network";
 import { Building, TimeInfo } from "shared/data-models";
 import { DataKey, DataKeys, DataValue } from "shared/data-models";
 import { OnPlayerLeave } from "shared/hooks";
 import { now } from "shared/util";
+import { Events, Functions } from "server/network";
+
+const { initializeData, setData, dataLoaded, dataUpdate } = Events;
+const { getData, findBuilding } = Functions;
 
 @Service()
 export class DataService implements OnInit, OnPlayerLeave {
 	public onInit(): void {
 		DataStore2.Combine("DATA", ...DataKeys);
-		Events.initializeData.connect((player) => this.setup(player));
-		Events.setData.connect((player, key, value) => this.set(player, key, value));
-		Functions.getData.setCallback((player, key) => this.get(player, key));
-		Functions.findBuilding.setCallback((player, id) => this.findBuilding(player, id));
+		initializeData.connect((player) => this.setup(player));
+		setData.connect((player, key, value) => this.set(player, key, value));
+		getData.setCallback((player, key) => this.get(player, key));
+		findBuilding.setCallback((player, id) => this.findBuilding(player, id));
 	}
 
 	public onPlayerLeave(player: Player): void {
@@ -57,7 +60,7 @@ export class DataService implements OnInit, OnPlayerLeave {
       timers: []
     });
 
-		Events.dataLoaded.predict(player);
+		dataLoaded.predict(player);
 	}
 
 	private initialize<T extends DataValue = DataValue>(
@@ -79,7 +82,7 @@ export class DataService implements OnInit, OnPlayerLeave {
 		value: T
 	): void {
 
-		Events.dataUpdate(player, key, value);
+		dataUpdate(player, key, value);
 	}
 
 	private getStore<T extends DataValue = DataValue>(player: Player, key: DataKey): DataStore2<T> {

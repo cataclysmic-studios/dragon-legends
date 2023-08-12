@@ -1,5 +1,4 @@
 import { BaseComponent } from "@flamework/components";
-import { OnStart } from "@flamework/core";
 import { TweenInfoBuilder } from "@rbxts/builders";
 
 interface Attributes {

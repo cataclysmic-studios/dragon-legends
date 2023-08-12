@@ -7,6 +7,8 @@ import { Functions } from "client/network";
 import { UIController } from "./ui-controller";
 import { PlacementController } from "./placement-controller";
 
+const { isTimerActive } = Functions;
+
 @Controller()
 export class SelectionController implements OnInit {
   
@@ -41,7 +43,7 @@ export class SelectionController implements OnInit {
   public onInit(): void {
     this.input.Bind("MouseButton1", async () => {
       // TODO: skip timers
-      if (await Functions.isTimerActive(this.selectedBuildingID!)) return;
+      if (await isTimerActive(this.selectedBuildingID!)) return;
       this.select();
     });
   }

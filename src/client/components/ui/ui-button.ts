@@ -1,7 +1,7 @@
 import { Dependency, OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
-import { MissingAttributeException } from "shared/exceptions";
 import { UIController } from "client/controllers/ui-controller";
+import { MissingAttributeException } from "shared/exceptions";
 
 interface Attributes {
   To?: string;

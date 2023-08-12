@@ -6,6 +6,8 @@ import { Building, Buildings } from "shared/data-models";
 import { Assets, getDragonData, toUsableVector3 } from "shared/util";
 import { Events } from "server/network";
 
+const { dataLoaded, placeBuilding, placeDragon } = Events;
+
 @Service()
 export class BuildingLoaderService implements OnStart {
   public readonly onBuildingsLoaded = new Signal<(player: Player) => void>();
@@ -13,7 +15,7 @@ export class BuildingLoaderService implements OnStart {
   private readonly data = Dependency<DataService>();
 
   public onStart(): void {
-    Events.dataLoaded.connect(player => {
+    dataLoaded.connect(player => {
       const buildings = this.data.get<Building[]>(player, "buildings");
       for (const building of buildings)
         this.loadBuilding(player, building);
@@ -29,11 +31,11 @@ export class BuildingLoaderService implements OnStart {
       for (const dragon of info.dragons) {
         const dragonModel = <Model>Assets.Dragons.WaitForChild(dragon.name);
         const dragonData = getDragonData(dragonModel);
-        Events.placeDragon.predict(player, dragonData, info.id);
+        placeDragon.predict(player, dragonData, info.id);
       }
     } else
       category = "Buildings";
 
-    Events.placeBuilding.predict(player, info.name, category, toUsableVector3(info.position), info.id)
+    placeBuilding.predict(player, info.name, category, toUsableVector3(info.position), info.id)
   }
 }

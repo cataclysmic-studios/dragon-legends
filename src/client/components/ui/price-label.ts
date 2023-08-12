@@ -1,7 +1,9 @@
 import { OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
-import { Events } from "client/network";
 import { parseSuffixedNumber } from "shared/util";
+import { Events } from "client/network";
+
+const { dataUpdate } = Events;
 
 interface Attributes {
   Currency: "gold" | "diamonds" | "food";
@@ -11,7 +13,7 @@ interface Attributes {
 export class PriceLabel extends BaseComponent<Attributes, TextLabel & { UIStroke: UIStroke; }> implements OnStart {
   public onStart(): void {
     this.maid.GiveTask(
-      Events.dataUpdate.connect((key, value) => {
+      dataUpdate.connect((key, value) => {
         if (key !== this.attributes.Currency) return;
 
         const price = parseSuffixedNumber(this.instance.Text);

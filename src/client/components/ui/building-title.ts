@@ -3,6 +3,9 @@ import { Component, BaseComponent } from "@flamework/components";
 import { Building, DataKey } from "shared/data-models";
 import { Events, Functions } from "client/network";
 
+const { dataUpdate } = Events;
+const { findBuilding } = Functions;
+
 interface Attributes {}
 
 @Component({ tag: "BuildingTitle" })
@@ -11,7 +14,7 @@ export class BuildingTitle extends BaseComponent<Attributes, TextLabel> implemen
   private readonly buildingSelectFrame = this.instance.Parent!;
 
   public onStart(): void {
-    this.maid.GiveTask(Events.dataUpdate.connect((key) => this.onDataUpdate(key)));
+    this.maid.GiveTask(dataUpdate.connect((key) => this.onDataUpdate(key)));
     this.maid.GiveTask(
       this.buildingSelectFrame
         .GetAttributeChangedSignal("ID")
@@ -34,6 +37,6 @@ export class BuildingTitle extends BaseComponent<Attributes, TextLabel> implemen
 
   private async getBuilding(): Promise<Maybe<Building>> {
     const id = this.buildingSelectFrame.GetAttribute<string>("ID");
-    return Functions.findBuilding(id);
+    return findBuilding(id);
   }
 }

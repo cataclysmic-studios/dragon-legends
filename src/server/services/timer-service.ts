@@ -9,6 +9,9 @@ import { BuildingLoaderService } from "./building-loader-service";
 import { Timer } from "server/components/timer";
 import { Events, Functions } from "server/network";
 
+const { updateTimers } = Events;
+const { isTimerActive } = Functions;
+
 @Service()
 export class TimerService implements OnInit {
   private readonly data = Dependency<DataService>();
@@ -17,8 +20,8 @@ export class TimerService implements OnInit {
 
   public onInit(): void {
     this.buildingLoader.onBuildingsLoaded.Connect((player) => this.updateTimers(player));
-    Events.updateTimers.connect((player) => this.updateTimers(player))
-    Functions.isTimerActive.setCallback((player, id) => this.isTimerActive(player, id));
+    updateTimers.connect((player) => this.updateTimers(player))
+    isTimerActive.setCallback((player, id) => this.isTimerActive(player, id));
   }
 
   public isTimerActive(player: Player, buildingID: string): boolean {

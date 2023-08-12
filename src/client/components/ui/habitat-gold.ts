@@ -4,6 +4,9 @@ import { Building, Habitat, DataKey, DataValue } from "shared/data-models";
 import { toSuffixedNumber } from "shared/util";
 import { Events, Functions } from "client/network";
 
+const { dataUpdate } = Events;
+const { getData } = Functions;
+
 interface Attributes {}
 
 @Component({ tag: "HabitatGold" })
@@ -11,12 +14,12 @@ export class HabitatGold extends BaseComponent<Attributes, TextLabel> implements
   private readonly buildingSelectFrame = this.instance.Parent?.Parent?.Parent!;
 
   public onStart(): void {
-    this.maid.GiveTask(Events.dataUpdate.connect((key, value) => this.onDataUpdate(key, value)));
+    this.maid.GiveTask(dataUpdate.connect((key, value) => this.onDataUpdate(key, value)));
     this.maid.GiveTask(
       this.buildingSelectFrame
         .GetAttributeChangedSignal("ID")
         .Connect(async () => {
-          const buildings = <Building[]>await Functions.getData("buildings");
+          const buildings = <Building[]>await getData("buildings");
           this.updateGoldText(buildings);
         })
     );

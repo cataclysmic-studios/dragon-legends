@@ -4,6 +4,8 @@ import { DataKey, DataValue, Dragon } from "shared/data-models";
 import { Assets, commaFormat, toSuffixedNumber } from "shared/util";
 import { Events } from "client/network";
 
+const { dataUpdate } = Events;
+
 interface Attributes {
   readonly DataKey: DataKey;
 }
@@ -11,7 +13,7 @@ interface Attributes {
 @Component({ tag: "DataLinkedText" })
 export class DataLinkedText extends BaseComponent<Attributes, TextLabel> implements OnStart {
   public onStart(): void {
-    this.maid.GiveTask(Events.dataUpdate.connect((key, value) => this.onDataUpdate(key, value)));
+    this.maid.GiveTask(dataUpdate.connect((key, value) => this.onDataUpdate(key, value)));
   }
 
   private onDataUpdate(key: DataKey, value: DataValue): void {
