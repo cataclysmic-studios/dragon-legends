@@ -101,6 +101,15 @@ type HabitatModel = Model & {
 	Base: Part;
 };
 
+type HatcheryModel = Model & {
+	Base: UnionOperation;
+	Eggs: Folder;
+	EggPositions: Folder & {
+		"1": Part;
+		"2": Part;
+	};
+};
+
 interface ReplicatedFirst extends Instance {
 	Assets: Folder & {
 		Eggs: Folder;
@@ -112,10 +121,7 @@ interface ReplicatedFirst extends Instance {
 			};
 		};
 		Buildings: Folder & {
-			Hatchery: Model & {
-				Base: UnionOperation;
-				Eggs: Folder;
-			};
+			Hatchery: HatcheryModel;
 		};	
 		UI: Folder & {
 			InventoryCard: InventoryCard;

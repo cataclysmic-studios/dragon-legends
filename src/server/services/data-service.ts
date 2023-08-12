@@ -1,7 +1,7 @@
 import { OnInit, Service } from "@flamework/core";
 import DataStore2 from "@rbxts/datastore2";
 
-import { Building, TimeInfo, UpgradableBuilding } from "shared/data-models";
+import { Building, Hatchery, TimeInfo, UpgradableBuilding } from "shared/data-models";
 import { DataKey, DataKeys, DataValue } from "shared/data-models";
 import { OnPlayerLeave } from "shared/hooks";
 import { Assets, now, toStorableVector3 } from "shared/util";
@@ -26,9 +26,21 @@ export class DataService implements OnInit, OnPlayerLeave {
 		this.set(player, "timeInfo", timeInfo);
 	}
 
-	public findBuilding<T extends Building = Building>(player: Player, buildingID: string): Maybe<T> {
+	public addBuilding(player: Player, building: Building): void {
+    const buildings = this.get<Building[]>(player, "buildings");
+		buildings.push(building);
+		this.set(player, "buildings", buildings);
+  }
+
+	public removeBuilding(player: Player, buildingID: string): void {
+    const buildings = this.get<Building[]>(player, "buildings");
+		const newBuildings = buildings.filter(b => b.id !== buildingID);
+		this.set(player, "buildings", newBuildings);
+  }
+
+	public findBuilding<T extends Building = Building>(player: Player, buildingID: string): T extends Hatchery ? T : Maybe<T> {
 		const buildings = this.get<Building[]>(player, "buildings");
-		return <Maybe<T>>buildings.find(building => building.id === buildingID);
+		return <T extends Hatchery ? T : Maybe<T>>buildings.find(building => building.id === buildingID);
 	}
 
 	public increment(player: Player, key: DataKey, amount = 1): void {
@@ -60,11 +72,12 @@ export class DataService implements OnInit, OnPlayerLeave {
     });
 
 		this.initialize<Building[]>(player, "buildings", [
-			<UpgradableBuilding>{
+			<Hatchery>{
 				id: "HATCHERY",
 				name: "Hatchery",
 				position: toStorableVector3(Assets.Buildings.Hatchery.PrimaryPart!.Position),
-				level: 1
+				level: 1,
+				eggs: []
 			}
 		]);
 

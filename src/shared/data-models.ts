@@ -46,7 +46,15 @@ export interface Habitat extends UpgradableBuilding {
   dragons: Dragon[];
 }
 
+export interface Hatchery extends UpgradableBuilding {
+  eggs: Egg[];
+}
+
 export namespace Buildings {
+  export function isHatchery(building: Building): building is Hatchery {
+    return "eggs" in building;
+  }
+
   export function isHabitat(building: Building): building is Habitat {
     return "dragons" in building && "gold" in building && isUpgradable(building);
   }

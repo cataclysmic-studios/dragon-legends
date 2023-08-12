@@ -19,9 +19,10 @@ export class TimerService implements OnInit {
   private readonly components = Dependency<Components>();
 
   public onInit(): void {
-    this.buildingLoader.onBuildingsLoaded.Connect((player) => this.updateTimers(player));
     updateTimers.connect((player) => this.updateTimers(player))
     isTimerActive.setCallback((player, id) => this.isTimerActive(player, id));
+    this.buildingLoader.onBuildingsLoaded
+      .Connect((player) => this.updateTimers(player));
   }
 
   public isTimerActive(player: Player, buildingID: string): boolean {

@@ -16,6 +16,11 @@ export const now = () => round(tick());
 export const toStorableVector3 = ({ X, Y, Z }: Vector3) => ({ x: X, y: Y, z: Z })
 export const toUsableVector3 = ({ x, y, z }: StorableVector3) => new Vector3(x, y, z);
 
+export function getBuildingModel<T extends Model = Model>(id: string): T extends HatcheryModel ? T : Maybe<T> {
+  return <T extends HatcheryModel ? T : Maybe<T>>World.Buildings.GetChildren()
+    .find(b => b.GetAttribute<string>("ID") === id);
+}
+
 const RAY_DISTANCE = 1000;
 export function getMouseWorldPosition(distance = RAY_DISTANCE): Vector3 {
   const { X, Y } = UIS.GetMouseLocation();

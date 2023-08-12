@@ -6,7 +6,7 @@ import { toSuffixedNumber } from "shared/util";
 
 const { dataUpdate } = Events;
 const { findBuilding } = Functions;
-const { isUpgradable, isHabitat } = Buildings;
+const { isUpgradable, isHabitat, isHatchery } = Buildings;
 
 interface Attributes {
   ID?: string;
@@ -46,6 +46,9 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
     this.updateButtons(building);
     if (isHabitat(building))
       this.updateGoldText(building);
+    else if (isHatchery(building)) {
+      // add egg buttons
+    }
   }
 
   private updateGoldText(habitat: Habitat): void {

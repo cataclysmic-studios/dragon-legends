@@ -3,7 +3,7 @@ import { HttpService as HTTP, Workspace as World } from "@rbxts/services";
 
 import { DataService } from "./data-service";
 import { TimerService } from "./timer-service";
-import { Assets, Placable, toStorableVector3, toSeconds } from "shared/util";
+import { Assets, Placable, toStorableVector3, toSeconds, getBuildingModel } from "shared/util";
 import { Building, Dragon, DragonInfo, Habitat } from "shared/data-models";
 import { Events } from "server/network";
 
@@ -30,8 +30,7 @@ export class PlacementService implements OnInit {
     idOverride?: string
   ): void {
 
-    const habitat = <Maybe<HabitatModel>>World.Buildings.GetChildren()
-      .find(b => b.GetAttribute<string>("ID") === habitatID);
+    const habitat = getBuildingModel<HabitatModel>(habitatID);
 
     if (!habitat)
       return warn(`Could not find habitat (ID ${habitatID}) when placing dragon "${dragonData.name}"`);
