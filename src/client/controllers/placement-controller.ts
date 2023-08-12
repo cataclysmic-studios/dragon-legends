@@ -119,6 +119,7 @@ export class PlacementController implements OnRender, OnInit {
     this.currentlyPlacing.PrimaryPart!.Position = this.snap(camPosition.add(new Vector3(12, 0, 12)));
     this.currentlyPlacing.Parent = World.CurrentCamera;
 
+    print("set page to confirmation")
     const placementConfirmation = <Frame & {
       Confirm: ImageButton;
       Cancel: ImageButton;

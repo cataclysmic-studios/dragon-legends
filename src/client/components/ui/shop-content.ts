@@ -57,8 +57,8 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
         if (price > gold)
           return this.notifications.dispatch(`You need ${toSuffixedNumber(price - gold)} more gold to purchase this.`, NotificationType.Error);
 
-        this.onPurchaseClick(item, contentType, price, gold);
         this.ui.open("Main");
+        this.onPurchaseClick(item, contentType, price, gold);
       }));
 
       card.Parent = this.instance;

@@ -16,12 +16,13 @@ export class BuildingLoaderService implements OnStart {
   private readonly data = Dependency<DataService>();
 
   public onStart(): void {
-    dataLoaded.connect(player => {
+    const conn = dataLoaded.connect(player => {
       const buildings = this.data.get<Building[]>(player, "buildings");
       for (const building of buildings)
         this.loadBuilding(player, building);
 
       this.onBuildingsLoaded.Fire(player);
+      conn.Disconnect();
     });
   }
 
