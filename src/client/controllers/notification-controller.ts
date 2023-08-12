@@ -22,7 +22,7 @@ export class NotificationController {
     Container: Frame;
   }>("Notifications");
 
-  public dispatch(message: string, notificationType: NotificationType): void {
+  public dispatch(message: string, notificationType = NotificationType.Note): void {
     const label = this.createNotificationLabel(message, notificationType);
     label.Parent = this.screen.Container;
 

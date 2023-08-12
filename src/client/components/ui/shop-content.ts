@@ -1,12 +1,13 @@
 import { Dependency, OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
+import { Workspace as World } from "@rbxts/services";
 
 import { PlacementController } from "client/controllers/placement-controller";
+import { NotificationController, NotificationType } from "client/controllers/notification-controller";
 import { UIController } from "client/controllers/ui-controller";
 import { Egg, Element, InventoryItem } from "shared/data-models";
 import { Assets, Placable, getDragonData, getRarityImage, toSeconds, toSuffixedNumber } from "shared/util";
 import { Events, Functions } from "client/network";
-import { Workspace as World } from "@rbxts/services";
 
 const { setData } = Events;
 const { getData } = Functions;
@@ -16,6 +17,7 @@ interface Attributes {}
 @Component({ tag: "ShopContent" })
 export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> implements OnStart {
   private readonly placement = Dependency<PlacementController>();
+  private readonly notifications = Dependency<NotificationController>();
   private readonly ui = Dependency<UIController>();
 
   public onStart(): void {
@@ -30,7 +32,7 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
 
       const viewportCamera = new Instance("Camera");
       viewportCamera.CFrame = World.ViewportCamera.CFrame;
-      viewportCamera.FieldOfView = contentType === "Habitats" ? 70 : 30;
+      viewportCamera.FieldOfView = contentType === "Habitats" ? 70 : 40;
       viewportCamera.Parent = card.Viewport;
       card.Viewport.CurrentCamera = viewportCamera;
 
@@ -82,6 +84,7 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
         inventory.push(egg);
         setData("inventory", inventory);
         setData("gold", gold - price);
+        this.notifications.dispatch("Added egg to your inventory!")
         // TODO: call this to place the dragon after hatching the egg
         // this.placement.placeDragon(item);
         break;
