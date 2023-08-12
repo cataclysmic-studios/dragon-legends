@@ -3,7 +3,7 @@ import { StarterGui, UserInputService, Workspace as World } from "@rbxts/service
 
 import { Controller, Dependency, OnInit, OnRender } from "@flamework/core";
 import { PlacementController } from "./placement-controller";
-import { Action } from "@rbxts/gamejoy/out/Actions";
+import { Action, Union } from "@rbxts/gamejoy/out/Actions";
 
 // TODO: scroll to change FOV
 
@@ -25,11 +25,15 @@ export class CameraController implements OnInit, OnRender {
     StarterGui.SetCoreGuiEnabled("All", false);
     this.camera.CameraType = Enum.CameraType.Scriptable;
 
-    const mb1 = new Action("MouseButton1");
-    this.input.Bind(mb1, () => {
-      if (this.placement.isDragging()) return;
-      this.mouseDown = true;
-    }).BindEvent("onRelease", mb1.Released, () => { this.mouseDown = false; });
+    const click = new Union(["MouseButton1", "Touch"]);
+    this.input
+      .Bind(click, () => {
+        if (this.placement.isDragging()) return;
+        this.mouseDown = true;
+      })
+      .BindEvent("onRelease", click.Released, () => {
+        this.mouseDown = false;
+      });
   }
 
   public onRender(dt: number): void {

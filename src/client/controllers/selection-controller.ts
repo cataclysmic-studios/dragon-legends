@@ -41,7 +41,7 @@ export class SelectionController implements OnInit {
   private selectedBuildingID?: string;
 
   public onInit(): void {
-    this.input.Bind("MouseButton1", async () => {
+    this.input.Bind(["MouseButton1", "Touch"], async () => {
       // TODO: skipping timers
       if (await isTimerActive(this.selectedBuildingID!)) return;
       this.select();

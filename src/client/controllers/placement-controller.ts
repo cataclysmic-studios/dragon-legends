@@ -1,7 +1,7 @@
 import { Controller, Dependency, OnInit, OnRender } from "@flamework/core";
 import { Workspace as World } from "@rbxts/services";
 import { Context as InputContext } from "@rbxts/gamejoy";
-import { Action } from "@rbxts/gamejoy/out/Actions";
+import { Union } from "@rbxts/gamejoy/out/Actions";
 import { Janitor } from "@rbxts/janitor";
 import StringUtils from "@rbxts/string-utils";
 
@@ -43,13 +43,13 @@ export class PlacementController implements OnRender, OnInit {
   }
 
   public onInit(): void | Promise<void> {
-    const mb1 = new Action("MouseButton1");
+    const click = new Union(["MouseButton1", "Touch"]);
     this.input
-      .Bind(mb1, () => {
+      .Bind(click, () => {
         this.mouseDown = true;
         this.targetOnClick = this.mouse.Target;
       })
-      .BindEvent("onRelease", mb1.Released, () => {
+      .BindEvent("onRelease", click.Released, () => {
         this.mouseDown = false;
       });
 
