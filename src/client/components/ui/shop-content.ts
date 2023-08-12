@@ -46,7 +46,7 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
 
         const gold = <number>await getData("gold");
         if (price > gold) return;
-        this.onPurchaseClick(item, contentType)
+        this.onPurchaseClick(item, contentType, price, gold);
         this.ui.open("Main");
       }));
 
@@ -55,7 +55,13 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
     }
   }
 
-  private async onPurchaseClick(itemModel: Model, contentType: Placable): Promise<void> {
+  private async onPurchaseClick(
+    itemModel: Model,
+    contentType: Placable,
+    price: number,
+    gold: number
+  ): Promise<void> {
+
     switch (contentType) {
       case "Dragons":
         const inventory = <InventoryItem[]>await getData("inventory");
@@ -68,6 +74,7 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
 
         inventory.push(egg);
         setData("inventory", inventory);
+        setData("gold", gold - price);
         // TODO: call this to place the dragon after hatching the egg
         // this.placement.placeDragon(item);
         break;
