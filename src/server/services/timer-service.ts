@@ -1,12 +1,12 @@
-import { Service, Dependency, OnInit } from "@flamework/core";
+import { Service, OnInit } from "@flamework/core";
 import { Components } from "@flamework/components";
 import { Workspace as World } from "@rbxts/services";
-import { BuildingTimer, TimeInfo } from "shared/data-models";
-import { now } from "shared/util";
 
 import { DataService } from "./data-service";
 import { BuildingLoaderService } from "./building-loader-service";
 import { Timer } from "server/components/timer";
+import { BuildingTimer, TimeInfo } from "shared/data-models";
+import { now } from "shared/util";
 import { Events, Functions } from "server/network";
 
 const { updateTimers } = Events;
@@ -14,9 +14,11 @@ const { isTimerActive } = Functions;
 
 @Service()
 export class TimerService implements OnInit {
-  private readonly data = Dependency<DataService>();
-  private readonly buildingLoader = Dependency<BuildingLoaderService>();
-  private readonly components = Dependency<Components>();
+  public constructor(
+    private readonly data: DataService,
+    private readonly buildingLoader: BuildingLoaderService,
+    private readonly components: Components
+  ) {}
 
   public onInit(): void {
     updateTimers.connect((player) => this.updateTimers(player))

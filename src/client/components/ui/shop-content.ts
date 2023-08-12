@@ -16,9 +16,11 @@ interface Attributes {}
 
 @Component({ tag: "ShopContent" })
 export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> implements OnStart {
-  private readonly placement = Dependency<PlacementController>();
-  private readonly notifications = Dependency<NotificationController>();
-  private readonly ui = Dependency<UIController>();
+  public constructor(
+    private readonly ui: UIController,
+    private readonly notifications: NotificationController,
+    private readonly placement: PlacementController
+  ) { super(); }
 
   public onStart(): void {
     const contentType = <Placable>this.instance.Parent?.Name!;

@@ -1,44 +1,30 @@
-import { Controller, Dependency, OnInit } from "@flamework/core";
+import { Controller, OnInit } from "@flamework/core";
 import { CollectionService as Collection } from "@rbxts/services";
 import { Context as InputContext } from "@rbxts/gamejoy";
-import { Player } from "shared/util";
-import { Functions } from "client/network";
 
 import { UIController } from "./ui-controller";
 import { PlacementController } from "./placement-controller";
+import { Player } from "shared/util";
+import { Functions } from "client/network";
 
 const { isTimerActive } = Functions;
 
 @Controller()
 export class SelectionController implements OnInit {
-  
-  private readonly ui = Dependency<UIController>();
-  private readonly placement = Dependency<PlacementController>();
   private readonly mouse = Player.GetMouse();
   private readonly input = new InputContext({
     ActionGhosting: 0,
     Process: false,
     RunSynchronously: true,
-    OnBefore: () => {
-      if (this.placement.inPlacementMode()) return false;
-      
-      const instance = this.mouse.Target?.Parent;
-      if (!instance) {
-        this.deselect();
-        return false;
-      }
-      
-      const isBuilding = Collection.HasTag(instance, "Building");
-      if (!isBuilding)
-        this.deselect();
-      else
-        this.selectedBuildingID = instance.GetAttribute<string>("ID");
-    
-      return isBuilding;
-    }
+    OnBefore: () => this.canClick()
   });
 
   private selectedBuildingID?: string;
+
+  public constructor(
+    private readonly ui: UIController,
+    private readonly placement: PlacementController
+  ) {}
 
   public onInit(): void {
     this.input.Bind(["MouseButton1", "Touch"], async () => {
@@ -57,5 +43,24 @@ export class SelectionController implements OnInit {
     if (this.ui.current !== "Main") return;
     this.ui.setPage("Main", "Main");
     this.selectedBuildingID = undefined;
+  }
+  
+  private canClick(): boolean {
+    if (this.placement.inPlacementMode())
+      return false;
+      
+    const instance = this.mouse.Target?.Parent;
+    if (!instance) {
+      this.deselect();
+      return false;
+    }
+    
+    const isBuilding = Collection.HasTag(instance, "Building");
+    if (!isBuilding)
+      this.deselect();
+    else
+      this.selectedBuildingID = instance.GetAttribute<string>("ID");
+  
+    return isBuilding;
   }
 }

@@ -1,4 +1,4 @@
-import { Dependency, OnStart } from "@flamework/core";
+import { OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
 import { UIController } from "client/controllers/ui-controller";
 
@@ -6,7 +6,9 @@ interface Attributes {}
 
 @Component({ tag: "PageRouteButton" })
 export class PageRouteButton extends BaseComponent<Attributes, GuiButton> implements OnStart {
-  private readonly ui = Dependency<UIController>();
+  public constructor(
+    private readonly ui: UIController
+  ) { super(); }
 
   public onStart(): void {
     const gui = this.ui.getScreen(this.instance);

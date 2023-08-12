@@ -19,7 +19,6 @@ const { floor } = math;
 
 @Controller()
 export class PlacementController implements OnRender, OnInit {
-  private readonly ui = Dependency<UIController>();
   private readonly janitor = new Janitor;
   private readonly mouse = Player.GetMouse();
   private readonly gridSize = 4;
@@ -33,6 +32,10 @@ export class PlacementController implements OnRender, OnInit {
   private currentlyPlacing?: Model;
   private targetOnClick?: Instance;
   private mouseDown = false;
+
+  public constructor(
+    private readonly ui: UIController
+  ) {}
 
   public inPlacementMode(): boolean {
     return this.currentlyPlacing !== undefined;

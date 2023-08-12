@@ -1,4 +1,4 @@
-import { Controller, Dependency } from "@flamework/core";
+import { Controller } from "@flamework/core";
 import { TweenInfoBuilder } from "@rbxts/builders";
 import { UIController } from "./ui-controller";
 import { tween } from "shared/util";
@@ -17,10 +17,15 @@ type NotificationLabel = TextLabel & {
 
 @Controller()
 export class NotificationController {
-  private readonly ui = Dependency<UIController>();
-  private readonly screen = this.ui.getScreen<{
-    Container: Frame;
-  }>("Notifications");
+  private readonly screen;
+
+  public constructor(
+    private readonly ui: UIController
+  ) {
+    this.screen = this.ui.getScreen<{
+      Container: Frame;
+    }>("Notifications");
+  }
 
   public dispatch(message: string, notificationType = NotificationType.Note): void {
     const label = this.createNotificationLabel(message, notificationType);

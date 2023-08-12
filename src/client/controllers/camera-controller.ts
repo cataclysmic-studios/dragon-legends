@@ -1,15 +1,14 @@
 import { Context as InputContext } from "@rbxts/gamejoy";
 import { StarterGui, UserInputService, Workspace as World } from "@rbxts/services";
 
-import { Controller, Dependency, OnInit, OnRender } from "@flamework/core";
+import { Controller,  OnInit, OnRender } from "@flamework/core";
 import { PlacementController } from "./placement-controller";
-import { Action, Union } from "@rbxts/gamejoy/out/Actions";
+import { Union } from "@rbxts/gamejoy/out/Actions";
 
 // TODO: scroll to change FOV
 
 @Controller()
 export class CameraController implements OnInit, OnRender {
-  private readonly placement = Dependency<PlacementController>();
   private readonly cameraPart = World.Ignore.PlayerCamera;
   private readonly bounds = World.Ignore.CameraBounds;
   private readonly camera = World.CurrentCamera!;
@@ -20,6 +19,10 @@ export class CameraController implements OnInit, OnRender {
   });
 
   private mouseDown = false;
+
+  public constructor(
+    private readonly placement: PlacementController
+  ) {}
 
   public onInit(): void {
     StarterGui.SetCoreGuiEnabled("All", false);

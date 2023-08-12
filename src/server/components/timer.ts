@@ -1,4 +1,4 @@
-import { Dependency, OnStart } from "@flamework/core";
+import { OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
 import { Players } from "@rbxts/services";
 import { TimeInfo } from "shared/data-models";
@@ -14,8 +14,10 @@ interface Attributes {
 
 @Component({ tag: "Timer" })
 export class Timer extends BaseComponent<Attributes, Model> implements OnStart {
-  private readonly data = Dependency<DataService>();
-  private readonly schedule = Dependency<SchedulingService>();
+  public constructor(
+    private readonly data: DataService,
+    private readonly schedule: SchedulingService
+  ) { super(); }
 
   public onStart(): void {
     const timerUI = Assets.UI.Timer.Clone();

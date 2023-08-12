@@ -1,11 +1,14 @@
-import { Controller, Dependency } from "@flamework/core";
+import { Controller } from "@flamework/core";
 import { PlayerController } from "./player-controller";
 import { CollectionService as Collection } from "@rbxts/services";
 
 @Controller()
 export class UIController {
-  private readonly player = Dependency<PlayerController>();
   public current = "Main";
+
+  public constructor(
+    private readonly player: PlayerController,
+  ) {}
 
   public open(name: string): void {
     const guis = <ScreenGui[]>this.player.gui.GetChildren();

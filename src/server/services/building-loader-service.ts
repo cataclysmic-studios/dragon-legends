@@ -1,4 +1,4 @@
-import { Dependency, OnStart, Service } from "@flamework/core";
+import { OnStart, Service } from "@flamework/core";
 import Signal from "@rbxts/signal";
 
 import { DataService } from "./data-service";
@@ -12,9 +12,11 @@ const { isHabitat, isHatchery } = Buildings;
 @Service()
 export class BuildingLoaderService implements OnStart {
   public readonly onBuildingsLoaded = new Signal<(player: Player) => void>();
-  
-  private readonly data = Dependency<DataService>();
 
+  public constructor(
+    private readonly data: DataService
+  ) {}  
+  
   public onStart(): void {
     const conn = dataLoaded.connect(player => {
       const buildings = this.data.get<Building[]>(player, "buildings");
