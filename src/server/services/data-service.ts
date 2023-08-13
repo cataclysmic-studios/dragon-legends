@@ -1,28 +1,40 @@
-import { OnInit, Service } from "@flamework/core";
+import { Modding, OnInit, Service } from "@flamework/core";
+import { StrictMap } from "@rbxts/strict-map/out";
 import DataStore2 from "@rbxts/datastore2";
 
 import { Building, Hatchery, TimeInfo, DataKey, DataKeys, DataValue } from "shared/data-models";
-import { OnPlayerLeave } from "server/hooks";
+import { OnPlayerJoin, OnPlayerLeave } from "server/hooks";
+import { DataLinked } from "shared/hooks";
 import { Assets, now, toStorableVector3 } from "shared/util";
 import { Events, Functions } from "server/network";
 
-const { initializeData, setData, dataLoaded, dataUpdate } = Events;
+const { initializeData, setData, dataLoaded } = Events;
 const { getData, findBuilding } = Functions;
 
 @Service()
-export class DataService implements OnInit, OnPlayerLeave {
+export class DataService implements OnInit, OnPlayerLeave, OnPlayerJoin {
+	private readonly updateListeners = new StrictMap<Player, Set<DataLinked>>();
+	
 	public onInit(): void {
 		DataStore2.Combine("DATA", ...DataKeys);
 		initializeData.connect((player) => this.setup(player));
 		setData.connect((player, key, value) => this.set(player, key, value));
 		getData.setCallback((player, key) => this.get(player, key));
 		findBuilding.setCallback((player, id) => this.findBuilding(player, id));
+
+    Modding.onListenerAdded<DataLinked>((object) => this.updateListeners.forEach(listeners => listeners.add(object)));
+    Modding.onListenerRemoved<DataLinked>((object) => this.updateListeners.forEach(listeners => listeners.delete(object)));
+	}
+
+	public onPlayerJoin(player: Player): void {
+		this.updateListeners.set(player, new Set<DataLinked>);
 	}
 
 	public onPlayerLeave(player: Player): void {
 		const timeInfo = this.get<TimeInfo>(player, "timeInfo");
 		timeInfo.lastOnline = now();
 		this.set(player, "timeInfo", timeInfo);
+		this.updateListeners.delete(player);
 	}
 
 	public addBuilding(player: Player, building: Building): void {
@@ -101,7 +113,8 @@ export class DataService implements OnInit, OnPlayerLeave {
 		value: T
 	): void {
 
-		dataUpdate(player, key, value);
+		for (const listener of this.updateListeners.mustGet(player))
+			task.spawn(() => listener.onDataUpdate(key, value));
 	}
 
 	private getStore<T extends DataValue = DataValue>(player: Player, key: DataKey): DataStore2<T> {

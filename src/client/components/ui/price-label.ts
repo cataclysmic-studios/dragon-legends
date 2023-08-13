@@ -1,7 +1,7 @@
 import { Component, BaseComponent } from "@flamework/components";
 import { DataKey, DataValue } from "shared/data-models";
 import { parseSuffixedNumber } from "shared/util";
-import { DataLinked } from "client/hooks";
+import { DataLinked } from "shared/hooks";
 
 interface Attributes {
   Currency?: "gold" | "diamonds" | "food";
