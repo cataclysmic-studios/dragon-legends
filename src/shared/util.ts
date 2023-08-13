@@ -2,7 +2,8 @@ import { Players, ReplicatedFirst, TweenService, UserInputService as UIS, Worksp
 import { RaycastParamsBuilder, TweenInfoBuilder } from "@rbxts/builders";
 import StringUtils from "@rbxts/string-utils";
 
-import { DragonInfo, Rarity, StorableVector3 } from "./data-models";
+import { DragonInfo, Rarity } from "./data-models/dragons";
+import { StorableVector3 } from "./data-models/utility";
 import { Exception } from "./exceptions";
 
 const { floor, log, round } = math;

@@ -1,12 +1,12 @@
 import { OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
 import { Players } from "@rbxts/services";
-
 import { SchedulingService } from "server/services/scheduling-service";
 import { DataService } from "server/services/data-service";
-import { TimeInfo } from "shared/data-models";
-import { Assets, toRemainingTime, now } from "shared/util";
+
+import { TimeInfo } from "shared/data-models/time";
 import { Exception } from "shared/exceptions";
+import { Assets, toRemainingTime, now } from "shared/util";
 import { Events } from "server/network";
 
 const { updateTimers } = Events;

@@ -1,4 +1,4 @@
-import { Controller, Dependency, OnInit, OnRender } from "@flamework/core";
+import { Controller, OnInit, OnRender } from "@flamework/core";
 import { Workspace as World } from "@rbxts/services";
 import { Context as InputContext } from "@rbxts/gamejoy";
 import { Union } from "@rbxts/gamejoy/out/Actions";
@@ -6,7 +6,8 @@ import { Janitor } from "@rbxts/janitor";
 import StringUtils from "@rbxts/string-utils";
 
 import { UIController } from "./ui-controller";
-import { Element } from "shared/data-models";
+
+import { Element } from "shared/data-models/dragons";
 import { Assets, Placable, Player, getDragonData, getMouseWorldPosition } from "shared/util";
 import { Events, Functions } from "client/network";
 

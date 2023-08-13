@@ -1,11 +1,12 @@
 import { OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
 import { CollectionService as Collection, HttpService as HTTP, Workspace as World } from "@rbxts/services";
-
 import { PlacementController } from "client/controllers/placement-controller";
 import { NotificationController, NotificationType } from "client/controllers/notification-controller";
 import { UIController } from "client/controllers/ui-controller";
-import { Egg, Element, InventoryItem } from "shared/data-models";
+
+import { Egg, InventoryItem } from "shared/data-models/inventory";
+import { Element } from "shared/data-models/dragons";
 import { Assets, Placable, getDragonData, getRarityImage, toSeconds, toSuffixedNumber } from "shared/util";
 import { Events, Functions } from "client/network";
 import { MissingAttributeException } from "shared/exceptions";

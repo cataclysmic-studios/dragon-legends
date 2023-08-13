@@ -1,5 +1,5 @@
 import { Component, BaseComponent } from "@flamework/components";
-import { DataKey, DataValue } from "shared/data-models";
+import { DataKey, DataValue } from "shared/data-models/generic";
 import { parseSuffixedNumber } from "shared/util";
 import { DataLinked } from "client/hooks";
 

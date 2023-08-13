@@ -1,9 +1,11 @@
 import { OnInit, Service } from "@flamework/core";
 import DataStore2 from "@rbxts/datastore2";
 
-import { Building, Hatchery, TimeInfo, DataKey, DataKeys, DataValue, TimerInfo } from "shared/data-models";
-import { OnPlayerLeave } from "server/hooks";
+import { DataKey, DataValue, DataKeys } from "shared/data-models/generic";
+import { TimeInfo, TimerInfo } from "shared/data-models/time";
+import { Building, Hatchery } from "shared/data-models/buildings";
 import { Assets, now, toStorableVector3 } from "shared/util";
+import { OnPlayerLeave } from "server/hooks";
 import { Events, Functions } from "server/network";
 
 const { initializeData, setData, dataLoaded, dataUpdate } = Events;

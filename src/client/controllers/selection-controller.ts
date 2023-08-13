@@ -1,9 +1,9 @@
 import { Controller, OnInit } from "@flamework/core";
 import { CollectionService as Collection } from "@rbxts/services";
 import { Context as InputContext } from "@rbxts/gamejoy";
-
 import { UIController } from "./ui-controller";
 import { PlacementController } from "./placement-controller";
+
 import { Player } from "shared/util";
 import { Functions } from "client/network";
 

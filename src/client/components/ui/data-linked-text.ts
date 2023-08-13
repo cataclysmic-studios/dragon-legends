@@ -1,7 +1,8 @@
 import { Component, BaseComponent } from "@flamework/components";
-import { DataKey, DataValue, Dragon } from "shared/data-models";
-import { DataLinked } from "client/hooks";
+import { DataKey, DataValue } from "shared/data-models/generic";
+import { Dragon } from "shared/data-models/dragons";
 import { Assets, commaFormat, toSuffixedNumber } from "shared/util";
+import { DataLinked } from "client/hooks";
 
 interface Attributes {
   readonly DataKey: DataKey;

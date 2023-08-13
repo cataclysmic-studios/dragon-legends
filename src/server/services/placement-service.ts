@@ -1,12 +1,13 @@
 import { Service, OnInit } from "@flamework/core";
 import { HttpService as HTTP, Workspace as World } from "@rbxts/services";
-
 import { DataService } from "./data-service";
 import { TimerService } from "./timer-service";
-import { Assets, Placable, toStorableVector3, toSeconds, getBuildingModel } from "shared/util";
-import { Building, Dragon, DragonInfo, Habitat } from "shared/data-models";
-import { Events } from "server/network";
+
+import { Dragon, DragonInfo } from "shared/data-models/dragons";
+import { Building, Habitat } from "shared/data-models/buildings";
 import { MissingBuildingException } from "shared/exceptions";
+import { Assets, Placable, toStorableVector3, toSeconds, getBuildingModel } from "shared/util";
+import { Events } from "server/network";
 
 const { placeBuilding, placeDragon } = Events;
 

@@ -1,5 +1,5 @@
 import { Component, BaseComponent } from "@flamework/components";
-import { DataKey, DataValue } from "shared/data-models";
+import { DataKey, DataValue } from "shared/data-models/generic";
 import { DataLinked } from "client/hooks";
 
 interface Attributes {

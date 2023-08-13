@@ -1,10 +1,11 @@
 import { Service, OnInit } from "@flamework/core";
-
 import { DataService } from "../data-service";
-import { Egg, Hatchery } from "shared/data-models";
+import { TimerService } from "../timer-service";
+
+import { Egg } from "shared/data-models/inventory";
+import { Hatchery } from "shared/data-models/buildings";
 import { Assets, getBuildingModel } from "shared/util";
 import { Events } from "server/network";
-import { TimerService } from "../timer-service";
 
 const { addEggToHatchery } = Events;
 

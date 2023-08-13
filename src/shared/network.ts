@@ -1,5 +1,8 @@
 import { Networking } from "@flamework/networking";
-import { Building, DataKey, DataValue, DragonInfo, Egg } from "./data-models";
+import { DataKey, DataValue } from "./data-models/generic";
+import { Egg } from "./data-models/inventory";
+import { DragonInfo } from "./data-models/dragons";
+import { Building } from "./data-models/buildings";
 import { Placable } from "./util";
 
 interface ServerEvents {

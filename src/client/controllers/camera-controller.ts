@@ -1,8 +1,8 @@
+import { Controller,  OnInit, OnRender } from "@flamework/core";
 import { Context as InputContext } from "@rbxts/gamejoy";
 import { StarterGui, UserInputService, Workspace as World } from "@rbxts/services";
-
-import { Controller,  OnInit, OnRender } from "@flamework/core";
 import { PlacementController } from "./placement-controller";
+
 import { Union } from "@rbxts/gamejoy/out/Actions";
 
 // TODO: scroll to change FOV

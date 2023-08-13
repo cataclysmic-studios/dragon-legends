@@ -1,10 +1,12 @@
 import { Component, BaseComponent } from "@flamework/components";
 import { Workspace as World } from "@rbxts/services";
-import { DataKey, DataValue, InventoryItem, InventoryItems } from "shared/data-models";
+import { UIController } from "client/controllers/ui-controller";
+
+import { DataKey, DataValue } from "shared/data-models/generic";
+import { InventoryItem, InventoryItems } from "shared/data-models/inventory";
 import { Assets } from "shared/util";
 import { DataLinked } from "client/hooks";
 import { Events } from "client/network";
-import { UIController } from "client/controllers/ui-controller";
 
 const { addEggToHatchery } = Events;
 const { isEgg } = InventoryItems;

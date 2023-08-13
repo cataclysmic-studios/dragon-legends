@@ -1,12 +1,12 @@
 import { Service, OnInit } from "@flamework/core";
 import { Components } from "@flamework/components";
-
 import { DataService } from "./data-service";
 import { BuildingLoaderService } from "./building-loader-service";
+
 import { Timer } from "server/components/timer";
-import { TimeInfo, TimerInfo, TimerType } from "shared/data-models";
-import { getBuildingModel, now } from "shared/util";
+import { TimeInfo, TimerInfo, TimerType } from "shared/data-models/time";
 import { Exception, MissingBuildingException } from "shared/exceptions";
+import { getBuildingModel, now } from "shared/util";
 import { Events, Functions } from "server/network";
 
 const { updateTimers } = Events;
