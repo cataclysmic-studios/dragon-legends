@@ -39,10 +39,11 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
 
   public async onDataUpdate(key: DataKey): Promise<void> {
     if (key !== "buildings") return;
+    if (!this.attributes.ID) return;
     const building = await this.getBuilding();
 
     if (!building)
-      throw new MissingBuildingException(this.attributes.ID!, "Failed to find building when updating BuildingSelectPage");
+      throw new MissingBuildingException(this.attributes.ID, "Failed to find building when updating BuildingSelectPage");
 
     this.updateTitle(building);
     this.updateButtons(building);

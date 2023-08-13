@@ -25,6 +25,6 @@ export class FlameworkIgnitionException extends Exception {
 
 export class MissingBuildingException extends Exception {
 	public constructor(buildingID: string, message: string) {
-		super("MissingBuilding", `${message} | (Building ID ${buildingID})`);
+		super("MissingBuilding", `${message} | (Building ID ${buildingID})`, 1);
 	}
 }
