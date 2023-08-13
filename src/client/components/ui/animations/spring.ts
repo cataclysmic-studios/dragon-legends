@@ -3,12 +3,12 @@ import { Component } from "@flamework/components";
 import { TweenInfoBuilder } from "@rbxts/builders";
 
 import { tween } from "shared/util";
-import AnimationComponent from "client/base-components/animation-component";
+import ButtonAnimation from "client/base-components/button-animation";
 
 const { EasingStyle } = Enum;
 
 @Component({ tag: "SpringAnimation" })
-export class SpringAnimation extends AnimationComponent implements OnStart {
+export class SpringAnimation extends ButtonAnimation implements OnStart {
   private readonly scale = new Instance("UIScale", this.instance);
   private readonly scaleIncrement = 0.05;
   

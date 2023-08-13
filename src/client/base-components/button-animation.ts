@@ -6,7 +6,7 @@ interface Attributes {
   Click?: boolean;
 }
 
-export default abstract class AnimationComponent<
+export default abstract class ButtonAnimation<
   A extends object = {},
   I extends GuiButton = GuiButton
 > extends BaseComponent<Attributes & A, I> {
