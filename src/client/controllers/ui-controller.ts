@@ -1,6 +1,7 @@
 import { Controller } from "@flamework/core";
 import { PlayerController } from "./player-controller";
 import { CollectionService as Collection } from "@rbxts/services";
+import Log from "shared/logger";
 
 @Controller()
 export class UIController {
@@ -11,6 +12,7 @@ export class UIController {
   ) {}
 
   public open(name: string): void {
+    Log.info("Current screen: " + name);
     const guis = <ScreenGui[]>this.player.gui.GetChildren();
     this.current = name;
 

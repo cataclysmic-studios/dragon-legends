@@ -28,30 +28,22 @@ export class TimerService implements OnInit {
   }
 
   public addHatchTimer(player: Player, eggID: string, length: number): void {
-    const timeInfo = this.data.get<TimeInfo>(player, "timeInfo");
-    const timer: TimerInfo = {
+    this.data.addTimer(player, {
       id: eggID,
       type: TimerType.Hatch,
       beganAt: now(),
       length
-    };
-
-    timeInfo.timers = [ ...timeInfo.timers, timer ];
-    this.data.set(player, "timeInfo", timeInfo);
+    });
     this.updateTimers(player);
   }
 
   public addBuildingTimer(player: Player, id: string, length: number): void {
-    const timeInfo = this.data.get<TimeInfo>(player, "timeInfo");
-    const timer: TimerInfo = {
+    this.data.addTimer(player, {
       id,
       type: TimerType.Building,
       beganAt: now(),
       length
-    };
-
-    timeInfo.timers = [ ...timeInfo.timers, timer ];
-    this.data.set(player, "timeInfo", timeInfo);
+    });
     this.updateTimers(player);
   }
 

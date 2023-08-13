@@ -11,9 +11,9 @@ export const enum NotificationType {
   Error
 }
 
-type NotificationLabel = TextLabel & {
+interface NotificationLabel extends TextLabel {
   UIStroke: UIStroke;
-};
+}
 
 @Controller()
 export class NotificationController {

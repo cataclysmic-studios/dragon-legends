@@ -7,6 +7,7 @@ import { Building, Hatchery } from "shared/data-models/buildings";
 import { Assets, now, toStorableVector3 } from "shared/util";
 import { OnPlayerLeave } from "server/hooks";
 import { Events, Functions } from "server/network";
+import Log from "shared/logger";
 
 const { initializeData, setData, dataLoaded, dataUpdate } = Events;
 const { getData, findBuilding } = Functions;
@@ -28,12 +29,14 @@ export class DataService implements OnInit, OnPlayerLeave {
 	}
 
 	public addTimer(player: Player, timer: TimerInfo): void {
+		Log.info(`Added new ${timer.type} timer (ID ${timer.id})`);
     const timeInfo = this.get<TimeInfo>(player, "timeInfo");
 		timeInfo.timers = [ ...timeInfo.timers, timer ];
 		this.set(player, "timeInfo", timeInfo);
   }
 
 	public addBuilding(player: Player, building: Building): void {
+		Log.info(`Added new ${building.name} building (ID ${building.id})`);
     const buildings = this.get<Building[]>(player, "buildings");
 		buildings.push(building);
 		this.set(player, "buildings", buildings);
@@ -66,18 +69,18 @@ export class DataService implements OnInit, OnPlayerLeave {
 	}
 
 	private setup(player: Player): void {
-    this.initialize(player, "gold", 250);
+		this.initialize(player, "gold", 250);
 		this.initialize(player, "diamonds", 5);
 		this.initialize(player, "food", 20);
 		this.initialize(player, "level", 1);
 		this.initialize(player, "xp", 0);
-
+		
 		this.initialize(player, "inventory", []);
 		this.initialize(player, "dragons", []);
     this.initialize<TimeInfo>(player, "timeInfo", {
-      timers: []
+			timers: []
     });
-
+		
 		this.initialize<Building[]>(player, "buildings", [
 			<Hatchery>{
 				id: "HATCHERY",
@@ -87,7 +90,8 @@ export class DataService implements OnInit, OnPlayerLeave {
 				eggs: []
 			}
 		]);
-
+		
+		Log.info("Initialized data");
 		dataLoaded.predict(player);
 	}
 
