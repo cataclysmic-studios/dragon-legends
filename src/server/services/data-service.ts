@@ -36,7 +36,7 @@ export class DataService implements OnInit, OnPlayerLeave {
   }
 
 	public addBuilding(player: Player, building: Building): void {
-		Log.info(`Added new ${building.name} building (ID ${building.id})`);
+		Log.info(`Added new building: "${building.name}" (ID ${building.id})`);
     const buildings = this.get<Building[]>(player, "buildings");
 		buildings.push(building);
 		this.set(player, "buildings", buildings);

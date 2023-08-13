@@ -12,7 +12,6 @@ export class UIController {
   ) {}
 
   public open(name: string): void {
-    Log.info("Current screen: " + name);
     const guis = <ScreenGui[]>this.player.gui.GetChildren();
     this.current = name;
 
