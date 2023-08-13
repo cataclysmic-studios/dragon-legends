@@ -65,8 +65,8 @@ export namespace Buildings {
 }
 
 export const enum TimerType {
-  Building,
-  Hatch
+  Building = "Building",
+  Hatch = "Hatch"
 }
 
 export interface TimerInfo extends Unique {

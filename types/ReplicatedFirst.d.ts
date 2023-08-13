@@ -38,6 +38,10 @@ interface ReplicatedFirst extends Instance {
 					UIStroke: UIStroke;
 				};
 			};
+			TimerIcons: Folder & {
+				Building: ImageLabel;
+				Hatch: ImageLabel;
+			};
 			ElementBanners: Folder & {
 				Necro: ImageLabel & {
 					Icon: ImageLabel & {
