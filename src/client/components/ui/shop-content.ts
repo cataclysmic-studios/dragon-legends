@@ -1,4 +1,4 @@
-import { Dependency, OnStart } from "@flamework/core";
+import { OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
 import { CollectionService as Collection, HttpService as HTTP, Workspace as World } from "@rbxts/services";
 
