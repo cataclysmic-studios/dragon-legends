@@ -28,6 +28,7 @@ export class HatcheryService implements OnInit {
     const eggPositionPart = <Part>hatcheryModel.EggPositions.WaitForChild(tostring(eggPositionIndex))
     eggMesh.Position = eggPositionPart.Position;
     eggMesh.Parent = hatcheryModel.Eggs;
+    eggMesh.SetAttribute("ID", egg.id);
     
     this.data.removeBuilding(player, "HATCHERY");
     hatchery.eggs = [ ...hatchery.eggs, egg ];

@@ -1,11 +1,9 @@
-import { $warn } from "rbxts-transform-debug";
-
 export class Exception {
 	public constructor(
 		name: string,
 		public readonly message: string
 	) {
-		$warn(`${name}Exception: ${message}`);
+		warn(`${name}Exception: ${message}`);
 		// throw $error(`${name}Exception: ${message}`, (level ?? 0) + 1);
 	}
 }
