@@ -14,7 +14,7 @@ interface ServerEvents {
 
 interface ClientEvents {
   buildingsLoaded(buildings: Building[]): void;
-  // dataUpdate(key: DataKey, value: DataValue): void;
+  dataUpdate(key: DataKey, value: DataValue): void;
   addNotificationToButton(buttonName: string): void;
 }
 

@@ -1,6 +1,6 @@
 import { Component, BaseComponent } from "@flamework/components";
 import { DataKey, DataValue } from "shared/data-models";
-import { DataLinked } from "shared/hooks";
+import { DataLinked } from "client/hooks";
 
 interface Attributes {
   readonly DataKey: DataKey;

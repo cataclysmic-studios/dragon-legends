@@ -1,10 +1,10 @@
 import { OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
 import { Building, Buildings, DataKey, Habitat } from "shared/data-models";
-import { DataLinked } from "shared/hooks";
+import { DataLinked } from "client/hooks";
+import { MissingBuildingException } from "shared/exceptions";
 import { toSuffixedNumber } from "shared/util";
 import { Functions } from "client/network";
-import { MissingBuildingException } from "shared/exceptions";
 
 const { findBuilding } = Functions;
 const { isUpgradable, isHabitat, isHatchery } = Buildings;

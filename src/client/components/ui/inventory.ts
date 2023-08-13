@@ -2,7 +2,7 @@ import { Component, BaseComponent } from "@flamework/components";
 import { Workspace as World } from "@rbxts/services";
 import { DataKey, DataValue, InventoryItem, InventoryItems } from "shared/data-models";
 import { Assets } from "shared/util";
-import { DataLinked } from "shared/hooks";
+import { DataLinked } from "client/hooks";
 
 const { isEgg } = InventoryItems;
 
