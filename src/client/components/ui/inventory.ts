@@ -4,6 +4,7 @@ import { DataKey, DataValue, InventoryItem, InventoryItems } from "shared/data-m
 import { Assets } from "shared/util";
 import { DataLinked } from "client/hooks";
 import { Events } from "client/network";
+import { UIController } from "client/controllers/ui-controller";
 
 const { addEggToHatchery } = Events;
 const { isEgg } = InventoryItems;
@@ -12,6 +13,10 @@ interface Attributes {}
 
 @Component({ tag: "Inventory" })
 export class Inventory extends BaseComponent<Attributes, ScrollingFrame> implements DataLinked {
+  public constructor(
+    private readonly ui: UIController
+  ) { super(); }
+
   public onDataUpdate(key: DataKey, value: DataValue): void {
     if (key !== "inventory") return;
     this.updateItems(<InventoryItem[]>value);
@@ -39,9 +44,10 @@ export class Inventory extends BaseComponent<Attributes, ScrollingFrame> impleme
       }));
 
       this.maid.GiveTask(card.Buttons.Use.MouseButton1Click.Connect(() => {
-        if (isEgg(item))
+        if (isEgg(item)) {
           addEggToHatchery(item);
-        else {
+          this.ui.open("Main");
+        } else {
           print("use item");
         }
 
