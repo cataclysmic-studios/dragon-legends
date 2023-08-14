@@ -3,7 +3,9 @@ import { Context as InputContext } from "@rbxts/gamejoy";
 import { StarterGui, UserInputService, Workspace as World } from "@rbxts/services";
 import { BuildingPlacementController } from "./building-placement-controller";
 
-import { Union } from "@rbxts/gamejoy/out/Actions";
+import { Action, Axis, Union } from "@rbxts/gamejoy/out/Actions";
+import { tween } from "shared/util";
+import { TweenInfoBuilder } from "@rbxts/builders";
 
 // TODO: scroll to change FOV
 
@@ -37,6 +39,21 @@ export class CameraController implements OnInit, OnRender {
       .BindEvent("onRelease", click.Released, () => {
         this.mouseDown = false;
       });
+
+    const scroll = new Axis("MouseWheel");
+    this.input.Bind(scroll, () => this.zoom(-scroll.Position.Z));
+  }
+
+  private zoom(delta: number): void {
+    const cam = World.CurrentCamera!;
+    const min = 60, max = 80;
+    tween(
+      cam,
+      new TweenInfoBuilder()
+        .SetTime(0.3)
+        .SetEasingStyle(Enum.EasingStyle.Sine),
+      { FieldOfView: math.clamp(cam.FieldOfView + (delta * 4), min, max) }
+    );
   }
 
   public onRender(dt: number): void {
