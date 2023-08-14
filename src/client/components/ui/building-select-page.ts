@@ -92,7 +92,6 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
 
   private addDragonButtons({ dragons }: Habitat): void {
     const janitor = new Janitor;
-    print(dragons)
     for (const dragon of dragons) {
       const button = Assets.UI.HabitatDragonButton.Clone();
       newDragonModel(dragon.name, {

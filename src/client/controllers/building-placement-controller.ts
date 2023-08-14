@@ -11,7 +11,7 @@ import { Events } from "client/network";
 
 const { incrementData, placeBuilding } = Events;
 
-// TODO: move() method, green/red highlight, some damn limits
+// TODO: move() method
 
 const { floor } = math;
 

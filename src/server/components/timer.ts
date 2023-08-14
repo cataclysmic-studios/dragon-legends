@@ -43,8 +43,21 @@ export class Timer extends BaseComponent<Attributes, Model | MeshPart> implement
 
       const timeElapsed = now() - timer.beganAt;
       const timeRemaining = timer.length - timeElapsed;
-      if (timeRemaining <= 0)
-        return updateTimers.predict(player); // TODO: completion prompt, reward XP & such
+      if (timeRemaining <= 0) {
+        if (this.instance.IsA("Model")) {
+          const xpClaimUI = Assets.UI.ClaimXP.Clone();
+          xpClaimUI.Button.MouseButton1Click.Once(() => {
+            const rewardXP = this.instance.GetAttribute<number>("RewardXP");
+            this.data.increment(player, "xp", rewardXP);
+            xpClaimUI.Enabled = false;
+          });
+
+          xpClaimUI.Adornee = this.instance;
+          xpClaimUI.Enabled = true;
+          xpClaimUI.Parent = player.WaitForChild("PlayerGui");
+        }
+        return updateTimers.predict(player);
+      }
 
       timerUI.RemainingTime.Text = toRemainingTime(timeRemaining);
     };

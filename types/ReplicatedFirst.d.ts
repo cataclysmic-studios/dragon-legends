@@ -1,3 +1,9 @@
+type ClaimGui = BillboardGui & {
+	Button: TextButton;
+	Icon: ImageLabel;
+	Bubble: ImageLabel;
+};
+
 interface ReplicatedFirst extends Instance {
 	Assets: Folder & {
 		Eggs: Folder;
@@ -14,6 +20,9 @@ interface ReplicatedFirst extends Instance {
 		UI: Folder & {
 			InventoryCard: InventoryCard;
 			ItemCard: ItemCard;
+			ClaimFood: ClaimGui;
+			ClaimGold: ClaimGui;
+			ClaimXP: ClaimGui;
 			HatcheryEggButton: ImageButton & {
 				Viewport: ViewportFrame & {
 					UICorner: UICorner;
