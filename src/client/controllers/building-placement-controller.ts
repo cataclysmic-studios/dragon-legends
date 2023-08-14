@@ -21,6 +21,8 @@ export class BuildingPlacementController implements OnRender, OnInit {
   private readonly mouse = Player.GetMouse();
   private readonly gridSize = 4;
 
+  private readonly canPlaceColor = Color3.fromHex("#50ff3c");
+  private readonly cannotPlaceColor = Color3.fromHex("#ff3d3d");
   private readonly input = new InputContext({
     ActionGhosting: 0,
     Process: false,
@@ -28,6 +30,7 @@ export class BuildingPlacementController implements OnRender, OnInit {
   });
 
   private currentlyPlacing?: Model;
+  private currentHighlight?: Highlight;
   private targetOnClick?: Instance;
   private mouseDown = false;
 
@@ -59,10 +62,15 @@ export class BuildingPlacementController implements OnRender, OnInit {
 
   public onRender(dt: number): void {
     if (!this.currentlyPlacing || !this.mouseDown) return;
-    if (this.currentlyPlacing.Name !== this.targetOnClick?.Parent?.Name) return;
+    this.updateHighlight();
 
-    const position = this.snap(getMouseWorldPosition());
-    this.currentlyPlacing.PrimaryPart!.Position = position;
+    if (this.currentlyPlacing.Name !== this.targetOnClick?.Parent?.Name) return;
+    this.currentlyPlacing.PrimaryPart!.Position = this.snap(getMouseWorldPosition());
+  }
+
+  private updateHighlight(): void {
+    if (!this.currentHighlight) return;
+    this.currentHighlight.FillColor = this.isColliding() ? this.cannotPlaceColor : this.canPlaceColor;
   }
 
   private snapCoord(n: number): number {
@@ -75,22 +83,33 @@ export class BuildingPlacementController implements OnRender, OnInit {
   }
 
   private isColliding(): boolean {
+    if (!this.currentlyPlacing)
+      return false;
+
     const boundsPart = <Part>this.currentlyPlacing!
       .GetChildren()
       .find(i => Collection.HasTag(i, "BuildingBounds"));
 
-    const region = toRegion3(boundsPart);
+    const region = toRegion3(boundsPart, 0.25);
     const partsInRegion = World.FindPartsInRegion3(region, boundsPart);
     return partsInRegion.size() > 1;
   }
 
   public place(buildingName: string, category: Placable): void {
     this.toggleGrid(true);
-    this.currentlyPlacing = <Model>Assets.WaitForChild(category).WaitForChild(buildingName).Clone();
+    const buildingModel = <Model>Assets.WaitForChild(category).WaitForChild(buildingName).Clone();
+    const rootPart = buildingModel.PrimaryPart!;
+    const highlight = new Instance("Highlight", rootPart);
+    highlight.OutlineTransparency = 1;
+    highlight.Adornee = rootPart;
 
+    this.currentlyPlacing = buildingModel;
+    this.currentHighlight = highlight;
+    
     const camPosition = World.Ignore.PlayerCamera.Position;
-    this.currentlyPlacing.PrimaryPart!.Position = this.snap(camPosition.add(new Vector3(12, 0, 12)));
+    rootPart.Position = this.snap(camPosition.add(new Vector3(12, 0, 12)));
     this.currentlyPlacing.Parent = World.CurrentCamera;
+    this.updateHighlight();
 
     const placementConfirmation = <Frame & {
       Confirm: ImageButton;
@@ -99,8 +118,8 @@ export class BuildingPlacementController implements OnRender, OnInit {
 
     this.janitor.Add(this.currentlyPlacing);
     this.janitor.Add(() => this.ui.setPage("Main", "Main"));
-    this.janitor.Add(placementConfirmation.Confirm.MouseButton1Click.Once(async () => {
-      if (!this.isColliding()) return;
+    this.janitor.Add(placementConfirmation.Confirm.MouseButton1Click.Connect(async () => {
+      if (this.isColliding()) return;
       const position = this.currentlyPlacing!.PrimaryPart!.Position;
       const price = <number>this.currentlyPlacing!.GetAttribute("Price");
       incrementData("gold", -price);
@@ -117,6 +136,7 @@ export class BuildingPlacementController implements OnRender, OnInit {
     this.toggleGrid(false);
     this.janitor.Cleanup();
     this.currentlyPlacing = undefined;
+    this.currentHighlight = undefined;
   }
 
   private toggleGrid(on: boolean) {    
