@@ -14,6 +14,37 @@ interface ReplicatedFirst extends Instance {
 		UI: Folder & {
 			InventoryCard: InventoryCard;
 			ItemCard: ItemCard;
+			HatcheryEggButton: ImageButton & {
+				Viewport: ViewportFrame & {
+					UICorner: UICorner;
+				};
+				Place: TextLabel & {
+					UIStroke: UIStroke;
+				};
+				UIAspectRatioConstraint: UIAspectRatioConstraint;
+				shadowHolder: Frame & {
+					umbraShadow: ImageLabel;
+					ambientShadow: ImageLabel;
+					penumbraShadow: ImageLabel;
+				};
+			};	
+			HabitatDragonButton: ImageButton & {
+				DragonName: TextLabel & {
+					UIStroke: UIStroke;
+				};
+				Viewport: ViewportFrame & {
+					UICorner: UICorner;
+				};
+				Boost: TextLabel & {
+					UIStroke: UIStroke;
+				};
+				UIAspectRatioConstraint: UIAspectRatioConstraint;
+				shadowHolder: Frame & {
+					umbraShadow: ImageLabel;
+					ambientShadow: ImageLabel;
+					penumbraShadow: ImageLabel;
+				};
+			};			
 			ButtonNotification: Frame & {
 				shadowHolder: Frame & {
 					umbraShadow: ImageLabel;

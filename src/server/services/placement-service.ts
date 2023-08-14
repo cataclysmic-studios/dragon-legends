@@ -6,7 +6,7 @@ import { TimerService } from "./timer-service";
 import { Dragon, DragonInfo } from "shared/data-models/dragons";
 import { Building, Habitat } from "shared/data-models/buildings";
 import { MissingBuildingException } from "shared/exceptions";
-import { Assets, Placable, toStorableVector3, toSeconds, getBuildingModel } from "shared/util";
+import { Assets, Placable, toStorableVector3, toSeconds, getPlacedBuildingModel } from "shared/util";
 import { Events } from "server/network";
 
 const { placeBuilding, placeDragon } = Events;
@@ -34,8 +34,7 @@ export class PlacementService implements OnInit {
     idOverride?: string
   ): void {
 
-    const habitat = getBuildingModel<HabitatModel>(habitatID);
-
+    const habitat = getPlacedBuildingModel<HabitatModel>(habitatID);
     if (!habitat)
       throw new MissingBuildingException(habitatID, `Could not find habitat when placing dragon "${dragonData.name}"`);
 

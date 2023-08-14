@@ -1,9 +1,11 @@
 import { Players, ReplicatedFirst, TweenService, UserInputService as UIS, Workspace as World } from "@rbxts/services";
 import { RaycastParamsBuilder, TweenInfoBuilder } from "@rbxts/builders";
 import StringUtils from "@rbxts/string-utils";
+import Object from "@rbxts/object-utils";
 
-import { DragonInfo, Rarity } from "./data-models/dragons";
 import { StorableVector3 } from "./data-models/utility";
+import { DragonInfo, Rarity } from "./data-models/dragons";
+import { Egg } from "./data-models/inventory";
 import { Exception } from "./exceptions";
 
 const { floor, log, round } = math;
@@ -17,7 +19,27 @@ export const now = () => round(tick());
 export const toStorableVector3 = ({ X, Y, Z }: Vector3) => ({ x: X, y: Y, z: Z })
 export const toUsableVector3 = ({ x, y, z }: StorableVector3) => new Vector3(x, y, z);
 
-export function getBuildingModel<T extends Model = Model>(id: string): T extends HatcheryModel ? T : Maybe<T> {
+export function newEggMesh(egg: Egg, options?: { 
+  position?: Vector3;
+  parent?: Instance;
+  attributes?: Record<string, AttributeValue>
+}): MeshPart {
+
+  const eggMesh = <MeshPart>Assets.Eggs.WaitForChild(egg.name).Clone();
+  eggMesh.Position = options?.position ?? new Vector3;
+
+  if (options?.attributes)
+    // my secret weapon 😈 (Object.entries)
+    for (const [name, value] of Object.entries(options.attributes))
+      eggMesh.SetAttribute(name, value);
+
+  if (options?.parent)
+    eggMesh.Parent = options.parent;
+
+  return eggMesh;
+}
+
+export function getPlacedBuildingModel<T extends Model = Model>(id: string): T extends HatcheryModel ? T : Maybe<T> {
   return <T extends HatcheryModel ? T : Maybe<T>>World.Buildings.GetChildren()
     .find(b => b.GetAttribute<string>("ID") === id);
 }

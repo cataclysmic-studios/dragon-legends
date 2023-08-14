@@ -2,9 +2,9 @@ import { OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
 
 import { DataKey } from "shared/data-models/generic";
-import { Building, Buildings, Habitat } from "shared/data-models/buildings";
+import { Building, Buildings, Habitat, Hatchery } from "shared/data-models/buildings";
 import { MissingBuildingException } from "shared/exceptions";
-import { toSuffixedNumber } from "shared/util";
+import { Assets, newEggMesh, toSuffixedNumber } from "shared/util";
 import { DataLinked } from "client/hooks";
 import { Functions } from "client/network";
 
@@ -17,9 +17,6 @@ interface Attributes {
 
 interface BuildingSelectFrame extends Frame {
   BuildingTitle: TextLabel;
-  BottomLeft: Frame & {
-    Dragon: ImageButton;
-  };
   BottomRight: Frame & {
     Info: ImageButton;
     Move: ImageButton;
@@ -32,6 +29,8 @@ interface BuildingSelectFrame extends Frame {
 
 @Component({ tag: "BuildingSelectPage" })
 export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelectFrame> implements OnStart, DataLinked {
+  private readonly buttons = this.instance.BottomRight;
+  
   public onStart(): void {
     this.maid.GiveTask(
       this.instance.GetAttributeChangedSignal("ID")
@@ -49,20 +48,45 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
 
     this.updateTitle(building);
     this.updateButtons(building);
-    if (isHabitat(building))
-      this.updateGoldText(building);
-    else if (isHatchery(building)) {
-      // add egg buttons
+  }
+
+  private addEggButtons(hatchery: Hatchery): void {
+    for (const egg of hatchery.eggs) {
+      const button = Assets.UI.HatcheryEggButton.Clone();
+      newEggMesh(egg, {
+        parent: button.Viewport
+      });
+
+      button.Parent = this.buttons;
     }
   }
 
-  private updateGoldText(habitat: Habitat): void {
-    this.instance.BottomRight.CollectGold.Amount.Text = toSuffixedNumber(habitat.gold);
+  private addDragonButtons(habitat: Habitat): void {
+    this.buttons.CollectGold.Amount.Text = toSuffixedNumber(habitat.gold);
+    for (const dragon of habitat.dragons) {
+      const button = Assets.UI.HabitatDragonButton.Clone();
+      // button.Boost
+      button.DragonName.Text = dragon.name;
+      button.Parent = this.buttons;
+    }
   }
 
   private updateButtons(building: Building) {
-    this.instance.BottomRight.CollectGold.Visible = isHabitat(building);
-    this.instance.BottomRight.Upgrade.Visible = isUpgradable(building);
+    this.buttons.CollectGold.Visible = isHabitat(building);
+    this.buttons.Upgrade.Visible = isUpgradable(building);
+
+    this.removeExtraButtons(building);
+    if (isHabitat(building))
+      this.addDragonButtons(building);
+    else if (isHatchery(building))
+      this.addEggButtons(building);
+  }
+
+  private removeExtraButtons(building: Building): void {
+    if (!isHabitat(building) && !isHatchery(building))
+      for (const button of this.buttons.GetChildren())
+        if (button.GetAttribute("DragonID") || button.GetAttribute("EggID"))
+          button.Destroy();
   }
 
   private updateTitle(building: Building): void {

@@ -4,7 +4,7 @@ import { UIController } from "client/controllers/ui-controller";
 
 import { DataKey, DataValue } from "shared/data-models/generic";
 import { InventoryItem, InventoryItems } from "shared/data-models/inventory";
-import { Assets } from "shared/util";
+import { Assets, newEggMesh } from "shared/util";
 import { DataLinked } from "client/hooks";
 import { Events } from "client/network";
 
@@ -35,13 +35,11 @@ export class Inventory extends BaseComponent<Attributes, ScrollingFrame> impleme
       viewportCamera.Parent = card.Viewport;
       card.Viewport.CurrentCamera = viewportCamera;
       
-      if (isEgg(item)) {
-        const eggMesh = <MeshPart>Assets.Eggs.WaitForChild(item.name).Clone();
-        eggMesh.Position = new Vector3;
-        eggMesh.Parent = card.Viewport;
-      }
+      if (isEgg(item))
+        newEggMesh(item, { parent: card.Viewport });
 
       this.maid.GiveTask(card.Buttons.Sell.MouseButton1Click.Connect(() => {
+        // ugh i still gotta do this?? shit...
         print("sell item");
       }));
 
