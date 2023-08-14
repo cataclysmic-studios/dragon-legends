@@ -9,9 +9,10 @@ import { NotificationController } from "./notification-controller";
 import { Element } from "shared/data-models/dragons";
 import { Player, getDragonData, newDragonModel } from "shared/util";
 import { Events, Functions } from "client/network";
+import { Habitat } from "shared/data-models/buildings";
 
 const { placeDragon } = Events;
-const { isTimerActive } = Functions;
+const { isTimerActive, getBuildingData } = Functions;
 
 @Controller()
 export class DragonPlacementController {
@@ -33,14 +34,19 @@ export class DragonPlacementController {
       .filter(b => StringUtils.endsWith(b.Name, "Habitat"));
 
     const usableHabitats: HabitatModel[] = [];
-    for (const habitat of habitats) {
-      const [ element ] = <[Element, string]>habitat.Name.split(" ");
-      const id = habitat.GetAttribute<string>("ID");
-      const usable = dragon.elements.includes(element) && !await isTimerActive(id);
-      habitat.Highlight.Enabled = usable;
+    for (const habitatModel of habitats) {
+      const [ element ] = <[Element, string]>habitatModel.Name.split(" ");
+      const id = habitatModel.GetAttribute<string>("ID");
+      const habitat = <Habitat>await getBuildingData(id);
+      
+      const max = <HabitatMaximums>require(habitatModel.Maximums);
+      const usable = dragon.elements.includes(element) && 
+        !await isTimerActive(id) &&
+        habitatModel.Dragons.GetChildren().size() < max.dragons[habitat.level - 1];
 
+      habitatModel.Highlight.Enabled = usable;
       if (usable)
-        usableHabitats.push(habitat);
+        usableHabitats.push(habitatModel);
     }
 
     if (usableHabitats.size() === 0)

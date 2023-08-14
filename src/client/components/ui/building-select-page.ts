@@ -38,7 +38,6 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
   private dragonButtonDebounce = false;
   private eggButtonDebounce = false;
 
-
   public constructor(
     private readonly dragon: DragonPlacementController
   ) { super(); }
@@ -47,7 +46,9 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
     this.maid.GiveTask(
       this.instance.GetAttributeChangedSignal("ID")
         .Connect(async () => {
-          this.updatePage();  
+          this.updatePage();
+          this.dragonButtonDebounce = false;
+          this.eggButtonDebounce = false;
         })
     );
   }

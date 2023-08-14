@@ -1,3 +1,8 @@
+interface HabitatMaximums {
+	readonly level: number;
+	readonly dragons: number[];
+}
+
 interface ItemCard extends Frame {
 	UIPadding: UIPadding;
 	UICorner: UICorner;
@@ -99,6 +104,7 @@ interface HabitatModel extends Model {
 	Dragons: Folder;
 	Highlight: Highlight;
 	Base: Part;
+	Maximums: ModuleScript;
 }
 
 interface HatcheryModel extends Model {
