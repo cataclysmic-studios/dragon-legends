@@ -11,7 +11,7 @@ import { Assets, newDragonModel, newEggMesh, toSuffixedNumber } from "shared/uti
 import { DataLinked } from "client/hooks";
 import { Events, Functions } from "client/network";
 
-const { timerFinished, removeEggFromHatchery } = Events;
+const { timerFinished, removeEggFromHatchery, claimHabitatGold } = Events;
 const { getBuildingData: findBuilding, isTimerActive } = Functions;
 const { isUpgradable, isHabitat, isHatchery } = Buildings;
 
@@ -33,9 +33,11 @@ interface BuildingSelectFrame extends Frame {
 
 @Component({ tag: "BuildingSelectPage" })
 export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelectFrame> implements OnStart, DataLinked {
+  private readonly janitor = new Janitor;
   private readonly buttons = this.instance.BottomRight;
   private dragonButtonDebounce = false;
   private eggButtonDebounce = false;
+
 
   public constructor(
     private readonly dragon: DragonPlacementController
@@ -133,6 +135,10 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
     this.removeExtraButtons();
     if (isHabitat(building)) {
       this.buttons.CollectGold.Amount.Text = toSuffixedNumber(building.gold);
+      this.janitor.Add(
+        this.buttons.CollectGold.MouseButton1Click
+          .Connect(() => claimHabitatGold(building.id))
+      );
       this.addDragonButtons(building);
     } else if (isHatchery(building))
       this.addEggButtons(building);
@@ -140,6 +146,7 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
   }
 
   private removeExtraButtons(): void {
+    this.janitor.Cleanup();
     for (const button of this.buttons.GetChildren())
       if (button.GetAttribute("DragonID")) {
         if (this.dragonButtonDebounce) return;

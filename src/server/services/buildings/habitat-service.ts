@@ -1,4 +1,4 @@
-import { Service } from "@flamework/core";
+import { OnStart, Service } from "@flamework/core";
 import { Workspace as World } from "@rbxts/services";
 import StringUtils from "@rbxts/string-utils";
 
@@ -8,8 +8,9 @@ import { SchedulingService } from "../scheduling-service";
 import { Habitat } from "shared/data-models/buildings";
 import { MissingDataException } from "shared/exceptions";
 import { OnPlayerJoin } from "server/hooks";
-import { Functions } from "server/network";
+import { Events, Functions } from "server/network";
 
+const { claimHabitatGold } = Events;
 const { isTimerActive } = Functions;
 const { ceil } = math;
 
@@ -19,7 +20,7 @@ interface HabitatGoldInfo {
 }
 
 @Service()
-export class HabitatService implements OnPlayerJoin {
+export class HabitatService implements OnPlayerJoin, OnStart {
   // Habitat ID to Gold/Minute
   private readonly playerMap = new Map<Player, Map<string, HabitatGoldInfo>>();
 
@@ -29,6 +30,10 @@ export class HabitatService implements OnPlayerJoin {
   ) {}
 
   // TODO: remove ID from map if habitat is sold
+
+  public onStart(): void {
+    claimHabitatGold.connect((player, habitatID) => this.claimGold(player, habitatID));
+  }
 
   public onPlayerJoin(player: Player): void {
     this.schedule.every.second.Connect(() => {

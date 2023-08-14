@@ -18,6 +18,8 @@ interface ServerEvents {
   
   addEggToHatchery(egg: Egg, isLoaded?: boolean): void;
   removeEggFromHatchery(eggID: string): void;
+
+  claimHabitatGold(habitatID: string): void;
 }
 
 interface ClientEvents {
