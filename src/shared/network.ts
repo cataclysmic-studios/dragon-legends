@@ -11,11 +11,11 @@ interface ServerEvents {
   dataLoaded(): void;
   setData(key: DataKey, value: DataValue): void;
   incrementData(key: ExtractKeys<GameDataModel, number>, amount?: number): void;
-
+  
   placeBuilding(buildingName: string, category: Placable, position: Vector3, idOverride?: string): void;
   placeDragon(dragonData: DragonInfo, habitatID: string): void;
   updateTimers(): void;
-
+  
   addEggToHatchery(egg: Egg, isLoaded?: boolean): void;
   removeEggFromHatchery(eggID: string): void;
 }
@@ -31,6 +31,7 @@ interface ServerFunctions {
   getData(key: DataKey): DataValue;
   findBuilding(id: string): Maybe<Building>;
   isTimerActive(buildingID: string): boolean;
+  calculateXPUntilNextLevel(): number;
 }
 
 interface ClientFunctions {}

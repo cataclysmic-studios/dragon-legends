@@ -1,8 +1,8 @@
-type ClaimGui = BillboardGui & {
+interface ClaimGui extends BillboardGui {
 	Button: TextButton;
 	Icon: ImageLabel;
 	Bubble: ImageLabel;
-};
+}
 
 interface ReplicatedFirst extends Instance {
 	Assets: Folder & {

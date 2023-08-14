@@ -8,6 +8,7 @@ import { TimeInfo } from "shared/data-models/time";
 import { Exception } from "shared/exceptions";
 import { Assets, toRemainingTime, now } from "shared/util";
 import { Events } from "server/network";
+import { LevelService } from "server/services/level-service";
 
 const { updateTimers } = Events;
 
@@ -19,6 +20,7 @@ interface Attributes {
 export class Timer extends BaseComponent<Attributes, Model | MeshPart> implements OnStart {
   public constructor(
     private readonly data: DataService,
+    private readonly levels: LevelService,
     private readonly schedule: SchedulingService
   ) { super(); }
 
@@ -48,7 +50,7 @@ export class Timer extends BaseComponent<Attributes, Model | MeshPart> implement
           const xpClaimUI = Assets.UI.ClaimXP.Clone();
           xpClaimUI.Button.MouseButton1Click.Once(() => {
             const rewardXP = this.instance.GetAttribute<number>("RewardXP");
-            this.data.increment(player, "xp", rewardXP);
+            this.levels.addXP(player, rewardXP);
             xpClaimUI.Enabled = false;
           });
 
