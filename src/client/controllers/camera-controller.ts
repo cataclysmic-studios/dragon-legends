@@ -46,7 +46,7 @@ export class CameraController implements OnInit, OnRender {
 
   private zoom(delta: number): void {
     const cam = World.CurrentCamera!;
-    const min = 60, max = 80;
+    const min = 60, max = 85;
     tween(
       cam,
       new TweenInfoBuilder()

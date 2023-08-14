@@ -7,9 +7,10 @@ import { DragonPlacementController } from "client/controllers/dragon-placement-c
 import { DataKey } from "shared/data-models/generic";
 import { Building, Buildings, Habitat, Hatchery } from "shared/data-models/buildings";
 import { MissingBuildingException } from "shared/exceptions";
-import { Assets, newDragonModel, newEggMesh, toSuffixedNumber } from "shared/util";
+import { Assets, getPlacedBuilding, newDragonModel, newEggMesh, toSuffixedNumber, tween } from "shared/util";
 import { DataLinked } from "client/hooks";
 import { Events, Functions } from "client/network";
+import { TweenInfoBuilder } from "@rbxts/builders";
 
 const { timerFinished, removeEggFromHatchery, claimHabitatGold } = Events;
 const { getBuildingData: findBuilding, isTimerActive } = Functions;
@@ -129,23 +130,6 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
     }
   }
 
-  private updateButtons(building: Building) {
-    this.buttons.CollectGold.Visible = isHabitat(building);
-    this.buttons.Upgrade.Visible = isUpgradable(building);
-
-    this.removeExtraButtons();
-    if (isHabitat(building)) {
-      this.buttons.CollectGold.Amount.Text = toSuffixedNumber(building.gold);
-      this.janitor.Add(
-        this.buttons.CollectGold.MouseButton1Click
-          .Connect(() => claimHabitatGold(building.id))
-      );
-      this.addDragonButtons(building);
-    } else if (isHatchery(building))
-      this.addEggButtons(building);
-
-  }
-
   private removeExtraButtons(): void {
     this.janitor.Cleanup();
     for (const button of this.buttons.GetChildren())
@@ -156,6 +140,56 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
         if (this.eggButtonDebounce) return;
         button.Destroy();
       }
+  }
+
+  private updateButtons(building: Building) {
+    this.buttons.CollectGold.Visible = isHabitat(building);
+    this.buttons.Upgrade.Visible = isUpgradable(building);
+
+    this.removeExtraButtons();
+    if (isHabitat(building)) {
+      this.buttons.CollectGold.Amount.Text = toSuffixedNumber(building.gold);
+      this.janitor.Add(
+        this.buttons.CollectGold.MouseButton1Click
+          .Connect(() => this.collectGoldFromBuilding(building))
+      );
+      this.addDragonButtons(building);
+    } else if (isHatchery(building))
+      this.addEggButtons(building);
+  }
+
+  private collectGoldFromBuilding(building: Habitat): void {
+    if (building.gold < 1) return;
+
+    const collectedGoldUI = Assets.UI.CollectedGold.Clone();
+    const gainedGold = "+" + toSuffixedNumber(building.gold);
+    const habitatModel = getPlacedBuilding<HabitatModel>(building.id);
+    collectedGoldUI.Amount.Text = gainedGold;
+    collectedGoldUI.Adornee = habitatModel;
+    collectedGoldUI.Parent = habitatModel;
+
+    const tweenInfo = new TweenInfoBuilder()
+      .SetTime(3)
+      .SetEasingStyle(Enum.EasingStyle.Sine);
+
+    tween(
+      collectedGoldUI.Amount, tweenInfo,
+      { TextTransparency: 1 }
+    );
+    tween(
+      collectedGoldUI.Amount.UIStroke, tweenInfo,
+      { Transparency: 1 }
+    );
+    tween(
+      collectedGoldUI.Icon, tweenInfo,
+      { ImageTransparency: 1 }
+    );
+    tween(
+      collectedGoldUI, tweenInfo,
+      { StudsOffsetWorldSpace: new Vector3(0, 5, 0) }
+    ).Completed.Once(() => collectedGoldUI.Destroy());
+
+    claimHabitatGold(building.id);
   }
 
   private updateTitle(building: Building): void {

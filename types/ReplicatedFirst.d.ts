@@ -23,6 +23,14 @@ interface ReplicatedFirst extends Instance {
 			ClaimFood: ClaimGui;
 			ClaimGold: ClaimGui;
 			ClaimXP: ClaimGui;
+			CollectedGold: BillboardGui & {
+				Icon: ImageLabel & {
+					UIAspectRatioConstraint: UIAspectRatioConstraint;
+				};
+				Amount: TextLabel & {
+					UIStroke: UIStroke;
+				};
+			};			
 			HatcheryEggButton: ImageButton & {
 				Viewport: ViewportFrame & {
 					UICorner: UICorner;
