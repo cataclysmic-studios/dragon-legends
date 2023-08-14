@@ -11,7 +11,7 @@ import { Assets, Placable, getDragonData, getRarityImage, toSeconds, toSuffixedN
 import { Events, Functions } from "client/network";
 import { MissingAttributeException } from "shared/exceptions";
 
-const { setData, addNotificationToButton } = Events;
+const { setData, incrementData, addNotificationToButton } = Events;
 const { getData } = Functions;
 
 interface Attributes {}
@@ -83,7 +83,7 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
 
         inventory.push(egg);
         setData("inventory", inventory);
-        setData("gold", gold - price);
+        incrementData("gold", -price);
 
         this.notifications.dispatch("Added egg to your inventory!");
         addNotificationToButton.predict("Inventory");

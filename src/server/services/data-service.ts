@@ -9,7 +9,7 @@ import { OnPlayerLeave } from "server/hooks";
 import { Events, Functions } from "server/network";
 import Log from "shared/logger";
 
-const { initializeData, setData, dataLoaded, dataUpdate } = Events;
+const { initializeData, setData, incrementData, dataLoaded, dataUpdate } = Events;
 const { getData, findBuilding } = Functions;
 
 @Service()
@@ -18,6 +18,7 @@ export class DataService implements OnInit, OnPlayerLeave {
 		DataStore2.Combine("DATA", ...DataKeys);
 		initializeData.connect((player) => this.setup(player));
 		setData.connect((player, key, value) => this.set(player, key, value));
+		incrementData.connect((player, key, amount) => this.increment(player, key, amount))
 		getData.setCallback((player, key) => this.get(player, key));
 		findBuilding.setCallback((player, id) => this.findBuilding(player, id));
 	}
@@ -54,7 +55,7 @@ export class DataService implements OnInit, OnPlayerLeave {
 	}
 
 	public increment(player: Player, key: DataKey, amount = 1): void {
-		const value = this.get<number>(player, key) ?? 0;
+		const value = this.get<number>(player, key);
 		this.set(player, key, value + amount);
 	}
 

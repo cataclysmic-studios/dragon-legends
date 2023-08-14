@@ -1,5 +1,5 @@
 import { Networking } from "@flamework/networking";
-import { DataKey, DataValue } from "./data-models/generic";
+import { DataKey, DataValue, GameDataModel } from "./data-models/generic";
 import { Egg } from "./data-models/inventory";
 import { DragonInfo } from "./data-models/dragons";
 import { Building } from "./data-models/buildings";
@@ -10,6 +10,7 @@ interface ServerEvents {
   initializeData(): void;
   dataLoaded(): void;
   setData(key: DataKey, value: DataValue): void;
+  incrementData(key: ExtractKeys<GameDataModel, number>, amount?: number): void;
 
   placeBuilding(buildingName: string, category: Placable, position: Vector3, idOverride?: string): void;
   placeDragon(dragonData: DragonInfo, habitatID: string): void;

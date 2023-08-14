@@ -8,7 +8,7 @@ import { DragonInfo, Rarity } from "./data-models/dragons";
 import { Egg } from "./data-models/inventory";
 import { Exception } from "./exceptions";
 
-const { floor, log, round } = math;
+const { floor, log, round, abs } = math;
 
 export type Placable = "Decor" | "Buildings" | "Habitats" | "Dragons";
 
@@ -117,6 +117,18 @@ const timePatterns = {
   d, day: d, days: d,
   w, week: w, weeks: w
 };
+
+export function toRegion3({ CFrame, Size }: Part, areaShrink = 0): Region3 {
+  const { X: sx, Y: sy, Z: sz } = Size;
+  const [ x, y, z, r00, r01, r02, r10, r11, r12, r20, r21, r22 ] = CFrame.GetComponents();
+  const wsx = 0.5 * (abs(r00) * sx + abs(r01) * sy + abs(r02) * sz);
+  const wsy = 0.5 * (abs(r10) * sx + abs(r11) * sy + abs(r12) * sz);
+  const wsz = 0.5 * (abs(r20) * sx + abs(r21) * sy + abs(r22) * sz);
+  return new Region3(
+    new Vector3(x - wsx + areaShrink, y - wsy, z - wsz + areaShrink),
+    new Vector3(x + wsx - areaShrink, y + wsy, z + wsz - areaShrink)
+  );
+}
 
 // Takes a remaining time string (e.g. 1d 5h 10s) and
 // converts it to the amount of time it represents in seconds.

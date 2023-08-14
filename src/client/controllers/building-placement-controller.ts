@@ -1,16 +1,15 @@
 import { Controller, OnInit, OnRender } from "@flamework/core";
-import { Workspace as World } from "@rbxts/services";
+import { CollectionService as Collection, Workspace as World } from "@rbxts/services";
 import { Context as InputContext } from "@rbxts/gamejoy";
 import { Union } from "@rbxts/gamejoy/out/Actions";
 import { Janitor } from "@rbxts/janitor";
 
 import { UIController } from "./ui-controller";
 
-import { Assets, Placable, Player, getMouseWorldPosition } from "shared/util";
-import { Events, Functions } from "client/network";
+import { Assets, Placable, Player, getMouseWorldPosition, toRegion3 } from "shared/util";
+import { Events } from "client/network";
 
-const { setData, placeBuilding } = Events;
-const { getData } = Functions;
+const { incrementData, placeBuilding } = Events;
 
 // TODO: move() method, green/red highlight, some damn limits
 
@@ -75,6 +74,16 @@ export class BuildingPlacementController implements OnRender, OnInit {
     return new Vector3(this.snapCoord(X), rootPart.Size.Y / 2, this.snapCoord(Z));
   }
 
+  private isColliding(): boolean {
+    const boundsPart = <Part>this.currentlyPlacing!
+      .GetChildren()
+      .find(i => Collection.HasTag(i, "BuildingBounds"));
+
+    const region = toRegion3(boundsPart);
+    const partsInRegion = World.FindPartsInRegion3(region, boundsPart);
+    return partsInRegion.size() > 1;
+  }
+
   public place(buildingName: string, category: Placable): void {
     this.toggleGrid(true);
     this.currentlyPlacing = <Model>Assets.WaitForChild(category).WaitForChild(buildingName).Clone();
@@ -91,10 +100,10 @@ export class BuildingPlacementController implements OnRender, OnInit {
     this.janitor.Add(this.currentlyPlacing);
     this.janitor.Add(() => this.ui.setPage("Main", "Main"));
     this.janitor.Add(placementConfirmation.Confirm.MouseButton1Click.Once(async () => {
+      if (!this.isColliding()) return;
       const position = this.currentlyPlacing!.PrimaryPart!.Position;
       const price = <number>this.currentlyPlacing!.GetAttribute("Price");
-      const gold = <number>await getData("gold");
-      setData("gold", gold - price);
+      incrementData("gold", -price);
       placeBuilding(buildingName, category, position);
       this.cancelPlacement();
     }));

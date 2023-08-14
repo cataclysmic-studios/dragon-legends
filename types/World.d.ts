@@ -2,7 +2,7 @@ interface Island extends Part {
   Grid: Texture;
 }
 
-interface Workspace extends Model {
+interface Workspace extends WorldRoot {
 	Camera: Camera;
 	ViewportCamera: Part;
 	Ignore: Folder & {
