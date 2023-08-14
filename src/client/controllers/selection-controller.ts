@@ -38,15 +38,15 @@ export class SelectionController implements OnInit {
   }
 
   private select(): void {
-    this.ui.setPage("Main", "BuildingSelect");
     this.setID();
+    this.ui.setPage("Main", "BuildingSelect");
   }
 
   private deselect() {
     if (this.ui.current !== "Main") return;
-    this.ui.setPage("Main", "Main");
     this.selectedBuildingID = undefined;
     this.setID();
+    this.ui.setPage("Main", "Main");
   }
 
   private setID(): void {

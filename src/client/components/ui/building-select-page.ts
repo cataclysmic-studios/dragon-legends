@@ -4,7 +4,7 @@ import { Component, BaseComponent } from "@flamework/components";
 import { DataKey } from "shared/data-models/generic";
 import { Building, Buildings, Habitat, Hatchery } from "shared/data-models/buildings";
 import { MissingBuildingException } from "shared/exceptions";
-import { Assets, newEggMesh, toSuffixedNumber } from "shared/util";
+import { Assets, newDragonModel, newEggMesh, toSuffixedNumber } from "shared/util";
 import { DataLinked } from "client/hooks";
 import { Events, Functions } from "client/network";
 import { Janitor } from "@rbxts/janitor";
@@ -91,14 +91,22 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
 
   private addDragonButtons({ dragons }: Habitat): void {
     const janitor = new Janitor;
+    print(dragons)
     for (const dragon of dragons) {
       const button = Assets.UI.HabitatDragonButton.Clone();
+      newDragonModel(dragon.name, {
+        parent: button.Viewport
+      });
+
       // button.Boost
       button.DragonName.Text = dragon.name;
       button.Parent = this.buttons;
       button.SetAttribute("DragonID", dragon.id);
 
       janitor.LinkToInstance(button, true);
+      janitor.Add(button.MouseButton1Click.Connect(() => {
+        // display dragon stats stats page (or something lmao)
+      }));
     }
   }
 

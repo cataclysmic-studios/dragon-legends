@@ -6,7 +6,7 @@ import { TimerService } from "./timer-service";
 import { Dragon, DragonInfo } from "shared/data-models/dragons";
 import { Building, Habitat } from "shared/data-models/buildings";
 import { MissingBuildingException } from "shared/exceptions";
-import { Assets, Placable, toStorableVector3, toSeconds, getPlacedBuilding } from "shared/util";
+import { Assets, Placable, toStorableVector3, toSeconds, getPlacedBuilding, newDragonModel } from "shared/util";
 import { Events } from "server/network";
 
 const { placeBuilding, placeDragon } = Events;
@@ -39,11 +39,11 @@ export class PlacementService implements OnInit {
       throw new MissingBuildingException(habitatID, `Could not find habitat when placing dragon "${dragonData.name}"`);
 
     const id = idOverride ?? HTTP.GenerateGUID();
-    const dragonModel = <Model>Assets.Dragons.WaitForChild(dragonData.name);
-    const offset = new Vector3(0, dragonModel.PrimaryPart!.Size.Y / 2, 0);
-    dragonModel.PrimaryPart!.Position = habitat.PrimaryPart!.Position.add(offset);
-    dragonModel.Parent = habitat.Dragons;
-    dragonModel.SetAttribute("ID", id);
+    newDragonModel(dragonData.name, {
+      position: habitat.PrimaryPart!.Position,
+      parent: habitat.Dragons,
+      attributes: { ID: id }
+    });
 
     if (idOverride) return;
     this.saveDragonInfo(player, id, dragonData, habitatID);
@@ -120,7 +120,7 @@ export class PlacementService implements OnInit {
     newBuildings.push(habitat)
     dragons.push(dragon);
 
-    this.data.set(player, "buildings", buildings);
+    this.data.set(player, "buildings", newBuildings);
     this.data.set(player, "dragons", dragons);
   }
 

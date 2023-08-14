@@ -19,14 +19,25 @@ export const now = () => round(tick());
 export const toStorableVector3 = ({ X, Y, Z }: Vector3) => ({ x: X, y: Y, z: Z })
 export const toUsableVector3 = ({ x, y, z }: StorableVector3) => new Vector3(x, y, z);
 
-export function newDragonModel(name: string): Model {
-  return <Model>Assets.Dragons.WaitForChild(name).Clone();
+export function newDragonModel(name: string, options?: { 
+  position?: Vector3;
+  parent?: Instance;
+  attributes?: Record<string, AttributeValue>;
+}): Model {
+
+  const dragonModel = <Model>Assets.Dragons.WaitForChild(name).Clone();
+  dragonModel.PrimaryPart!.Position = options?.position?.add(new Vector3(0, dragonModel.PrimaryPart!.Size.Y / 2, 0)) ?? new Vector3;
+
+  if (options?.parent)
+    dragonModel.Parent = options.parent;
+
+  return dragonModel;
 }
 
 export function newEggMesh(egg: Egg, options?: { 
   position?: Vector3;
   parent?: Instance;
-  attributes?: Record<string, AttributeValue>
+  attributes?: Record<string, AttributeValue>;
 }): MeshPart {
 
   const eggMesh = <MeshPart>Assets.Eggs.WaitForChild(egg.name).Clone();
