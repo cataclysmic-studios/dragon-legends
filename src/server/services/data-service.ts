@@ -117,6 +117,6 @@ export class DataService implements OnInit, OnPlayerLeave {
 	}
 
 	private getStore<T extends DataValue = DataValue>(player: Player, key: DataKey): DataStore2<T> {
-		return DataStore2<T>("TEST_" + key, player);
+		return DataStore2<T>("TEST1_" + key, player);
 	}
 }
