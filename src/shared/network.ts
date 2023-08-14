@@ -5,6 +5,7 @@ import { DragonInfo } from "./data-models/dragons";
 import { Building } from "./data-models/buildings";
 import { Placable } from "./util";
 import { TimerInfo } from "./data-models/time";
+import { NotificationType } from "./notification-type";
 
 interface ServerEvents {
   initializeData(): void;
@@ -27,6 +28,7 @@ interface ClientEvents {
   buildingsLoaded(buildings: Building[]): void;
   timerFinished(timer: TimerInfo): void;
   addNotificationToButton(buttonName: string): void;
+  dispatchNotification(message: string, notificationType?: NotificationType): void;
 }
 
 interface ServerFunctions {

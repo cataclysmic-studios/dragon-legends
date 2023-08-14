@@ -7,9 +7,10 @@ import { UIController } from "./ui-controller";
 import { NotificationController } from "./notification-controller";
 
 import { Element } from "shared/data-models/dragons";
+import { Habitat } from "shared/data-models/buildings";
+import { NotificationType } from "shared/notification-type";
 import { Player, getDragonData, newDragonModel } from "shared/util";
 import { Events, Functions } from "client/network";
-import { Habitat } from "shared/data-models/buildings";
 
 const { placeDragon } = Events;
 const { isTimerActive, getBuildingData } = Functions;
@@ -50,7 +51,7 @@ export class DragonPlacementController {
     }
 
     if (usableHabitats.size() === 0)
-      return this.notification.dispatch("Cannot place dragon: you own no usable habitats for this dragon.");
+      return this.notification.dispatch("Cannot place dragon, you own no usable habitats for this dragon.", NotificationType.Error);
 
     this.ui.setPage("Main", "None");
     this.janitor.Add(this.mouse.Button1Down.Connect(() => {

@@ -1,6 +1,13 @@
-interface HabitatMaximums {
+interface UpgradableMaximums {
 	readonly level: number;
+}
+
+interface HabitatMaximums extends UpgradableMaximums {
 	readonly dragons: number[];
+}
+
+interface HatcheryMaximums extends UpgradableMaximums {
+	readonly eggs: number[];
 }
 
 interface ItemCard extends Frame {
@@ -100,14 +107,17 @@ interface InventoryCard extends Frame {
 	};
 }
 
-interface HabitatModel extends Model {
-	Dragons: Folder;
-	Highlight: Highlight;
-	Base: Part;
+interface ModelWithMaximums extends Model {
 	Maximums: ModuleScript;
 }
 
-interface HatcheryModel extends Model {
+interface HabitatModel extends ModelWithMaximums {
+	Dragons: Folder;
+	Highlight: Highlight;
+	Base: Part;
+}
+
+interface HatcheryModel extends ModelWithMaximums {
 	Base: UnionOperation;
 	Eggs: Folder;
 	EggPositions: Folder & {

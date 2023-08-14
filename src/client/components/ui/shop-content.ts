@@ -2,7 +2,8 @@ import { OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
 import { CollectionService as Collection, HttpService as HTTP, Workspace as World } from "@rbxts/services";
 import { BuildingPlacementController } from "client/controllers/building-placement-controller";
-import { NotificationController, NotificationType } from "client/controllers/notification-controller";
+import { NotificationController } from "client/controllers/notification-controller";
+import { NotificationType } from "shared/notification-type";
 import { UIController } from "client/controllers/ui-controller";
 
 import { Egg, InventoryItem } from "shared/data-models/inventory";
@@ -20,7 +21,7 @@ interface Attributes {}
 export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> implements OnStart {
   public constructor(
     private readonly ui: UIController,
-    private readonly notifications: NotificationController,
+    private readonly notification: NotificationController,
     private readonly building: BuildingPlacementController
   ) { super(); }
 
@@ -53,10 +54,10 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
 
         const gold = <number>await getData("gold");
         if (price > gold)
-          return this.notifications.dispatch(`You need ${toSuffixedNumber(price - gold)} more gold to purchase this.`, NotificationType.Error);
+          return this.notification.dispatch(`You need ${toSuffixedNumber(price - gold)} more gold to purchase this.`, NotificationType.Error);
 
         this.ui.open("Main");
-        this.onPurchaseClick(item, contentType, price, gold);
+        this.onPurchaseClick(item, contentType, price);
       }));
 
       card.Parent = this.instance;
@@ -67,8 +68,7 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
   private async onPurchaseClick(
     itemModel: Model,
     contentType: Placable,
-    price: number,
-    gold: number
+    price: number
   ): Promise<void> {
 
     switch (contentType) {
@@ -85,7 +85,7 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
         setData("inventory", inventory);
         incrementData("gold", -price);
 
-        this.notifications.dispatch("Added egg to your inventory!");
+        this.notification.dispatch("Added egg to your inventory!");
         addNotificationToButton.predict("Inventory");
         break;
 

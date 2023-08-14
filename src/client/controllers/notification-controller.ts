@@ -1,22 +1,19 @@
-import { Controller } from "@flamework/core";
+import { Controller, OnStart } from "@flamework/core";
 import { TweenInfoBuilder } from "@rbxts/builders";
 import { UIController } from "./ui-controller";
+import { NotificationType } from "shared/notification-type";
 import { tween } from "shared/util";
+import { Events } from "client/network";
 
+const { dispatchNotification } = Events;
 const { EasingStyle, Font } = Enum;
-
-export const enum NotificationType {
-  Note,
-  Warning,
-  Error
-}
 
 interface NotificationLabel extends TextLabel {
   UIStroke: UIStroke;
 }
 
 @Controller()
-export class NotificationController {
+export class NotificationController implements OnStart {
   private readonly screen;
 
   public constructor(
@@ -25,6 +22,10 @@ export class NotificationController {
     this.screen = this.ui.getScreen<{
       Container: Frame;
     }>("Notifications");
+  }
+
+  public onStart(): void {
+    dispatchNotification.connect((message, notificationType) => this.dispatch(message, notificationType));
   }
 
   public dispatch(message: string, notificationType = NotificationType.Note): void {
