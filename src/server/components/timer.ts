@@ -4,7 +4,7 @@ import { Players } from "@rbxts/services";
 import { SchedulingService } from "server/services/scheduling-service";
 import { DataService } from "server/services/data-service";
 
-import { TimeInfo } from "shared/data-models/time";
+import { TimeInfo, TimerInfo } from "shared/data-models/time";
 import { Exception } from "shared/exceptions";
 import { Assets, toRemainingTime, now } from "shared/util";
 import { Events } from "server/network";
@@ -30,7 +30,7 @@ export class Timer extends BaseComponent<Attributes, Model | MeshPart> implement
     timerUI.Parent = this.instance;
     
     const updateUI = () => {
-      const [ player ] = <Player[]>Players.GetChildren();
+      const [ player ] = Players.GetPlayers();
       if (!player) return;
 
       const { timers } = this.data.get<TimeInfo>(player, "timeInfo");
@@ -38,11 +38,7 @@ export class Timer extends BaseComponent<Attributes, Model | MeshPart> implement
       if (!timer)
         throw new Exception("MissingTimer", `Could not find timer associated with "${this.instance.Name}" (ID ${this.attributes.ID})`);
 
-      if (!timerUI.FindFirstChildOfClass("ImageLabel")) {
-        const icon = <ImageLabel>Assets.UI.TimerIcons.WaitForChild(timer.type).Clone();
-        icon.Parent = timerUI;
-      }
-
+      this.addIcon(timer, timerUI);
       const timeElapsed = now() - timer.beganAt;
       const timeRemaining = timer.length - timeElapsed;
       if (timeRemaining <= 0) {
@@ -69,7 +65,9 @@ export class Timer extends BaseComponent<Attributes, Model | MeshPart> implement
     this.maid.GiveTask(this.schedule.every.second.Connect(updateUI));
   }
 
-  private addIcon(): void {
-    
+  private addIcon(timer: TimerInfo, timerUI: BillboardGui): void {
+    if (timerUI.FindFirstChildOfClass("ImageLabel")) return;
+    const icon = <ImageLabel>Assets.UI.TimerIcons.WaitForChild(timer.type).Clone();
+    icon.Parent = timerUI;
   }
 }

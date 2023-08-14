@@ -29,7 +29,7 @@ interface ClientEvents {
 
 interface ServerFunctions {
   getData(key: DataKey): DataValue;
-  findBuilding(id: string): Maybe<Building>;
+  getBuildingData(id: string): Maybe<Building>;
   isTimerActive(buildingID: string): boolean;
   calculateXPUntilNextLevel(): number;
 }

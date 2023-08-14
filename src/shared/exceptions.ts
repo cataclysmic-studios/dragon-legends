@@ -25,3 +25,9 @@ export class MissingBuildingException extends Exception {
 		super("MissingBuilding", `${message} (Building ID ${buildingID})`);
 	}
 }
+
+export class MissingDataException extends Exception {
+	public constructor(id: string, message: string) {
+		super("MissingData", `${message} (ID ${id})`);
+	}
+}

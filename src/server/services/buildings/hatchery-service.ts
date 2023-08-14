@@ -22,21 +22,21 @@ export class HatcheryService implements OnInit {
   }
 
   private removeEggFromHatchery(player: Player, eggID: string): void {
-    const hatchery = this.data.findBuilding<Hatchery>(player, "HATCHERY");
+    const hatchery = this.data.getBuildingData<Hatchery>(player, "HATCHERY");
     const hatcheryModel = getPlacedBuilding<HatcheryModel>("HATCHERY");
     hatcheryModel.Eggs
       .GetChildren()
       .find(egg => egg.GetAttribute<string>("ID") === eggID)
       ?.Destroy();
 
-    this.data.removeBuilding(player, "HATCHERY");
     hatchery.eggs = hatchery.eggs.filter(egg => egg.id !== eggID);
-    this.data.addBuilding(player, hatchery);
+    this.data.removeBuildingData(player, "HATCHERY");
+    this.data.addBuildingData(player, hatchery);
   }
 
   // check if hatchery is full before calling
   private addEgg(player: Player, egg: Egg, isLoading = false): void {
-    const hatchery = this.data.findBuilding<Hatchery>(player, "HATCHERY");
+    const hatchery = this.data.getBuildingData<Hatchery>(player, "HATCHERY");
     const hatcheryModel = getPlacedBuilding<HatcheryModel>("HATCHERY");
     const eggPositionIndex = tostring(hatchery.eggs.size() + 1);
     const eggPositionPart = <Part>hatcheryModel.EggPositions.WaitForChild(eggPositionIndex);
@@ -48,9 +48,9 @@ export class HatcheryService implements OnInit {
     
     // don't edit building/timer data for eggs if egg is being loaded from BuildingLoaderService
     if (isLoading) return;
-    this.data.removeBuilding(player, "HATCHERY");
+    this.data.removeBuildingData(player, "HATCHERY");
     hatchery.eggs = [ ...hatchery.eggs, egg ];
-    this.data.addBuilding(player, hatchery);
+    this.data.addBuildingData(player, hatchery);
     this.timer.addHatchTimer(player, egg.id, egg.hatchTime);
   }
 }

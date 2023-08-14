@@ -12,7 +12,7 @@ import { DataLinked } from "client/hooks";
 import { Events, Functions } from "client/network";
 
 const { timerFinished, removeEggFromHatchery } = Events;
-const { findBuilding, isTimerActive } = Functions;
+const { getBuildingData: findBuilding, isTimerActive } = Functions;
 const { isUpgradable, isHabitat, isHatchery } = Buildings;
 
 interface Attributes {
@@ -34,6 +34,8 @@ interface BuildingSelectFrame extends Frame {
 @Component({ tag: "BuildingSelectPage" })
 export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelectFrame> implements OnStart, DataLinked {
   private readonly buttons = this.instance.BottomRight;
+  private dragonButtonDebounce = false;
+  private eggButtonDebounce = false;
 
   public constructor(
     private readonly dragon: DragonPlacementController
@@ -42,15 +44,21 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
   public onStart(): void {
     this.maid.GiveTask(
       this.instance.GetAttributeChangedSignal("ID")
-        .Connect(() => this.onDataUpdate("buildings"))
+        .Connect(async () => {
+          this.updatePage();  
+        })
     );
   }
 
   public async onDataUpdate(key: DataKey): Promise<void> {
     if (key !== "buildings") return;
-    if (!this.attributes.ID) return;
-    const building = await this.getBuilding();
+    this.updatePage();
+  }
 
+  private async updatePage(): Promise<void> {
+    if (!this.attributes.ID) return;
+
+    const building = await this.getBuilding();
     if (!building)
       throw new MissingBuildingException(this.attributes.ID, "Failed to find building when updating BuildingSelectPage");
 
@@ -59,6 +67,10 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
   }
 
   private async addEggButtons({ eggs }: Hatchery): Promise<void> {
+    if (this.eggButtonDebounce) return;
+    this.eggButtonDebounce = true;
+    task.delay(1, () => this.eggButtonDebounce = false);
+
     const janitor = new Janitor;
     for (const egg of eggs) {
       const button = Assets.UI.HatcheryEggButton.Clone();
@@ -91,6 +103,10 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
   }
 
   private addDragonButtons({ dragons }: Habitat): void {
+    if (this.dragonButtonDebounce) return;
+    this.dragonButtonDebounce = true;
+    task.delay(1.5, () => this.dragonButtonDebounce = false);
+
     const janitor = new Janitor;
     for (const dragon of dragons) {
       const button = Assets.UI.HabitatDragonButton.Clone();
@@ -125,8 +141,13 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
 
   private removeExtraButtons(): void {
     for (const button of this.buttons.GetChildren())
-      if (button.GetAttribute("DragonID") || button.GetAttribute("EggID"))
+      if (button.GetAttribute("DragonID")) {
+        if (this.dragonButtonDebounce) return;
         button.Destroy();
+      } else if (button.GetAttribute("EggID")) {
+        if (this.eggButtonDebounce) return;
+        button.Destroy();
+      }
   }
 
   private updateTitle(building: Building): void {

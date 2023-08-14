@@ -1,7 +1,9 @@
 import { Service, OnInit } from "@flamework/core";
 import { HttpService as HTTP, Workspace as World } from "@rbxts/services";
+
 import { DataService } from "./data-service";
 import { TimerService } from "./timer-service";
+import { HabitatService } from "./buildings/habitat-service";
 
 import { Dragon, DragonInfo } from "shared/data-models/dragons";
 import { Building, Habitat } from "shared/data-models/buildings";
@@ -15,7 +17,8 @@ const { placeBuilding, placeDragon } = Events;
 export class PlacementService implements OnInit {
   public constructor(
     private readonly data: DataService,
-    private readonly timer: TimerService
+    private readonly timer: TimerService,
+    private readonly habitat: HabitatService
   ) {}  
 
   public onInit(): void {
@@ -77,7 +80,7 @@ export class PlacementService implements OnInit {
 
     const buildings = this.data.get<Building[]>(player, "buildings");
     const dragons = this.data.get<Dragon[]>(player, "dragons");
-    const habitat = this.data.findBuilding<Habitat>(player, habitatID)!;
+    const habitat = this.data.getBuildingData<Habitat>(player, habitatID)!;
     const dragon: Dragon = {
       id, name, elements, rarity,
       damage: 100,
@@ -117,7 +120,7 @@ export class PlacementService implements OnInit {
     habitat.dragons = [...habitat.dragons, dragon ];
 
     const newBuildings = buildings.filter(b => b.id !== habitatID);
-    newBuildings.push(habitat)
+    newBuildings.push(habitat);
     dragons.push(dragon);
 
     this.data.set(player, "buildings", newBuildings);
@@ -136,7 +139,7 @@ export class PlacementService implements OnInit {
     const buildings = this.data.get<Building[]>(player, "buildings");
     switch (category) {
       case "Habitats": {
-        const info: Habitat = {
+        const habitat: Habitat = {
           id, name,
           position: toStorableVector3(position),
           level: 1,
@@ -144,7 +147,8 @@ export class PlacementService implements OnInit {
           dragons: []
         }
         
-        buildings.push(info);
+        buildings.push(habitat);
+        this.habitat.updateGoldGeneration(player, habitat);
         break;
       }
     }
