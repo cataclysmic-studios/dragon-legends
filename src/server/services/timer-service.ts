@@ -9,7 +9,7 @@ import { Exception, MissingBuildingException } from "shared/exceptions";
 import { getPlacedBuilding, now } from "shared/util";
 import { Events, Functions } from "server/network";
 
-const { updateTimers } = Events;
+const { updateTimers, timerFinished } = Events;
 const { isTimerActive } = Functions;
 
 @Service()
@@ -65,6 +65,7 @@ export class TimerService implements OnInit {
       const completionTime = timer.beganAt + timer.length;
 
       if (now() >= completionTime) {
+        timerFinished(player, timer);
         this.removeTimer(player, timer.id);
         if (this.components.getComponent<Timer>(modelForTimer))
           this.components.removeComponent<Timer>(modelForTimer);

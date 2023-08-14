@@ -19,6 +19,10 @@ export const now = () => round(tick());
 export const toStorableVector3 = ({ X, Y, Z }: Vector3) => ({ x: X, y: Y, z: Z })
 export const toUsableVector3 = ({ x, y, z }: StorableVector3) => new Vector3(x, y, z);
 
+export function newDragonModel(name: string): Model {
+  return <Model>Assets.Dragons.WaitForChild(name).Clone();
+}
+
 export function newEggMesh(egg: Egg, options?: { 
   position?: Vector3;
   parent?: Instance;

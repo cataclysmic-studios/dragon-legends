@@ -7,7 +7,7 @@ import { Hatchery } from "shared/data-models/buildings";
 import { getPlacedBuilding, newEggMesh } from "shared/util";
 import { Events } from "server/network";
 
-const { addEggToHatchery } = Events;
+const { addEggToHatchery, removeEggFromHatchery } = Events;
 
 @Service()
 export class HatcheryService implements OnInit {
@@ -18,6 +18,20 @@ export class HatcheryService implements OnInit {
 
   public onInit(): void {
     addEggToHatchery.connect((player, egg, isLoaded) => this.addEgg(player, egg, isLoaded));
+    removeEggFromHatchery.connect((player, eggID) => this.removeEggFromHatchery(player, eggID));
+  }
+
+  private removeEggFromHatchery(player: Player, eggID: string): void {
+    const hatchery = this.data.findBuilding<Hatchery>(player, "HATCHERY");
+    const hatcheryModel = getPlacedBuilding<HatcheryModel>("HATCHERY");
+    hatcheryModel.Eggs
+      .GetChildren()
+      .find(egg => egg.GetAttribute<string>("ID") === eggID)
+      ?.Destroy();
+
+    this.data.removeBuilding(player, "HATCHERY");
+    hatchery.eggs = hatchery.eggs.filter(egg => egg.id !== eggID);
+    this.data.addBuilding(player, hatchery);
   }
 
   // check if hatchery is full before calling

@@ -6,13 +6,14 @@ import { Janitor } from "@rbxts/janitor";
 import StringUtils from "@rbxts/string-utils";
 
 import { UIController } from "./ui-controller";
+import { NotificationController } from "./notification-controller";
 
 import { Element } from "shared/data-models/dragons";
-import { Assets, Placable, Player, getDragonData, getMouseWorldPosition } from "shared/util";
+import { Assets, Placable, Player, getDragonData, getMouseWorldPosition, newDragonModel } from "shared/util";
 import { Events, Functions } from "client/network";
 
 const { setData, placeBuilding, placeDragon } = Events;
-const { getData } = Functions;
+const { getData, isTimerActive } = Functions;
 
 // TODO: move() method, green/red highlight, some damn limits
 
@@ -35,7 +36,8 @@ export class PlacementController implements OnRender, OnInit {
   private mouseDown = false;
 
   public constructor(
-    private readonly ui: UIController
+    private readonly ui: UIController,
+    private readonly notification: NotificationController
   ) {}
 
   public inPlacementMode(): boolean {
@@ -77,24 +79,30 @@ export class PlacementController implements OnRender, OnInit {
     return new Vector3(this.snapCoord(X), rootPart.Size.Y / 2, this.snapCoord(Z));
   }
 
-  public placeDragon(dragonModel: Model): void {
-    this.ui.setPage("Main", "None");
-
+  public async placeDragon(dragonName: string): Promise<boolean | void> {
     // TODO: check space left in habitat
+    const dragonModel = newDragonModel(dragonName);
     const dragon = getDragonData(dragonModel);
-    const usableHabitats: HabitatModel[] = [];
+    dragonModel.Destroy();
+
     const habitats = <HabitatModel[]>World.Buildings.GetChildren()
       .filter(b => StringUtils.endsWith(b.Name, "Habitat"));
 
+    const usableHabitats: HabitatModel[] = [];
     for (const habitat of habitats) {
       const [ element ] = <[Element, string]>habitat.Name.split(" ");
-      const usable = dragon.elements.includes(element);
+      const id = habitat.GetAttribute<string>("ID");
+      const usable = dragon.elements.includes(element) && !await isTimerActive(id);
       habitat.Highlight.Enabled = usable;
 
       if (usable)
         usableHabitats.push(habitat);
     }
 
+    if (usableHabitats.size() === 0)
+      return this.notification.dispatch("Cannot place dragon: you own no usable habitats for this dragon.");
+
+    this.ui.setPage("Main", "None");
     this.janitor.Add(this.mouse.Button1Down.Connect(() => {
       const habitat = <Maybe<HabitatModel>>this.mouse.Target?.Parent;
       if (!habitat) return;
@@ -113,6 +121,8 @@ export class PlacementController implements OnRender, OnInit {
       for (const habitat of habitats)
         habitat.Highlight.Enabled = false;
     });
+
+    return true;
   }
 
   public place(buildingName: string, category: Placable): void {
