@@ -18,11 +18,11 @@ export default abstract class ButtonAnimation<
   protected abstract inactive(): void;
 
   public connectEvents(): void {
-    this.instance.MouseEnter.Connect(() => this.active());
-    this.instance.MouseLeave.Connect(() => this.inactive());
+    this.maid.GiveTask(this.instance.MouseEnter.Connect(() => this.active()));
+    this.maid.GiveTask(this.instance.MouseLeave.Connect(() => this.inactive()));
     if (this.includeClick) {
-      this.instance.MouseButton1Down.Connect(() => this.inactive());
-      this.instance.MouseButton1Up.Connect(() => this.active());
+      this.maid.GiveTask(this.instance.MouseButton1Down.Connect(() => this.inactive()));
+      this.maid.GiveTask(this.instance.MouseButton1Up.Connect(() => this.active()));
     }
   }
 }

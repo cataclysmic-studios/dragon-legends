@@ -6,7 +6,7 @@ import { BuildingLoaderService } from "./building-loader-service";
 import { Timer } from "server/components/timer";
 import { TimeInfo, TimerInfo, TimerType } from "shared/data-models/time";
 import { Exception, MissingBuildingException } from "shared/exceptions";
-import { getPlacedBuildingModel, now } from "shared/util";
+import { getPlacedBuilding, now } from "shared/util";
 import { Events, Functions } from "server/network";
 
 const { updateTimers } = Events;
@@ -77,14 +77,14 @@ export class TimerService implements OnInit {
   private getModelForTimer(timer: TimerInfo): Model | MeshPart {
     switch (timer.type) {
       case TimerType.Building: {
-        const building = getPlacedBuildingModel(timer.id);
+        const building = getPlacedBuilding(timer.id);
         if (!building)
           throw new MissingBuildingException(timer.id, "Could not find building associated with timer");
 
         return building;
       }
       case TimerType.Hatch: {
-        const building = getPlacedBuildingModel<HatcheryModel>("HATCHERY");
+        const building = getPlacedBuilding<HatcheryModel>("HATCHERY");
         const eggMesh = <Maybe<MeshPart>>building.Eggs.GetChildren()
           .find(e => e.GetAttribute<string>("ID") === timer.id);
 

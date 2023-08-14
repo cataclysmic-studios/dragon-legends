@@ -11,6 +11,7 @@ const { isTimerActive } = Functions;
 
 @Controller()
 export class SelectionController implements OnInit {
+  private readonly buildingSelectFrame;
   private readonly mouse = Player.GetMouse();
   private readonly input = new InputContext({
     ActionGhosting: 0,
@@ -24,7 +25,9 @@ export class SelectionController implements OnInit {
   public constructor(
     private readonly ui: UIController,
     private readonly placement: PlacementController
-  ) {}
+  ) {
+    this.buildingSelectFrame = this.ui.getPage("Main", "BuildingSelect");
+  }
 
   public onInit(): void {
     this.input.Bind(["MouseButton1", "Touch"], async () => {
@@ -35,14 +38,19 @@ export class SelectionController implements OnInit {
   }
 
   private select(): void {
-    const buildingSelectFrame = this.ui.setPage("Main", "BuildingSelect");
-    buildingSelectFrame.SetAttribute("ID", this.selectedBuildingID);
+    this.ui.setPage("Main", "BuildingSelect");
+    this.setID();
   }
 
   private deselect() {
     if (this.ui.current !== "Main") return;
     this.ui.setPage("Main", "Main");
     this.selectedBuildingID = undefined;
+    this.setID();
+  }
+
+  private setID(): void {
+    this.buildingSelectFrame.SetAttribute("ID", this.selectedBuildingID);
   }
   
   private canClick(): boolean {

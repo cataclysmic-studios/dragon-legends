@@ -1,7 +1,6 @@
 import { Controller } from "@flamework/core";
 import { PlayerController } from "./player-controller";
 import { CollectionService as Collection } from "@rbxts/services";
-import Log from "shared/logger";
 
 @Controller()
 export class UIController {
@@ -25,6 +24,13 @@ export class UIController {
           this.setPage(gui.Name, mainPage);
         }
       }
+  }
+
+  public getPage<T extends GuiObject = GuiObject>(guiName: string, pageName: string): T {
+    const gui = this.getScreen(guiName);
+    return <T>(<GuiObject[]>gui.GetChildren()
+      .filter(e => Collection.HasTag(e, "Page")))
+      .find(page => page.Name === pageName)!;
   }
 
   public setPage(guiName: string, pageName: string): GuiObject {

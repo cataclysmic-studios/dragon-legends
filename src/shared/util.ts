@@ -39,7 +39,7 @@ export function newEggMesh(egg: Egg, options?: {
   return eggMesh;
 }
 
-export function getPlacedBuildingModel<T extends Model = Model>(id: string): T extends HatcheryModel ? T : Maybe<T> {
+export function getPlacedBuilding<T extends Model = Model>(id: string): T extends HatcheryModel ? T : Maybe<T> {
   return <T extends HatcheryModel ? T : Maybe<T>>World.Buildings.GetChildren()
     .find(b => b.GetAttribute<string>("ID") === id);
 }
