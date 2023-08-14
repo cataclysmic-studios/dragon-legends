@@ -7,10 +7,10 @@ export namespace InventoryItems {
   }
 }
 
-export interface InventoryItem {
+export interface InventoryItem extends Unique {
   readonly name: string;
 }
 
-export interface Egg extends InventoryItem, Unique {
+export interface Egg extends InventoryItem {
   readonly hatchTime: number;
 }

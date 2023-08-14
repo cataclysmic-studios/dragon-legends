@@ -2,7 +2,7 @@ import { Service, OnInit } from "@flamework/core";
 import { DataService } from "../data-service";
 import { TimerService } from "../timer-service";
 
-import { Egg } from "shared/data-models/inventory";
+import { Egg, InventoryItem } from "shared/data-models/inventory";
 import { Hatchery } from "shared/data-models/buildings";
 import { getPlacedBuilding, newEggMesh } from "shared/util";
 import { Events } from "server/network";
@@ -36,7 +36,9 @@ export class HatcheryService implements OnInit {
 
   // check if hatchery is full before calling
   private addEgg(player: Player, egg: Egg, isLoading = false): void {
-    // TODO: remove egg from inventory
+    const inventory = this.data.get<InventoryItem[]>(player, "inventory");
+    const newInventory = inventory.filter(i => i.id !== egg.id);
+    this.data.set(player, "inventory", newInventory);
 
     const hatchery = this.data.getBuildingData<Hatchery>(player, "HATCHERY");
     const hatcheryModel = getPlacedBuilding<HatcheryModel>("HATCHERY");

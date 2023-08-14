@@ -24,6 +24,9 @@ export class Inventory extends BaseComponent<Attributes, ScrollingFrame> impleme
   }
 
   private updateItems(inventory: InventoryItem[]): void {
+    for (const card of this.instance.GetChildren().filter(i => i.IsA("Frame")))
+      card.Destroy();
+
     for (const item of inventory) {
       const card = Assets.UI.InventoryCard.Clone();
       card.Title.Text = item.name;
@@ -43,8 +46,6 @@ export class Inventory extends BaseComponent<Attributes, ScrollingFrame> impleme
         } else {
           print("use item");
         }
-
-        card.Destroy();
       }));
 
       card.Parent = this.instance;
