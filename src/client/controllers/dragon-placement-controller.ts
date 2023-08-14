@@ -13,8 +13,6 @@ import { Events, Functions } from "client/network";
 const { setData, placeDragon } = Events;
 const { getData, isTimerActive } = Functions;
 
-// TODO: move() method, green/red highlight, some damn limits
-
 const { floor } = math;
 
 @Controller()
