@@ -1,5 +1,8 @@
 import { OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
+import { Janitor } from "@rbxts/janitor";
+
+import { DragonPlacementController } from "client/controllers/dragon-placement-controller";
 
 import { DataKey } from "shared/data-models/generic";
 import { Building, Buildings, Habitat, Hatchery } from "shared/data-models/buildings";
@@ -7,8 +10,6 @@ import { MissingBuildingException } from "shared/exceptions";
 import { Assets, newDragonModel, newEggMesh, toSuffixedNumber } from "shared/util";
 import { DataLinked } from "client/hooks";
 import { Events, Functions } from "client/network";
-import { Janitor } from "@rbxts/janitor";
-import { PlacementController } from "client/controllers/placement-controller";
 
 const { timerFinished, removeEggFromHatchery } = Events;
 const { findBuilding, isTimerActive } = Functions;
@@ -35,7 +36,7 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
   private readonly buttons = this.instance.BottomRight;
 
   public constructor(
-    private readonly placement: PlacementController
+    private readonly dragon: DragonPlacementController
   ) { super(); }
   
   public onStart(): void {
@@ -74,7 +75,7 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
       janitor.Add(button.MouseButton1Click.Connect(async () => {
         if (!eggTimerFinished) return;
         const [ dragonName ] = egg.name.gsub(" Egg", "");
-        const placed = await this.placement.placeDragon(dragonName);
+        const placed = await this.dragon.place(dragonName);
         if (placed) {
           removeEggFromHatchery(egg.id);
           button.Destroy();

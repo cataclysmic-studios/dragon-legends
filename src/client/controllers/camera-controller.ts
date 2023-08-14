@@ -1,7 +1,7 @@
 import { Controller,  OnInit, OnRender } from "@flamework/core";
 import { Context as InputContext } from "@rbxts/gamejoy";
 import { StarterGui, UserInputService, Workspace as World } from "@rbxts/services";
-import { PlacementController } from "./placement-controller";
+import { BuildingPlacementController } from "./building-placement-controller";
 
 import { Union } from "@rbxts/gamejoy/out/Actions";
 
@@ -21,7 +21,7 @@ export class CameraController implements OnInit, OnRender {
   private mouseDown = false;
 
   public constructor(
-    private readonly placement: PlacementController
+    private readonly building: BuildingPlacementController
   ) {}
 
   public onInit(): void {
@@ -31,7 +31,7 @@ export class CameraController implements OnInit, OnRender {
     const click = new Union(["MouseButton1", "Touch"]);
     this.input
       .Bind(click, () => {
-        if (this.placement.isDragging()) return;
+        if (this.building.isDragging()) return;
         this.mouseDown = true;
       })
       .BindEvent("onRelease", click.Released, () => {

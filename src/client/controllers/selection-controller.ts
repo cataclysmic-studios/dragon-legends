@@ -2,7 +2,7 @@ import { Controller, OnInit } from "@flamework/core";
 import { CollectionService as Collection } from "@rbxts/services";
 import { Context as InputContext } from "@rbxts/gamejoy";
 import { UIController } from "./ui-controller";
-import { PlacementController } from "./placement-controller";
+import { BuildingPlacementController } from "./building-placement-controller";
 
 import { Player } from "shared/util";
 import { Functions } from "client/network";
@@ -24,7 +24,7 @@ export class SelectionController implements OnInit {
 
   public constructor(
     private readonly ui: UIController,
-    private readonly placement: PlacementController
+    private readonly building: BuildingPlacementController
   ) {
     this.buildingSelectFrame = this.ui.getPage("Main", "BuildingSelect");
   }
@@ -54,7 +54,7 @@ export class SelectionController implements OnInit {
   }
   
   private canClick(): boolean {
-    if (this.placement.inPlacementMode())
+    if (this.building.inPlacementMode())
       return false;
       
     const instance = this.mouse.Target?.Parent;

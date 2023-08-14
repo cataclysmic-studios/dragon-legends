@@ -1,7 +1,7 @@
 import { OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
 import { CollectionService as Collection, HttpService as HTTP, Workspace as World } from "@rbxts/services";
-import { PlacementController } from "client/controllers/placement-controller";
+import { BuildingPlacementController } from "client/controllers/building-placement-controller";
 import { NotificationController, NotificationType } from "client/controllers/notification-controller";
 import { UIController } from "client/controllers/ui-controller";
 
@@ -21,7 +21,7 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
   public constructor(
     private readonly ui: UIController,
     private readonly notifications: NotificationController,
-    private readonly placement: PlacementController
+    private readonly building: BuildingPlacementController
   ) { super(); }
 
   public onStart(): void {
@@ -90,7 +90,7 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
         break;
 
       default:
-        this.placement.place(itemModel.Name, contentType);
+        this.building.place(itemModel.Name, contentType);
         break;
     }
   }
