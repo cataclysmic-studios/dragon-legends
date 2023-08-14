@@ -5,6 +5,7 @@ import { CollectionService as Collection } from "@rbxts/services";
 @Controller()
 export class UIController {
   public current = "Main";
+  public currentPage = "Main";
 
   public constructor(
     private readonly player: PlayerController
@@ -38,8 +39,12 @@ export class UIController {
     const pages = <GuiObject[]>gui.GetChildren()
       .filter(e => Collection.HasTag(e, "Page"));
 
-    for (const page of pages)
-      page.Visible = page.Name === pageName;
+    for (const page of pages) {
+      const on = page.Name === pageName;
+      page.Visible = on;
+      if (on)
+        this.currentPage = page.Name;
+    }
 
     return pages.find(page => page.Name === pageName)!;
   }

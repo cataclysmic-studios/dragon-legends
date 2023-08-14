@@ -18,10 +18,10 @@ export class HatcheryService implements OnInit {
 
   public onInit(): void {
     addEggToHatchery.connect((player, egg, isLoaded) => this.addEgg(player, egg, isLoaded));
-    removeEggFromHatchery.connect((player, eggID) => this.removeEggFromHatchery(player, eggID));
+    removeEggFromHatchery.connect((player, eggID) => this.removeEgg(player, eggID));
   }
 
-  private removeEggFromHatchery(player: Player, eggID: string): void {
+  private removeEgg(player: Player, eggID: string): void {
     const hatchery = this.data.getBuildingData<Hatchery>(player, "HATCHERY");
     const hatcheryModel = getPlacedBuilding<HatcheryModel>("HATCHERY");
     hatcheryModel.Eggs
@@ -36,6 +36,8 @@ export class HatcheryService implements OnInit {
 
   // check if hatchery is full before calling
   private addEgg(player: Player, egg: Egg, isLoading = false): void {
+    // TODO: remove egg from inventory
+
     const hatchery = this.data.getBuildingData<Hatchery>(player, "HATCHERY");
     const hatcheryModel = getPlacedBuilding<HatcheryModel>("HATCHERY");
     const eggPositionIndex = tostring(hatchery.eggs.size() + 1);

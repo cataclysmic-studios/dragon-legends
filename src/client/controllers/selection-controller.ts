@@ -44,6 +44,7 @@ export class SelectionController implements OnInit {
 
   private deselect() {
     if (this.ui.current !== "Main") return;
+    if (this.ui.currentPage === "None") return;
     this.selectedBuildingID = undefined;
     this.setID();
     this.ui.setPage("Main", "Main");
