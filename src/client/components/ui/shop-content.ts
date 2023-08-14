@@ -34,12 +34,6 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
       const card = Assets.UI.ItemCard.Clone();
       card.Title.Text = item.Name;
 
-      const viewportCamera = new Instance("Camera");
-      viewportCamera.CFrame = World.ViewportCamera.CFrame;
-      viewportCamera.FieldOfView = this.getViewportFOV(contentType);
-      viewportCamera.Parent = card.Viewport;
-      card.Viewport.CurrentCamera = viewportCamera;
-
       const viewportModel = item.Clone();
       viewportModel.PrimaryPart!.Position = new Vector3;
       viewportModel.Parent = card.Viewport;
@@ -70,13 +64,6 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
     }
   }
 
-  private getViewportFOV(contentType: Placable): number {
-    switch (contentType) {
-      case "Habitats": return 70;
-      default: return 30;
-    }
-  }
-
   private async onPurchaseClick(
     itemModel: Model,
     contentType: Placable,
@@ -100,9 +87,6 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
 
         this.notifications.dispatch("Added egg to your inventory!");
         addNotificationToButton.predict("Inventory");
-
-        // TODO: call this to place the dragon after hatching the egg
-        // this.placement.placeDragon(item);
         break;
 
       default:

@@ -50,24 +50,25 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
     this.updateButtons(building);
   }
 
-  private addEggButtons(hatchery: Hatchery): void {
-    for (const egg of hatchery.eggs) {
+  private addEggButtons({ eggs }: Hatchery): void {
+    for (const egg of eggs) {
       const button = Assets.UI.HatcheryEggButton.Clone();
       newEggMesh(egg, {
         parent: button.Viewport
       });
 
       button.Parent = this.buttons;
+      button.SetAttribute("EggID", egg.id);
     }
   }
 
-  private addDragonButtons(habitat: Habitat): void {
-    this.buttons.CollectGold.Amount.Text = toSuffixedNumber(habitat.gold);
-    for (const dragon of habitat.dragons) {
+  private addDragonButtons({ dragons }: Habitat): void {
+    for (const dragon of dragons) {
       const button = Assets.UI.HabitatDragonButton.Clone();
       // button.Boost
       button.DragonName.Text = dragon.name;
       button.Parent = this.buttons;
+      button.SetAttribute("DragonID", dragon.id);
     }
   }
 
@@ -76,9 +77,10 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
     this.buttons.Upgrade.Visible = isUpgradable(building);
 
     this.removeExtraButtons(building);
-    if (isHabitat(building))
+    if (isHabitat(building)) {
+      this.buttons.CollectGold.Amount.Text = toSuffixedNumber(building.gold);
       this.addDragonButtons(building);
-    else if (isHatchery(building))
+    } else if (isHatchery(building))
       this.addEggButtons(building);
   }
 

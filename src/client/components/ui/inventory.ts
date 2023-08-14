@@ -1,5 +1,4 @@
 import { Component, BaseComponent } from "@flamework/components";
-import { Workspace as World } from "@rbxts/services";
 import { UIController } from "client/controllers/ui-controller";
 
 import { DataKey, DataValue } from "shared/data-models/generic";
@@ -28,12 +27,6 @@ export class Inventory extends BaseComponent<Attributes, ScrollingFrame> impleme
     for (const item of inventory) {
       const card = Assets.UI.InventoryCard.Clone();
       card.Title.Text = item.name;
-
-      const viewportCamera = new Instance("Camera");
-      viewportCamera.CFrame = World.ViewportCamera.CFrame;
-      viewportCamera.FieldOfView = 30;
-      viewportCamera.Parent = card.Viewport;
-      card.Viewport.CurrentCamera = viewportCamera;
       
       if (isEgg(item))
         newEggMesh(item, { parent: card.Viewport });
