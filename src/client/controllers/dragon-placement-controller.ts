@@ -10,10 +10,8 @@ import { Element } from "shared/data-models/dragons";
 import { Player, getDragonData, newDragonModel } from "shared/util";
 import { Events, Functions } from "client/network";
 
-const { setData, placeDragon } = Events;
-const { getData, isTimerActive } = Functions;
-
-const { floor } = math;
+const { placeDragon } = Events;
+const { isTimerActive } = Functions;
 
 @Controller()
 export class DragonPlacementController {
@@ -60,9 +58,6 @@ export class DragonPlacementController {
     }));
 
     this.janitor.Add(async () => {
-      const gold = <number>await getData("gold");
-      setData("gold", gold - dragon.price);
-
       this.ui.setPage("Main", "Main");
       for (const habitat of habitats)
         habitat.Highlight.Enabled = false;
