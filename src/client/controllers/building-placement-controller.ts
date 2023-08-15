@@ -70,7 +70,7 @@ export class BuildingPlacementController implements OnRender, OnInit {
 
   private updateHighlight(): void {
     if (!this.currentHighlight) return;
-    this.currentHighlight.FillColor = this.isColliding() ? this.cannotPlaceColor : this.canPlaceColor;
+    this.currentHighlight.FillColor = this.canPlace() ? this.canPlaceColor : this.cannotPlaceColor;
   }
 
   private snapCoord(n: number): number {
@@ -82,17 +82,52 @@ export class BuildingPlacementController implements OnRender, OnInit {
     return new Vector3(this.snapCoord(X), rootPart.Size.Y / 2, this.snapCoord(Z));
   }
 
-  private isColliding(): boolean {
+  private canPlace(): boolean {
     if (!this.currentlyPlacing)
       return false;
 
-    const boundsPart = <Part>this.currentlyPlacing!
-      .GetChildren()
-      .find(i => Collection.HasTag(i, "BuildingBounds"));
+    return this.inIslandBounds() && !this.isColliding();
+  }
 
+  private inIslandBounds(): boolean {
+    const boundsPart = this.getBoundsPart();
+    const [ island ] = this.getPartsInRegion(boundsPart);
+    if (!island)
+      return false;
+
+    const region = new Region3(
+      new Vector3(
+        -island.Size.X / 2 + boundsPart.Size.X,
+        island.Position.Y + island.Size.Y / 2,
+        -island.Size.Z / 2 + boundsPart.Size.Z
+      ),
+      new Vector3(
+        island.Size.X / 2 - boundsPart.Size.X,
+        50,
+        island.Size.Z / 2 - boundsPart.Size.Z
+      )
+    );
+
+    const partsInIslandRegion = World.FindPartsInRegion3(region, island);
+    return partsInIslandRegion.includes(boundsPart);
+  }
+
+  private isColliding(): boolean {
+    const boundsPart = this.getBoundsPart();
+    const partsInRegion = this.getPartsInRegion(boundsPart);
+    return partsInRegion.size() > 1;
+  }
+
+  private getPartsInRegion(boundsPart: Part): BasePart[] {
     const region = toRegion3(boundsPart, 0.25);
     const partsInRegion = World.FindPartsInRegion3(region, boundsPart);
-    return partsInRegion.size() > 1;
+    return partsInRegion;
+  }
+
+  private getBoundsPart(): Part {
+    return <Part>this.currentlyPlacing!
+      .GetChildren()
+      .find(i => Collection.HasTag(i, "BuildingBounds"));
   }
 
   public place(buildingName: string, category: Placable): void {
@@ -119,7 +154,7 @@ export class BuildingPlacementController implements OnRender, OnInit {
     this.janitor.Add(this.currentlyPlacing);
     this.janitor.Add(() => this.ui.setPage("Main", "Main"));
     this.janitor.Add(placementConfirmation.Confirm.MouseButton1Click.Connect(async () => {
-      if (this.isColliding()) return;
+      if (!this.canPlace()) return;
       const position = this.currentlyPlacing!.PrimaryPart!.Position;
       const price = <number>this.currentlyPlacing!.GetAttribute("Price");
       incrementData("gold", -price);
