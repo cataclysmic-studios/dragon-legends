@@ -1,4 +1,6 @@
-export class Unique {
+export class Unique implements Record<string, unknown> {
+  [key: string]: unknown;
+  
   public constructor(
     public readonly id: string
   ) {}

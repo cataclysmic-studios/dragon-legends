@@ -4,13 +4,17 @@ import { Context as InputContext } from "@rbxts/gamejoy";
 import { UIController } from "./ui-controller";
 import { BuildingPlacementController } from "./building-placement-controller";
 
+import { Building } from "shared/data-models/buildings";
 import { Player } from "shared/util";
 import { Functions } from "client/network";
+import Signal from "@rbxts/signal";
 
-const { isTimerActive } = Functions;
+const { isTimerActive, getBuildingData } = Functions;
 
 @Controller()
 export class SelectionController implements OnInit {
+  public readonly onSelectionChanged = new Signal<() => void>;
+
   private readonly buildingSelectFrame;
   private readonly mouse = Player.GetMouse();
   private readonly input = new InputContext({
@@ -20,8 +24,9 @@ export class SelectionController implements OnInit {
     OnBefore: () => this.canClick()
   });
 
+  
   private selectedBuildingID?: string;
-
+  
   public constructor(
     private readonly ui: UIController,
     private readonly building: BuildingPlacementController
@@ -35,6 +40,11 @@ export class SelectionController implements OnInit {
       if (await isTimerActive(this.selectedBuildingID!)) return;
       this.select();
     });
+  }
+
+  public async getSelectedBuilding(): Promise<Maybe<Building>> {
+    if (!this.selectedBuildingID) return;
+    return getBuildingData(this.selectedBuildingID);
   }
 
   private select(): void {
@@ -52,6 +62,7 @@ export class SelectionController implements OnInit {
 
   private setID(): void {
     this.buildingSelectFrame.SetAttribute("ID", this.selectedBuildingID);
+    this.onSelectionChanged.Fire();
   }
   
   private canClick(): boolean {
