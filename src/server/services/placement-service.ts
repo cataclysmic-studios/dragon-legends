@@ -1,5 +1,5 @@
 import { Service, OnInit } from "@flamework/core";
-import { HttpService as HTTP, Workspace as World } from "@rbxts/services";
+import { HttpService as HTTP, RunService as Runtime, Workspace as World } from "@rbxts/services";
 
 import { DataService } from "./data-service";
 import { TimerService } from "./timer-service";
@@ -67,7 +67,10 @@ export class PlacementService implements OnInit {
     building.SetAttribute("ID", id);
 
     if (idOverride) return;
-    const timerLength = building.GetAttribute<string>("PlacementTime");
+    const timerLength = Runtime.IsStudio() ?
+      "5 seconds" :
+      building.GetAttribute<string>("PlacementTime");
+      
     this.saveBuildingInfo(player, id, buildingName, category, position, toSeconds(timerLength));
   }
 

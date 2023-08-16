@@ -15,7 +15,7 @@ export class LevelService implements OnStart {
   }
   
   private calculateXPUntilNextLevel(player: Player): number {
-    const level = this.data.get<number>(player, "level");
+    const level = this.data.get<number>(player, "level") + 1;
     return (level ** 2 + level) / 2 * 100 - (level * 100);
   }
 
@@ -26,8 +26,7 @@ export class LevelService implements OnStart {
     if (xp >= xpUntilNext) {
       const diff = xp - xpUntilNext;
       this.addLevel(player);
-      this.addXP(player, diff);
-      return;
+      return this.addXP(player, diff);
     }
 
     this.data.increment(player, "xp", amount);
