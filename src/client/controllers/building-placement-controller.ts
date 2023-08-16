@@ -1,5 +1,5 @@
 import { Controller, OnInit, OnRender } from "@flamework/core";
-import { CollectionService as Collection, Workspace as World } from "@rbxts/services";
+import { CollectionService as Collection, Lighting, Workspace as World } from "@rbxts/services";
 import { Context as InputContext } from "@rbxts/gamejoy";
 import { Union } from "@rbxts/gamejoy/out/Actions";
 import { Janitor } from "@rbxts/janitor";
@@ -132,6 +132,7 @@ export class BuildingPlacementController implements OnRender, OnInit {
 
   public place(buildingName: string, category: Placable): void {
     this.toggleGrid(true);
+    this.toggleDepthOfField(true);
     const buildingModel = <Model>Assets.WaitForChild(category).WaitForChild(buildingName).Clone();
     const rootPart = buildingModel.PrimaryPart!;
     const highlight = new Instance("Highlight", rootPart);
@@ -169,13 +170,18 @@ export class BuildingPlacementController implements OnRender, OnInit {
 
   private cancelPlacement(): void {
     this.toggleGrid(false);
+    this.toggleDepthOfField(false);
     this.janitor.Cleanup();
     this.currentlyPlacing = undefined;
     this.currentHighlight = undefined;
   }
 
+  private toggleDepthOfField(on: boolean) {    
+    Lighting.DepthOfField.Enabled = on;
+  }
+
   private toggleGrid(on: boolean) {    
-    const enabledTransparency = 0.5
+    const enabledTransparency = 0.5;
     const islands = <Island[]>World.Islands.GetChildren();
     for (const island of islands)
       island.Grid.Transparency = on ? enabledTransparency : 1;
