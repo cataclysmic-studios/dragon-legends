@@ -3,7 +3,7 @@ import { CollectionService as Collection, Lighting, Workspace as World } from "@
 import { Janitor } from "@rbxts/janitor";
 
 import { UIController } from "./ui-controller";
-import { MouseController } from "./mouse-controller";
+import { MouseController, MouseIcon } from "./mouse-controller";
 
 import { Assets, Placable, getMouseWorldPosition, toRegion3 } from "shared/util";
 import { Events } from "client/network";
@@ -32,16 +32,18 @@ export class BuildingPlacementController implements OnRender, OnInit {
   ) { }
 
   public onInit(): void | Promise<void> {
-    this.mouse.onClick(() => this.targetOnClick = this.mouse.target());
     this.mouse.setTargetFilter(World.Ignore);
+    this.mouse.onClick(() => this.targetOnClick = this.mouse.target());
   }
 
   public onRender(): void {
-    if (!this.currentlyPlacing || !this.mouse.down) return;
+    const notDragging = !this.currentlyPlacing || !this.mouse.down;
+    this.mouse.setIcon(notDragging ? MouseIcon.Default : MouseIcon.Drag)
+    if (notDragging) return;
     this.updateHighlight();
 
-    if (this.currentlyPlacing.Name !== this.targetOnClick?.Parent?.Name) return;
-    this.currentlyPlacing.PrimaryPart!.Position = this.snap(getMouseWorldPosition());
+    if (this.currentlyPlacing!.Name !== this.targetOnClick?.Parent?.Name) return;
+    this.currentlyPlacing!.PrimaryPart!.Position = this.snap(getMouseWorldPosition());
   }
 
   public inPlacementMode(): boolean {

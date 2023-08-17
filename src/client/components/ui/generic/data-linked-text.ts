@@ -4,6 +4,19 @@ import { Dragon } from "shared/data-models/dragons";
 import { Assets, commaFormat, toSuffixedNumber } from "shared/util";
 import { DataLinked } from "client/hooks";
 
+function removeDuplicates(dragons: Dragon[]): Dragon[] {
+  const seenNames = new Set<string>();
+  const uniqueDragons: Dragon[] = [];
+
+  for (const dragon of dragons)
+    if (!seenNames.has(dragon.name)) {
+      seenNames.add(dragon.name);
+      uniqueDragons.push(dragon);
+    }
+
+  return uniqueDragons;
+}
+
 interface Attributes {
   readonly DataKey: DataKey;
 }
@@ -12,7 +25,7 @@ interface Attributes {
 export class DataLinkedText extends BaseComponent<Attributes, TextLabel> implements DataLinked {
   public onDataUpdate(key: DataKey, value: DataValue): void {
     if (key !== this.attributes.DataKey) return;
-    
+
     switch (key) {
       case "level":
         this.instance.Text = commaFormat(<number>value);
@@ -25,8 +38,10 @@ export class DataLinkedText extends BaseComponent<Attributes, TextLabel> impleme
         break;
       case "dragons":
         const dragonCount = Assets.Dragons.GetChildren().filter(e => e.IsA("Model")).size();
-        this.instance.Text = (<Dragon[]>value).size() + "/" + dragonCount;
+        const dragonsOwned = removeDuplicates(<Dragon[]>value).size();
+        this.instance.Text = dragonsOwned + "/" + dragonCount;
         break;
     }
   }
 }
+
