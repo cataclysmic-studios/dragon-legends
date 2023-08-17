@@ -1,12 +1,11 @@
 import { Controller, OnInit, OnRender } from "@flamework/core";
 import { CollectionService as Collection, Lighting, Workspace as World } from "@rbxts/services";
-import { Context as InputContext } from "@rbxts/gamejoy";
-import { Union } from "@rbxts/gamejoy/out/Actions";
 import { Janitor } from "@rbxts/janitor";
 
 import { UIController } from "./ui-controller";
+import { MouseController } from "./mouse-controller";
 
-import { Assets, Placable, Player, getMouseWorldPosition, toRegion3 } from "shared/util";
+import { Assets, Placable, getMouseWorldPosition, toRegion3 } from "shared/util";
 import { Events } from "client/network";
 
 const { incrementData, placeBuilding } = Events;
@@ -18,54 +17,39 @@ const { floor } = math;
 @Controller()
 export class BuildingPlacementController implements OnRender, OnInit {
   private readonly janitor = new Janitor;
-  private readonly mouse = Player.GetMouse();
   private readonly gridSize = 4;
 
   private readonly canPlaceColor = Color3.fromHex("#50ff3c");
   private readonly cannotPlaceColor = Color3.fromHex("#ff3d3d");
-  private readonly input = new InputContext({
-    ActionGhosting: 0,
-    Process: false,
-    RunSynchronously: true
-  });
 
   private currentlyPlacing?: Model;
   private currentHighlight?: Highlight;
   private targetOnClick?: Instance;
-  private mouseDown = false;
 
   public constructor(
-    private readonly ui: UIController
-  ) {}
+    private readonly ui: UIController,
+    private readonly mouse: MouseController
+  ) { }
+
+  public onInit(): void | Promise<void> {
+    this.mouse.onClick(() => this.targetOnClick = this.mouse.target());
+    this.mouse.setTargetFilter(World.Ignore);
+  }
+
+  public onRender(): void {
+    if (!this.currentlyPlacing || !this.mouse.down) return;
+    this.updateHighlight();
+
+    if (this.currentlyPlacing.Name !== this.targetOnClick?.Parent?.Name) return;
+    this.currentlyPlacing.PrimaryPart!.Position = this.snap(getMouseWorldPosition());
+  }
 
   public inPlacementMode(): boolean {
     return this.currentlyPlacing !== undefined;
   }
 
   public isDragging(): boolean {
-    return this.inPlacementMode() && this.mouse.Target?.Parent?.Name === this.currentlyPlacing!.Name;
-  }
-
-  public onInit(): void | Promise<void> {
-    const click = new Union(["MouseButton1", "Touch"]);
-    this.input
-      .Bind(click, () => {
-        this.mouseDown = true;
-        this.targetOnClick = this.mouse.Target;
-      })
-      .BindEvent("onRelease", click.Released, () => {
-        this.mouseDown = false;
-      });
-
-    this.mouse.TargetFilter = World.Ignore;
-  }
-
-  public onRender(dt: number): void {
-    if (!this.currentlyPlacing || !this.mouseDown) return;
-    this.updateHighlight();
-
-    if (this.currentlyPlacing.Name !== this.targetOnClick?.Parent?.Name) return;
-    this.currentlyPlacing.PrimaryPart!.Position = this.snap(getMouseWorldPosition());
+    return this.inPlacementMode() && this.mouse.target()?.Parent?.Name === this.currentlyPlacing!.Name;
   }
 
   private updateHighlight(): void {
@@ -91,7 +75,7 @@ export class BuildingPlacementController implements OnRender, OnInit {
 
   private inIslandBounds(): boolean {
     const boundsPart = this.getBoundsPart();
-    const [ island ] = this.getPartsInRegion(boundsPart);
+    const [island] = this.getPartsInRegion(boundsPart);
     if (!island)
       return false;
 
@@ -141,7 +125,7 @@ export class BuildingPlacementController implements OnRender, OnInit {
 
     this.currentlyPlacing = buildingModel;
     this.currentHighlight = highlight;
-    
+
     const camPosition = World.Ignore.PlayerCamera.Position;
     rootPart.Position = this.snap(camPosition.add(new Vector3(12, 0, 12)));
     this.currentlyPlacing.Parent = World.CurrentCamera;
@@ -176,11 +160,11 @@ export class BuildingPlacementController implements OnRender, OnInit {
     this.currentHighlight = undefined;
   }
 
-  private toggleDepthOfField(on: boolean) {    
+  private toggleDepthOfField(on: boolean) {
     Lighting.DepthOfField.Enabled = on;
   }
 
-  private toggleGrid(on: boolean) {    
+  private toggleGrid(on: boolean) {
     const enabledTransparency = 0.5;
     const islands = <Island[]>World.Islands.GetChildren();
     for (const island of islands)

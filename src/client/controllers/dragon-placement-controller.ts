@@ -4,12 +4,13 @@ import { Janitor } from "@rbxts/janitor";
 import StringUtils from "@rbxts/string-utils";
 
 import { UIController } from "./ui-controller";
+import { MouseController } from "./mouse-controller";
 import { NotificationController } from "./notification-controller";
 
 import { Element } from "shared/data-models/dragons";
 import { Habitat } from "shared/data-models/buildings";
 import { NotificationType } from "shared/notification-type";
-import { Player, getDragonData, newDragonModel } from "shared/util";
+import { getDragonData, newDragonModel } from "shared/util";
 import { Events, Functions } from "client/network";
 
 const { placeDragon } = Events;
@@ -18,10 +19,10 @@ const { isTimerActive, getBuildingData } = Functions;
 @Controller()
 export class DragonPlacementController {
   private readonly janitor = new Janitor;
-  private readonly mouse = Player.GetMouse();
-
+  
   public constructor(
     private readonly ui: UIController,
+    private readonly mouse: MouseController,
     private readonly notification: NotificationController
   ) {}
 
@@ -54,8 +55,8 @@ export class DragonPlacementController {
       return this.notification.dispatch("Cannot place dragon, you own no usable habitats for this dragon.", NotificationType.Error);
 
     this.ui.setPage("Main", "None");
-    this.janitor.Add(this.mouse.Button1Down.Connect(() => {
-      const habitat = <Maybe<HabitatModel>>this.mouse.Target?.Parent;
+    this.janitor.Add(this.mouse.onClick(() => {
+      const habitat = <Maybe<HabitatModel>>this.mouse.target()?.Parent;
       if (!habitat) return;
       if (!usableHabitats.includes(habitat)) return;
 

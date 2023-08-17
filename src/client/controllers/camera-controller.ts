@@ -1,11 +1,12 @@
 import { Controller,  OnInit, OnRender } from "@flamework/core";
 import { Context as InputContext } from "@rbxts/gamejoy";
-import { StarterGui, UserInputService, Workspace as World } from "@rbxts/services";
-import { BuildingPlacementController } from "./building-placement-controller";
-
-import { Action, Axis, Union } from "@rbxts/gamejoy/out/Actions";
-import { tween } from "shared/util";
+import { StarterGui, Workspace as World } from "@rbxts/services";
 import { TweenInfoBuilder } from "@rbxts/builders";
+import { Axis } from "@rbxts/gamejoy/out/Actions";
+import { BuildingPlacementController } from "./building-placement-controller";
+import { MouseController } from "./mouse-controller";
+
+import { tween } from "shared/util";
 
 // TODO: scroll to change FOV
 
@@ -20,25 +21,14 @@ export class CameraController implements OnInit, OnRender {
     RunSynchronously: true
   });
 
-  private mouseDown = false;
-
   public constructor(
-    private readonly building: BuildingPlacementController
+    private readonly building: BuildingPlacementController,
+    private readonly mouse: MouseController
   ) {}
 
   public onInit(): void {
     StarterGui.SetCoreGuiEnabled("All", false);
     this.camera.CameraType = Enum.CameraType.Scriptable;
-
-    const click = new Union(["MouseButton1", "Touch"]);
-    this.input
-      .Bind(click, () => {
-        if (this.building.isDragging()) return;
-        this.mouseDown = true;
-      })
-      .BindEvent("onRelease", click.Released, () => {
-        this.mouseDown = false;
-      });
 
     const scroll = new Axis("MouseWheel");
     this.input.Bind(scroll, () => this.zoom(-scroll.Position.Z));
@@ -58,13 +48,13 @@ export class CameraController implements OnInit, OnRender {
 
   public onRender(dt: number): void {
     const { camera, cameraPart, bounds } = this;
-    const mouseDelta = UserInputService.GetMouseDelta().div(16);
+    const { X: dx, Y: dy } = this.mouse.delta().div(16);
     const movementCorrection = CFrame.Angles(-math.rad(cameraPart.Orientation.X), 0, 0);
     const lookVector = cameraPart.CFrame
       .mul(movementCorrection).LookVector
-      .mul(mouseDelta.Y);
+      .mul(dy);
     const movedPosition = cameraPart.Position
-      .add(this.cameraPart.CFrame.RightVector.mul(-mouseDelta.X))
+      .add(this.cameraPart.CFrame.RightVector.mul(-dx))
       .add(lookVector);
   
     let { X: x, Z: z } = movedPosition;
@@ -77,8 +67,10 @@ export class CameraController implements OnInit, OnRender {
     if (z <= bounds.Position.Z - bounds.Size.Z / 2)
       z = -bounds.Size.Z / 2;
   
+    const dragging = this.mouse.down && this.building.isDragging();
+    const mouseBehavior = dragging ? Enum.MouseBehavior.LockCurrentPosition : Enum.MouseBehavior.Default;
+    this.mouse.setBehavior(mouseBehavior);
     cameraPart.Position = new Vector3(x, movedPosition.Y, z);
     camera.CFrame = cameraPart.CFrame;
-    UserInputService.MouseBehavior = this.mouseDown ? Enum.MouseBehavior.LockCurrentPosition : Enum.MouseBehavior.Default;
   }
 }
