@@ -37,7 +37,7 @@ export class CameraController implements OnInit, OnRender {
     );
   }
 
-  public onRender(dt: number): void {
+  public onRender(): void {
     const { camera, cameraPart, bounds } = this;
     const { X: dx, Y: dy } = this.mouse.delta().div(16);
     const movementCorrection = CFrame.Angles(-math.rad(cameraPart.Orientation.X), 0, 0);
@@ -58,8 +58,8 @@ export class CameraController implements OnInit, OnRender {
     if (z <= bounds.Position.Z - bounds.Size.Z / 2)
       z = -bounds.Size.Z / 2;
 
-    const dragging = this.mouse.down && this.building.isDragging();
-    const mouseBehavior = dragging ? Enum.MouseBehavior.LockCurrentPosition : Enum.MouseBehavior.Default;
+    const mouseDown = this.mouse.down && !this.building.isDragging();
+    const mouseBehavior = mouseDown ? Enum.MouseBehavior.LockCurrentPosition : Enum.MouseBehavior.Default;
     this.mouse.setBehavior(mouseBehavior);
     cameraPart.Position = new Vector3(x, movedPosition.Y, z);
     camera.CFrame = cameraPart.CFrame;
