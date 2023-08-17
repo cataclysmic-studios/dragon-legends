@@ -43,10 +43,9 @@ export class HabitatService implements OnPlayerJoin, OnStart {
       const habitats = <HabitatModel[]>World.Buildings.GetChildren()
         .filter(i => StringUtils.endsWith(i.Name, "Habitat"));
 
-      for (const habitatModel of habitats) {
-        if (habitatModel.Dragons.GetChildren().size() < 1) return;
-        this.generateGold(player, habitatModel.GetAttribute<string>("ID"));
-      }
+      for (const habitatModel of habitats)
+        if (habitatModel.Dragons.GetChildren().size() > 0)
+          this.generateGold(player, habitatModel.GetAttribute<string>("ID"));
     });
   }
 
@@ -59,7 +58,7 @@ export class HabitatService implements OnPlayerJoin, OnStart {
     this.data.removeBuildingData(player, habitatID);
     this.data.addBuildingData(player, habitat);
     this.setTotalGold(player, habitatID, habitat.gold);
-    this.updateGold(player, habitatID);
+    this.updateGoldData(player, habitatID);
   }
 
   public updateGoldGeneration(player: Player, habitat: Habitat): void {
@@ -80,7 +79,7 @@ export class HabitatService implements OnPlayerJoin, OnStart {
 
     this.data.increment(player, "gold", habitat.gold);
     this.setTotalGold(player, habitatID, 0);
-    this.updateGold(player, habitatID);
+    this.updateGoldData(player, habitatID);
   }
 
   private setTotalGold(player: Player, habitatID: string, gold: number) {
@@ -94,7 +93,7 @@ export class HabitatService implements OnPlayerJoin, OnStart {
     goldInfoMap.set(habitatID, goldInfo);
   }
 
-  private updateGold(player: Player, habitatID: string): void {
+  private updateGoldData(player: Player, habitatID: string): void {
     const habitat = this.data.getBuildingData<Habitat>(player, habitatID);
     if (!habitat)
       throw new MissingDataException(habitatID, "Missing habitat building data");
@@ -113,7 +112,7 @@ export class HabitatService implements OnPlayerJoin, OnStart {
       throw new MissingDataException(habitatID, "Missing habitat building data");
 
     if (await isTimerActive.predict(player, habitatID)) return;
-    this.updateGold(player, habitatID);
+    this.updateGoldData(player, habitatID);
 
     const goldInfoMap = this.playerMap.mustGet(player);
     const goldInfo = goldInfoMap.get(habitatID)!;

@@ -74,7 +74,7 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
   private addDragonButtons({ dragons }: Habitat): void {
     if (this.dragonButtonDebounce) return;
     this.dragonButtonDebounce = true;
-    task.delay(1.5, () => this.dragonButtonDebounce = false);
+    task.delay(2, () => this.dragonButtonDebounce = false);
 
     const janitor = new Janitor;
     for (const dragon of dragons) {

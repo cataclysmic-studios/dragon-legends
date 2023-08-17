@@ -35,22 +35,17 @@ export class HatcheryService implements OnInit {
     this.data.addBuildingData(player, hatchery);
   }
 
-  // check if hatchery is full before calling
   private addEgg(player: Player, egg: Egg, isLoading = false): void {
     const hatchery = this.data.getBuildingData<Hatchery>(player, "HATCHERY");
     const hatcheryModel = getPlacedBuilding<HatcheryModel>("HATCHERY");
-    const eggPositionIndex = tostring(hatchery.eggs.size() + (isLoading ? 0 : 1));
+    const eggPositionIndex = tostring(hatcheryModel.Eggs.GetChildren().size() + 1);
     const eggPositionPart = <Part>hatcheryModel.EggPositions.WaitForChild(eggPositionIndex);
+
     newEggMesh(egg, {
       position: eggPositionPart.Position,
       parent: hatcheryModel.Eggs,
       attributes: { ID: egg.id }
     });
-
-    const max = <HatcheryMaximums>require(hatcheryModel.Maximums);
-    const currentEggs = hatcheryModel.Eggs.GetChildren().size();
-    if (currentEggs === max.eggs[hatchery.level - 1])
-      return dispatchNotification(player, "Cannot add egg to hatchery, hatchery is full.", NotificationType.Error);
 
     // don't edit building/timer data for eggs if egg is being loaded from BuildingLoaderService
     if (isLoading) return;

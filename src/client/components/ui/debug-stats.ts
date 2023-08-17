@@ -113,30 +113,31 @@ export class DebugStats extends BaseComponent<{}, DebugScreen> implements OnStar
 
   private getPrettyValue(value: unknown, indent = 0): string {
     if (typeOf(value) === "table") {
-      let lbracket = "{", rbracket = "}";
-      let newlines = true;
-      const tab = (offset = 0) => "\t".rep(indent + offset);
-      const entries = Object.entries(<Record<string | number, unknown>>value);
-      const contents = entries
-        .sort(([ka], [kb]) => typeOf(ka) === "number" ? <number>ka < <number>kb : <string>ka > <string>kb)
-        .map(([k, v]) => {
-          if (typeOf(k) === "number") {
-            lbracket = "[";
-            rbracket = "]";
-            newlines = false;
-          }
+      // let lbracket = "{", rbracket = "}";
+      // let newlines = true;
+      // const tab = (offset = 0) => "\t".rep(indent + offset);
+      // const entries = Object.entries(<Record<string | number, unknown>>value);
+      // const contents = entries
+      //   .sort(([ka], [kb]) => typeOf(ka) === "number" ? <number>ka < <number>kb : <string>ka > <string>kb)
+      //   .map(([k, v]) => {
+      //     if (typeOf(k) === "number") {
+      //       lbracket = "[";
+      //       rbracket = "]";
+      //       newlines = false;
+      //     }
 
-          const field = (newlines ? tab(1) : "") + `${typeOf(k) === "string" ? k + ": " : ""}${this.color(v, indent)}`;
-          if (typeOf(v) === "table")
-            indent += 1;
+      //     const field = (newlines ? tab(1) : "") + `${typeOf(k) === "string" ? k + ": " : ""}${this.color(v, indent)}`;
+      //     if (typeOf(v) === "table")
+      //       indent += 1;
 
-          return field;
-        })
-        .join("," + (newlines ? "\n" : ""));
+      //     return field;
+      //   })
+      //   .join("," + (newlines ? "\n" : ""));
 
-      const newline = newlines ? "\n" : "";
-      if (entries.size() === 0) return "[]";
-      return `${lbracket}${newline}${contents}${newline + (newlines ? tab(-1) : "")}${rbracket}`;
+      // const newline = newlines ? "\n" : "";
+      // if (entries.size() === 0) return "[]";
+      // return `${lbracket}${newline}${contents}${newline + (newlines ? tab(-1) : "")}${rbracket}`;
+      return "{ ... }"
     }
 
     return tostring(repr(value, {

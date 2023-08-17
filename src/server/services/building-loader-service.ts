@@ -70,8 +70,8 @@ export class BuildingLoaderService implements OnStart {
     const { lastOnline } = this.data.get<TimeInfo>(player, "timeInfo");
     const perMinuteGold = getTotalGoldPerMinute(habitat);
     const secondsOffline = lastOnline ? now() - lastOnline : 0;
-    const minutesOffline = floor(secondsOffline / 60);
-    const gainedGold = perMinuteGold * minutesOffline;
+    const minutesOffline = secondsOffline / 60;
+    const gainedGold = floor(perMinuteGold * minutesOffline);
     this.habitats.addGold(player, id, gainedGold);
   }
 }
