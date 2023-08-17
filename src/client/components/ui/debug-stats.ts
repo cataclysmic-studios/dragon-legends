@@ -132,7 +132,7 @@ export class DebugStats extends BaseComponent<{}, DebugScreen> implements OnStar
 
           return field;
         })
-        .join("," + newlines ? "\n" : "");
+        .join("," + (newlines ? "\n" : ""));
 
       const newline = newlines ? "\n" : "";
       if (entries.size() === 0) return "[]";
