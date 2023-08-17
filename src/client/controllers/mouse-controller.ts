@@ -1,6 +1,6 @@
 import { Controller, OnInit } from "@flamework/core";
 import { Context as InputContext } from "@rbxts/gamejoy";
-import { Union } from "@rbxts/gamejoy/out/Actions";
+import { Axis, Union } from "@rbxts/gamejoy/out/Actions";
 import { ContextOptions } from "@rbxts/gamejoy/out/Definitions/Types";
 import { UserInputService } from "@rbxts/services";
 import { Player } from "shared/util";
@@ -16,6 +16,7 @@ export class MouseController implements OnInit {
 
   private readonly playerMouse = Player.GetMouse();
   private readonly clickAction = new Union(["MouseButton1", "Touch"]);
+  private readonly scrollAction = new Axis("MouseWheel");
   private readonly clickCallbacks: Callback[] = [];
   private readonly input = new InputContext({
     ActionGhosting: 0,
@@ -34,14 +35,6 @@ export class MouseController implements OnInit {
       });
   }
 
-  public delta(): Vector2 {
-    return UserInputService.GetMouseDelta();
-  }
-
-  public target(): Maybe<BasePart> {
-    return this.playerMouse.Target;
-  }
-
   // returns a function that removes the listener
   public onClick(callback: Callback, predicate?: () => boolean): Callback {
     const disconnect = () => this.clickCallbacks.remove(this.clickCallbacks.indexOf(callback));
@@ -51,6 +44,18 @@ export class MouseController implements OnInit {
     });
 
     return disconnect;
+  }
+
+  public onScroll(callback: (direction: 1 | -1) => void) {
+    this.input.Bind(this.scrollAction, () => callback(<1 | -1>-this.scrollAction.Position.Z));
+  }
+
+  public delta(): Vector2 {
+    return UserInputService.GetMouseDelta();
+  }
+
+  public target(): Maybe<BasePart> {
+    return this.playerMouse.Target;
   }
 
   public setTargetFilter(filterInstance: Instance) {

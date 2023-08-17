@@ -1,8 +1,6 @@
-import { Controller,  OnInit, OnRender } from "@flamework/core";
-import { Context as InputContext } from "@rbxts/gamejoy";
+import { Controller, OnInit, OnRender } from "@flamework/core";
 import { StarterGui, Workspace as World } from "@rbxts/services";
 import { TweenInfoBuilder } from "@rbxts/builders";
-import { Axis } from "@rbxts/gamejoy/out/Actions";
 import { BuildingPlacementController } from "./building-placement-controller";
 import { MouseController } from "./mouse-controller";
 
@@ -15,23 +13,16 @@ export class CameraController implements OnInit, OnRender {
   private readonly cameraPart = World.Ignore.PlayerCamera;
   private readonly bounds = World.Ignore.CameraBounds;
   private readonly camera = World.CurrentCamera!;
-  private readonly input = new InputContext({
-    ActionGhosting: 0,
-    Process: false,
-    RunSynchronously: true
-  });
 
   public constructor(
     private readonly building: BuildingPlacementController,
     private readonly mouse: MouseController
-  ) {}
+  ) { }
 
   public onInit(): void {
     StarterGui.SetCoreGuiEnabled("All", false);
     this.camera.CameraType = Enum.CameraType.Scriptable;
-
-    const scroll = new Axis("MouseWheel");
-    this.input.Bind(scroll, () => this.zoom(-scroll.Position.Z));
+    this.mouse.onScroll(direction => this.zoom(direction));
   }
 
   private zoom(delta: number): void {
@@ -56,7 +47,7 @@ export class CameraController implements OnInit, OnRender {
     const movedPosition = cameraPart.Position
       .add(this.cameraPart.CFrame.RightVector.mul(-dx))
       .add(lookVector);
-  
+
     let { X: x, Z: z } = movedPosition;
     if (x >= bounds.Position.X + bounds.Size.X / 2)
       x = bounds.Size.X / 2;
@@ -66,7 +57,7 @@ export class CameraController implements OnInit, OnRender {
       z = bounds.Size.Z / 2;
     if (z <= bounds.Position.Z - bounds.Size.Z / 2)
       z = -bounds.Size.Z / 2;
-  
+
     const dragging = this.mouse.down && this.building.isDragging();
     const mouseBehavior = dragging ? Enum.MouseBehavior.LockCurrentPosition : Enum.MouseBehavior.Default;
     this.mouse.setBehavior(mouseBehavior);
