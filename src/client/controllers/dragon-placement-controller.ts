@@ -18,16 +18,18 @@ const { isTimerActive, getBuildingData } = Functions;
 
 @Controller()
 export class DragonPlacementController {
+  public placing = false;
+
   private readonly janitor = new Janitor;
-  
+
   public constructor(
     private readonly ui: UIController,
     private readonly mouse: MouseController,
     private readonly notification: NotificationController
-  ) {}
+  ) { }
 
   public async place(dragonName: string): Promise<boolean | void> {
-    // TODO: check space left in habitat
+    this.placing = true;
     const dragonModel = newDragonModel(dragonName);
     const dragon = getDragonData(dragonModel);
     dragonModel.Destroy();
@@ -37,12 +39,12 @@ export class DragonPlacementController {
 
     const usableHabitats: HabitatModel[] = [];
     for (const habitatModel of habitats) {
-      const [ element ] = <[Element, string]>habitatModel.Name.split(" ");
+      const [element] = <[Element, string]>habitatModel.Name.split(" ");
       const id = habitatModel.GetAttribute<string>("ID");
       const habitat = <Habitat>await getBuildingData(id);
-      
+
       const max = <HabitatMaximums>require(habitatModel.Maximums);
-      const usable = dragon.elements.includes(element) && 
+      const usable = dragon.elements.includes(element) &&
         !await isTimerActive(id) &&
         habitatModel.Dragons.GetChildren().size() < max.dragons[habitat.level - 1];
 
@@ -66,9 +68,10 @@ export class DragonPlacementController {
     }));
 
     this.janitor.Add(async () => {
+      this.placing = false;
       this.ui.setPage("Main", "Main");
       for (const habitat of habitats)
-        habitat.Highlight.Enabled = false;
+        task.spawn(() => habitat.Highlight.Enabled = false);
     });
 
     return true;

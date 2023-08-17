@@ -8,6 +8,7 @@ import { BuildingPlacementController } from "./building-placement-controller";
 
 import { Building } from "shared/data-models/buildings";
 import { Functions } from "client/network";
+import { DragonPlacementController } from "./dragon-placement-controller";
 
 const { isTimerActive, getBuildingData } = Functions;
 
@@ -20,6 +21,7 @@ export class SelectionController implements OnInit {
   public constructor(
     private readonly ui: UIController,
     private readonly mouse: MouseController,
+    private readonly dragon: DragonPlacementController,
     private readonly building: BuildingPlacementController
   ) {
     this.buildingSelectFrame = this.ui.getPage("Main", "BuildingSelect");
@@ -57,7 +59,7 @@ export class SelectionController implements OnInit {
   }
 
   private canClick(): boolean {
-    if (this.building.inPlacementMode())
+    if (this.building.inPlacementMode() || this.dragon.placing)
       return false;
 
     const instance = this.mouse.target()?.Parent;
