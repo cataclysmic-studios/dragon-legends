@@ -5,8 +5,9 @@ import Object from "@rbxts/object-utils";
 
 import { SelectionController } from "client/controllers/selection-controller";
 import { toSuffixedNumber } from "shared/util";
-import repr from "shared/repr";
 import Log from "shared/logger";
+import repr from "shared/repr";
+import StringUtils from "@rbxts/string-utils";
 
 const { floor } = math;
 
@@ -70,44 +71,78 @@ export class DebugStats extends BaseComponent<{}, DebugScreen> implements OnStar
 
     let order = 1;
     for (const [key, value] of Object.entries(info)) {
-      const property = new Instance("TextLabel");
-      property.BackgroundTransparency = 1;
-      property.Name = "PropertyLabel";
-      property.RichText = true;
-      property.TextScaled = true;
-      property.FontFace = new Font("rbxasset://fonts/families/Ubuntu.json", Enum.FontWeight.Medium, Enum.FontStyle.Normal);
-      property.Size = UDim2.fromScale(1, 0.05);
-      property.TextColor3 = Color3.fromRGB(188, 226, 255);
-      property.TextXAlignment = Enum.TextXAlignment.Left;
-
-      const color = this.getTypeColor(value);
-      const valueText = this.color(this.getPrettyValue(value), color);
-      property.Text = key + ": " + valueText;
-      property.LayoutOrder = order;
-      property.Parent = this.instance.Info;
-
+      this.addInfoPropertyLabel(value, key, order);
       order++;
     }
   }
 
-  private color(text: string, color: Maybe<string>): string {
+  private addInfoPropertyLabel(value: defined, key: string, layoutOrder: number) {
+    const property = new Instance("TextLabel");
+    property.BackgroundTransparency = 1;
+    property.Name = "PropertyLabel";
+    property.RichText = true;
+    property.TextScaled = true;
+    property.FontFace = new Font("rbxasset://fonts/families/Ubuntu.json", Enum.FontWeight.Medium, Enum.FontStyle.Normal);
+    property.TextColor3 = Color3.fromRGB(188, 226, 255);
+    property.TextXAlignment = Enum.TextXAlignment.Left;
+    property.TextYAlignment = Enum.TextYAlignment.Top;
+
+    property.GetPropertyChangedSignal("TextBounds")
+      .Connect(() => {
+        const lines = floor(property.TextBounds.X / 390) + property.Text.split("\n").size();
+        property.Size = UDim2.fromScale(1, 0.05 * lines);
+      });
+
+    property.Text = `${key}: ${this.color(value)}`;
+    property.LayoutOrder = layoutOrder;
+    property.Parent = this.instance.Info;
+  }
+
+  private color(value: unknown, indent = 0): string {
+    let text = this.getPrettyValue(value, indent);
+    const isID = text.size() === 40 &&
+      StringUtils.startsWith(text, "\"{") &&
+      StringUtils.endsWith(text, "}\"");
+
+    if (isID)
+      text = text.sub(3, -3);
+
+    const color = this.getTypeColor(value, isID);
     return color ? `<font color="#${color}">${text}</font>` : text;
   }
 
-  private getPrettyValue(value: defined): string {
+  private getPrettyValue(value: unknown, indent = 0): string {
     if (typeOf(value) === "table") {
-      const contents = Object.entries(<Record<string | number, unknown>>value)
+      let lbracket = "{", rbracket = "}";
+      let newlines = true;
+      const tab = (offset = 0) => "\t".rep(indent + offset);
+      const entries = Object.entries(<Record<string | number, unknown>>value);
+      const contents = entries
+        .sort(([ka], [kb]) => typeOf(ka) === "number" ? <number>ka < <number>kb : <string>ka > <string>kb)
         .map(([k, v]) => {
-          const keyColor = this.getTypeColor(k);
-          const valueColor = this.getTypeColor(v);
-          return `${this.color(this.getPrettyValue(k), keyColor)} = ${this.color(this.getPrettyValue(v), valueColor)}`;
-        })
-        .join(", ");
+          if (typeOf(k) === "number") {
+            lbracket = "[";
+            rbracket = "]";
+            newlines = false;
+          }
 
-      return `{${contents}}`;
+          const field = (newlines ? tab(1) : "") + `${typeOf(k) === "string" ? k + ": " : ""}${this.color(v, indent)}`;
+          if (typeOf(v) === "table")
+            indent += 1;
+
+          return field;
+        })
+        .join("," + newlines ? "\n" : "");
+
+      const newline = newlines ? "\n" : "";
+      if (entries.size() === 0) return "[]";
+      return `${lbracket}${newline}${contents}${newline + (newlines ? tab(-1) : "")}${rbracket}`;
     }
 
-    return repr(value, { sortKeys: true });
+    return tostring(repr(value, {
+      pretty: true,
+      sortKeys: true
+    }));
   }
 
   private updateStatsFrame(): void {
@@ -118,7 +153,10 @@ export class DebugStats extends BaseComponent<{}, DebugScreen> implements OnStar
     stats.Instances.Text = "Instances: " + toSuffixedNumber(Stats.InstanceCount);
   }
 
-  private getTypeColor(value: unknown): Maybe<string> {
+  private getTypeColor(value: unknown, isID = false): Maybe<string> {
+    if (isID)
+      return "aa55ff";
+
     switch (typeOf(value)) {
       case "EnumItem":
         return "00aaff";
