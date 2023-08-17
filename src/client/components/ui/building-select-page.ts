@@ -2,6 +2,7 @@ import { OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
 import { Janitor } from "@rbxts/janitor";
 
+import { SelectionController } from "client/controllers/selection-controller";
 import { DragonPlacementController } from "client/controllers/dragon-placement-controller";
 
 import { DataKey } from "shared/data-models/generic";
@@ -13,7 +14,7 @@ import { Events, Functions } from "client/network";
 import { TweenInfoBuilder } from "@rbxts/builders";
 
 const { timerFinished, removeEggFromHatchery, claimHabitatGold } = Events;
-const { getBuildingData: findBuilding, isTimerActive } = Functions;
+const { getBuildingData, isTimerActive } = Functions;
 const { isUpgradable, isHabitat, isHatchery } = Buildings;
 
 interface Attributes {
@@ -40,17 +41,17 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
   private eggButtonDebounce = false;
 
   public constructor(
+    private readonly selection: SelectionController,
     private readonly dragon: DragonPlacementController
   ) { super(); }
-  
+
   public onStart(): void {
     this.maid.GiveTask(
-      this.instance.GetAttributeChangedSignal("ID")
-        .Connect(async () => {
-          this.updatePage();
-          this.dragonButtonDebounce = false;
-          this.eggButtonDebounce = false;
-        })
+      this.selection.onSelectionChanged.Connect(async () => {
+        this.updatePage();
+        this.dragonButtonDebounce = false;
+        this.eggButtonDebounce = false;
+      })
     );
   }
 
@@ -68,6 +69,30 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
 
     this.updateTitle(building);
     this.updateButtons(building);
+  }
+
+  private addDragonButtons({ dragons }: Habitat): void {
+    if (this.dragonButtonDebounce) return;
+    this.dragonButtonDebounce = true;
+    task.delay(1.5, () => this.dragonButtonDebounce = false);
+
+    const janitor = new Janitor;
+    for (const dragon of dragons) {
+      const button = Assets.UI.HabitatDragonButton.Clone();
+      newDragonModel(dragon.name, {
+        parent: button.Viewport
+      });
+
+      // button.Boost
+      button.DragonName.Text = dragon.name;
+      button.Parent = this.buttons;
+      button.SetAttribute("DragonID", dragon.id);
+
+      janitor.LinkToInstance(button, true);
+      janitor.Add(button.MouseButton1Click.Connect(() => {
+        // display dragon page in dragon index
+      }));
+    }
   }
 
   private async addEggButtons({ eggs }: Hatchery): Promise<void> {
@@ -90,7 +115,7 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
       janitor.LinkToInstance(button, true);
       janitor.Add(button.MouseButton1Click.Connect(async () => {
         if (!eggTimerFinished) return;
-        const [ dragonName ] = egg.name.gsub(" Egg", "");
+        const [dragonName] = egg.name.gsub(" Egg", "");
         const placed = await this.dragon.place(dragonName);
         if (placed) {
           removeEggFromHatchery(egg.id);
@@ -102,30 +127,6 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
         if (timer.id !== egg.id) return;
         eggTimerFinished = true;
         button.Place.Visible = true;
-      }));
-    }
-  }
-
-  private addDragonButtons({ dragons }: Habitat): void {
-    if (this.dragonButtonDebounce) return;
-    this.dragonButtonDebounce = true;
-    task.delay(1.5, () => this.dragonButtonDebounce = false);
-
-    const janitor = new Janitor;
-    for (const dragon of dragons) {
-      const button = Assets.UI.HabitatDragonButton.Clone();
-      newDragonModel(dragon.name, {
-        parent: button.Viewport
-      });
-
-      // button.Boost
-      button.DragonName.Text = dragon.name;
-      button.Parent = this.buttons;
-      button.SetAttribute("DragonID", dragon.id);
-
-      janitor.LinkToInstance(button, true);
-      janitor.Add(button.MouseButton1Click.Connect(() => {
-        // display dragon stats stats page (or something lmao)
       }));
     }
   }
@@ -198,6 +199,6 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
   }
 
   private async getBuilding(): Promise<Maybe<Building>> {
-    return findBuilding(this.attributes.ID!);
+    return getBuildingData(this.attributes.ID!);
   }
 }

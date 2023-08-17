@@ -15,7 +15,7 @@ export class HatcheryService implements OnInit {
   public constructor(
     private readonly data: DataService,
     private readonly timer: TimerService
-  ) {}
+  ) { }
 
   public onInit(): void {
     addEggToHatchery.connect((player, egg, isLoaded) => this.addEgg(player, egg, isLoaded));
@@ -39,10 +39,10 @@ export class HatcheryService implements OnInit {
   private addEgg(player: Player, egg: Egg, isLoading = false): void {
     const hatchery = this.data.getBuildingData<Hatchery>(player, "HATCHERY");
     const hatcheryModel = getPlacedBuilding<HatcheryModel>("HATCHERY");
-    const eggPositionIndex = tostring(hatchery.eggs.size() + 1);
+    const eggPositionIndex = tostring(hatchery.eggs.size() + (isLoading ? 0 : 1));
     const eggPositionPart = <Part>hatcheryModel.EggPositions.WaitForChild(eggPositionIndex);
     newEggMesh(egg, {
-      position: eggPositionPart.Position, 
+      position: eggPositionPart.Position,
       parent: hatcheryModel.Eggs,
       attributes: { ID: egg.id }
     });
@@ -51,7 +51,7 @@ export class HatcheryService implements OnInit {
     const currentEggs = hatcheryModel.Eggs.GetChildren().size();
     if (currentEggs === max.eggs[hatchery.level - 1])
       return dispatchNotification(player, "Cannot add egg to hatchery, hatchery is full.", NotificationType.Error);
-    
+
     // don't edit building/timer data for eggs if egg is being loaded from BuildingLoaderService
     if (isLoading) return;
     const inventory = this.data.get<InventoryItem[]>(player, "inventory");
@@ -59,7 +59,7 @@ export class HatcheryService implements OnInit {
     this.data.set(player, "inventory", newInventory);
 
     this.data.removeBuildingData(player, "HATCHERY");
-    hatchery.eggs = [ ...hatchery.eggs, egg ];
+    hatchery.eggs = [...hatchery.eggs, egg];
     this.data.addBuildingData(player, hatchery);
     this.timer.addHatchTimer(player, egg.id, egg.hatchTime);
   }

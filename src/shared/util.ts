@@ -5,6 +5,7 @@ import Object from "@rbxts/object-utils";
 
 import { StorableVector3 } from "./data-models/utility";
 import { DragonInfo, Rarity } from "./data-models/dragons";
+import { Habitat } from "./data-models/buildings";
 import { Egg } from "./data-models/inventory";
 import { Exception } from "./exceptions";
 
@@ -19,7 +20,15 @@ export const now = () => round(tick());
 export const toStorableVector3 = ({ X, Y, Z }: Vector3) => ({ x: X, y: Y, z: Z })
 export const toUsableVector3 = ({ x, y, z }: StorableVector3) => new Vector3(x, y, z);
 
-export function newDragonModel(name: string, options?: { 
+export function getTotalGoldPerMinute(habitat: Habitat): number {
+  return habitat.dragons.size() > 0 ?
+    habitat.dragons
+      .map(d => d.goldGenerationRate)
+      .reduce((accum, cur) => accum + cur)
+    : 0;
+}
+
+export function newDragonModel(name: string, options?: {
   position?: Vector3;
   parent?: Instance;
   attributes?: Record<string, AttributeValue>;
@@ -34,7 +43,7 @@ export function newDragonModel(name: string, options?: {
   return dragonModel;
 }
 
-export function newEggMesh(egg: Egg, options?: { 
+export function newEggMesh(egg: Egg, options?: {
   position?: Vector3;
   parent?: Instance;
   attributes?: Record<string, AttributeValue>;
@@ -106,7 +115,7 @@ export function getRarityImage(rarity: Rarity): string {
 
 export function toRegion3({ CFrame, Size }: Part, areaShrink = 0): Region3 {
   const { X: sx, Y: sy, Z: sz } = Size;
-  const [ x, y, z, r00, r01, r02, r10, r11, r12, r20, r21, r22 ] = CFrame.GetComponents();
+  const [x, y, z, r00, r01, r02, r10, r11, r12, r20, r21, r22] = CFrame.GetComponents();
   const wsx = 0.5 * (abs(r00) * sx + abs(r01) * sy + abs(r02) * sz);
   const wsy = 0.5 * (abs(r10) * sx + abs(r11) * sy + abs(r12) * sz);
   const wsz = 0.5 * (abs(r20) * sx + abs(r21) * sy + abs(r22) * sz);
@@ -188,10 +197,10 @@ const suffixes = <const>["K", "M", "B", "T", "Q"];
 export function toSuffixedNumber(n: number): string {
   if (n < 100_000)
     return commaFormat(n);
-  
+
   const index = floor(log(n, 1e3)) - 1;
   const divisor = 10 ** ((index + 1) * 3);
-  const [ baseNumber ] = "%.1f".format(floor(n / divisor)).gsub("%.?0+$", "");
+  const [baseNumber] = "%.1f".format(floor(n / divisor)).gsub("%.?0+$", "");
   return baseNumber + (index < 0 ? "" : suffixes[index]);
 }
 

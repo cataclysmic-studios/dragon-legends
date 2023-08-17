@@ -19,13 +19,13 @@ export class PlacementService implements OnInit {
     private readonly data: DataService,
     private readonly timer: TimerService,
     private readonly habitat: HabitatService
-  ) {}  
+  ) { }
 
   public onInit(): void {
-    placeDragon.connect((player, dragonData, habitatID) =>
-      this.placeDragon(player, dragonData, habitatID)
+    placeDragon.connect((player, dragonData, habitatID, idOverride) =>
+      this.placeDragon(player, dragonData, habitatID, idOverride)
     );
-    placeBuilding.connect((player, buildingName, category, position, idOverride) => 
+    placeBuilding.connect((player, buildingName, category, position, idOverride) =>
       this.placeBuilding(player, buildingName, category, position, idOverride)
     );
   }
@@ -70,7 +70,7 @@ export class PlacementService implements OnInit {
     const timerLength = Runtime.IsStudio() ?
       "5 seconds" :
       building.GetAttribute<string>("PlacementTime");
-      
+
     this.saveBuildingInfo(player, id, buildingName, category, position, toSeconds(timerLength));
   }
 
@@ -120,7 +120,7 @@ export class PlacementService implements OnInit {
       ]
     };
 
-    habitat.dragons = [...habitat.dragons, dragon ];
+    habitat.dragons = [...habitat.dragons, dragon];
 
     const newBuildings = buildings.filter(b => b.id !== habitatID);
     newBuildings.push(habitat);
@@ -149,13 +149,13 @@ export class PlacementService implements OnInit {
           gold: 0,
           dragons: []
         }
-        
+
         buildings.push(habitat);
         this.habitat.updateGoldGeneration(player, habitat);
         break;
       }
     }
-    
+
     this.data.set(player, "buildings", buildings);
     this.timer.addBuildingTimer(player, id, timerLength);
   }

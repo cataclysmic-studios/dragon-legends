@@ -2,7 +2,8 @@ import { Controller, OnInit } from "@flamework/core";
 import { Context as InputContext } from "@rbxts/gamejoy";
 import { Axis, Union } from "@rbxts/gamejoy/out/Actions";
 import { ContextOptions } from "@rbxts/gamejoy/out/Definitions/Types";
-import { UserInputService } from "@rbxts/services";
+import { HttpService as HTTP, UserInputService } from "@rbxts/services";
+import { StrictMap } from "@rbxts/strict-map";
 import { Player } from "shared/util";
 
 export const enum MouseIcon {
@@ -17,7 +18,7 @@ export class MouseController implements OnInit {
   private readonly playerMouse = Player.GetMouse();
   private readonly clickAction = new Union(["MouseButton1", "Touch"]);
   private readonly scrollAction = new Axis("MouseWheel");
-  private readonly clickCallbacks: Callback[] = [];
+  private readonly clickCallbacks = new StrictMap<string, Callback>;
   private readonly input = new InputContext({
     ActionGhosting: 0,
     Process: false,
@@ -37,8 +38,9 @@ export class MouseController implements OnInit {
 
   // returns a function that removes the listener
   public onClick(callback: Callback, predicate?: () => boolean): Callback {
-    const disconnect = () => this.clickCallbacks.remove(this.clickCallbacks.indexOf(callback));
-    this.clickCallbacks.push(() => {
+    const id = HTTP.GenerateGUID();
+    const disconnect = () => this.clickCallbacks.delete(id);
+    this.clickCallbacks.set(id, () => {
       if (predicate && !predicate()) return;
       callback()
     });

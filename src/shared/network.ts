@@ -12,11 +12,11 @@ interface ServerEvents {
   dataLoaded(): void;
   setData(key: DataKey, value: DataValue): void;
   incrementData(key: ExtractKeys<GameDataModel, number>, amount?: number): void;
-  
+
   placeBuilding(buildingName: string, category: Placable, position: Vector3, idOverride?: string): void;
-  placeDragon(dragonData: DragonInfo, habitatID: string): void;
+  placeDragon(dragonData: DragonInfo, habitatID: string, idOverride?: string): void;
   updateTimers(): void;
-  
+
   addEggToHatchery(egg: Egg, isLoaded?: boolean): void;
   removeEggFromHatchery(eggID: string): void;
 
@@ -38,7 +38,7 @@ interface ServerFunctions {
   calculateXPUntilNextLevel(): number;
 }
 
-interface ClientFunctions {}
+interface ClientFunctions { }
 
 export const GlobalEvents = Networking.createEvent<ServerEvents, ClientEvents>();
 export const GlobalFunctions = Networking.createFunction<ServerFunctions, ClientFunctions>();

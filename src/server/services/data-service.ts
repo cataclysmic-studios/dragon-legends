@@ -13,7 +13,7 @@ const { initializeData, setData, incrementData, dataLoaded, dataUpdate } = Event
 const { getData, getBuildingData } = Functions;
 
 @Service()
-export class DataService implements OnInit, OnPlayerLeave {	
+export class DataService implements OnInit, OnPlayerLeave {
 	public onInit(): void {
 		DataStore2.Combine("DATA", ...DataKeys);
 		initializeData.connect((player) => this.setup(player));
@@ -29,24 +29,24 @@ export class DataService implements OnInit, OnPlayerLeave {
 		this.set(player, "timeInfo", timeInfo);
 	}
 
-	public addTimer(player: Player, timer: TimerInfo): void {
+	public addTimerData(player: Player, timer: TimerInfo): void {
 		Log.info(`Added new ${timer.type} timer (ID ${timer.id})`);
-    const timeInfo = this.get<TimeInfo>(player, "timeInfo");
-		timeInfo.timers = [ ...timeInfo.timers, timer ];
+		const timeInfo = this.get<TimeInfo>(player, "timeInfo");
+		timeInfo.timers = [...timeInfo.timers, timer];
 		this.set(player, "timeInfo", timeInfo);
-  }
+	}
 
 	public addBuildingData(player: Player, building: Building): void {
-    const buildings = this.get<Building[]>(player, "buildings");
+		const buildings = this.get<Building[]>(player, "buildings");
 		buildings.push(building);
 		this.set(player, "buildings", buildings);
-  }
+	}
 
 	public removeBuildingData(player: Player, buildingID: string): void {
-    const buildings = this.get<Building[]>(player, "buildings");
+		const buildings = this.get<Building[]>(player, "buildings");
 		const newBuildings = buildings.filter(b => b.id !== buildingID);
 		this.set(player, "buildings", newBuildings);
-  }
+	}
 
 	public getBuildingData<T extends Building = Building>(player: Player, buildingID: string): T extends Hatchery ? T : Maybe<T> {
 		const buildings = this.get<Building[]>(player, "buildings");
@@ -74,13 +74,13 @@ export class DataService implements OnInit, OnPlayerLeave {
 		this.initialize(player, "food", 20);
 		this.initialize(player, "level", 1);
 		this.initialize(player, "xp", 0);
-		
+
 		this.initialize(player, "inventory", []);
 		this.initialize(player, "dragons", []);
-    this.initialize<TimeInfo>(player, "timeInfo", {
+		this.initialize<TimeInfo>(player, "timeInfo", {
 			timers: []
-    });
-		
+		});
+
 		this.initialize<Building[]>(player, "buildings", [
 			<Hatchery>{
 				id: "HATCHERY",
@@ -90,7 +90,7 @@ export class DataService implements OnInit, OnPlayerLeave {
 				eggs: []
 			}
 		]);
-		
+
 		Log.info("Initialized data");
 		dataLoaded.predict(player);
 	}
@@ -117,6 +117,6 @@ export class DataService implements OnInit, OnPlayerLeave {
 	}
 
 	private getStore<T extends DataValue = DataValue>(player: Player, key: DataKey): DataStore2<T> {
-		return DataStore2<T>("TEST1_" + key, player);
+		return DataStore2<T>("TEST10_" + key, player);
 	}
 }

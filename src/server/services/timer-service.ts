@@ -18,7 +18,7 @@ export class TimerService implements OnInit {
     private readonly data: DataService,
     private readonly buildingLoader: BuildingLoaderService,
     private readonly components: Components
-  ) {}
+  ) { }
 
   public onInit(): void {
     updateTimers.connect((player) => this.updateTimers(player))
@@ -28,7 +28,7 @@ export class TimerService implements OnInit {
   }
 
   public addHatchTimer(player: Player, eggID: string, length: number): void {
-    this.data.addTimer(player, {
+    this.data.addTimerData(player, {
       id: eggID,
       type: TimerType.Hatch,
       beganAt: now(),
@@ -38,7 +38,7 @@ export class TimerService implements OnInit {
   }
 
   public addBuildingTimer(player: Player, id: string, length: number): void {
-    this.data.addTimer(player, {
+    this.data.addTimerData(player, {
       id,
       type: TimerType.Building,
       beganAt: now(),
