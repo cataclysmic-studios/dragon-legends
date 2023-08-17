@@ -9,5 +9,5 @@ interface ReprOptions {
   sortKeys: boolean;
 }
 
-declare function repr(value: unknown, options?: ReprOptions): string;
+declare function repr(value: unknown, options?: Partial<ReprOptions>): string;
 export = repr;

@@ -275,6 +275,4 @@ local function repr(value, reprSettings)
 	end
 end
  
-return {
-	default = repr
-}
+return repr

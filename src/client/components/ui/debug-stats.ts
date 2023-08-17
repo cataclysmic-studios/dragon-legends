@@ -81,7 +81,7 @@ export class DebugStats extends BaseComponent<{}, DebugScreen> implements OnStar
       property.TextXAlignment = Enum.TextXAlignment.Left;
 
       const color = this.getTypeColor(value);
-      const valueText = color ? `<font color="#${color}">${repr(value)}</font>` : repr(value);
+      const valueText = this.color(this.getPrettyValue(value), color);
       property.Text = key + ": " + valueText;
       property.LayoutOrder = order;
       property.Parent = this.instance.Info;
@@ -90,21 +90,24 @@ export class DebugStats extends BaseComponent<{}, DebugScreen> implements OnStar
     }
   }
 
-  private getTypeColor(value: unknown): Maybe<string> {
-    switch(typeOf(value)) {
-      case "Color3":
-      case "Vector2":
-      case "Vector3":
-        return "aa55ff";
-      case "EnumItem":
-        return "00aaff";
-      case "string":
-        return "55ff7f";
-      case "number":
-        return "ff5500";
-      case "boolean":
-        return "fff04a";
-    }      
+  private color(text: string, color: Maybe<string>): string {
+    return color ? `<font color="#${color}">${text}</font>` : text;
+  }
+
+  private getPrettyValue(value: defined): string {
+    if (typeOf(value) === "table") {
+      const contents = Object.entries(<Record<string | number, unknown>>value)
+        .map(([k, v]) => {
+          const keyColor = this.getTypeColor(k);
+          const valueColor = this.getTypeColor(v);
+          return `${this.color(this.getPrettyValue(k), keyColor)} = ${this.color(this.getPrettyValue(v), valueColor)}`;
+        })
+        .join(", ");
+
+      return `{${contents}}`;
+    }
+
+    return repr(value, { sortKeys: true });
   }
 
   private updateStatsFrame(): void {
@@ -113,5 +116,20 @@ export class DebugStats extends BaseComponent<{}, DebugScreen> implements OnStar
     stats.Incoming.Text = `NetworkIncoming: ${floor(Stats.DataReceiveKbps)} kb/s`;
     stats.Outgoing.Text = `NetworkOutgoing: ${floor(Stats.DataSendKbps)} kb/s`;
     stats.Instances.Text = "Instances: " + toSuffixedNumber(Stats.InstanceCount);
+  }
+
+  private getTypeColor(value: unknown): Maybe<string> {
+    switch (typeOf(value)) {
+      case "EnumItem":
+        return "00aaff";
+      case "string":
+        return "55ff7f";
+      case "number":
+        return "ff5500";
+      case "boolean":
+        return "fff04a";
+      case "nil":
+        return "db5433";
+    }
   }
 }
