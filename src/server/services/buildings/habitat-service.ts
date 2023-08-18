@@ -8,13 +8,13 @@ import { SchedulingService } from "../scheduling-service";
 
 import { Habitat } from "shared/data-models/buildings";
 import { MissingDataException } from "shared/exceptions";
-import { getTotalGoldPerMinute } from "shared/util";
+import { getPlacedBuilding, getTotalGoldPerMinute } from "shared/util";
 import { OnPlayerJoin } from "server/hooks";
 import { Events, Functions } from "server/network";
 
 const { claimHabitatGold } = Events;
 const { isTimerActive } = Functions;
-const { ceil } = math;
+const { ceil, min } = math;
 
 interface HabitatGoldInfo {
   goldPerMinute: number;
@@ -44,8 +44,7 @@ export class HabitatService implements OnPlayerJoin, OnStart {
         .filter(i => StringUtils.endsWith(i.Name, "Habitat"));
 
       for (const habitatModel of habitats)
-        if (habitatModel.Dragons.GetChildren().size() > 0)
-          this.generateGold(player, habitatModel.GetAttribute<string>("ID"));
+        this.generateGold(player, habitatModel);
     });
   }
 
@@ -98,15 +97,20 @@ export class HabitatService implements OnPlayerJoin, OnStart {
     if (!habitat)
       throw new MissingDataException(habitatID, "Missing habitat building data");
 
+    const habitatModel = getPlacedBuilding<HabitatModel>(habitatID)!;
+    const max = <HabitatMaximums>require(habitatModel.Maximums);
     const goldInfo = this.playerMap.mustGet(player).get(habitatID)!;
-    habitat.gold = goldInfo.totalGold;
+    habitat.gold = min(goldInfo.totalGold, max.gold);
     this.data.removeBuildingData(player, habitatID);
     this.data.addBuildingData(player, habitat);
     this.updateGoldGeneration(player, habitat);
   }
 
   // call every second
-  private async generateGold(player: Player, habitatID: string): Promise<void> {
+  private async generateGold(player: Player, habitatModel: HabitatModel): Promise<void> {
+    if (habitatModel.Dragons.GetChildren().size() <= 0) return;
+
+    const habitatID = habitatModel.GetAttribute<string>("ID");
     const habitat = this.data.getBuildingData<Habitat>(player, habitatID);
     if (!habitat)
       throw new MissingDataException(habitatID, "Missing habitat building data");

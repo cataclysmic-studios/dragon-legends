@@ -3,6 +3,7 @@ interface UpgradableMaximums {
 }
 
 interface HabitatMaximums extends UpgradableMaximums {
+	readonly gold: number;
 	readonly dragons: number[];
 }
 
