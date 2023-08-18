@@ -22,6 +22,7 @@ const enum PerkType {
   Character,
   Combat
 }
+
 interface Perk {
   readonly name: string;
   readonly type: PerkType;
@@ -52,6 +53,8 @@ export interface Dragon extends Unique {
   readonly rarity: Rarity;
   damage: number;
   health: number;
+  xp: number;
+  kills: number;
   /** gold generated per minute */
   goldGenerationRate: number;
   power: number;
