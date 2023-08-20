@@ -24,35 +24,7 @@ interface DragonbookCard extends Frame {
 			UIAspectRatioConstraint: UIAspectRatioConstraint;
 		};
 		Elements: Frame & {
-			Geo: ImageLabel & {
-				Icon: ImageLabel & {
-					UIAspectRatioConstraint: UIAspectRatioConstraint;
-				};
-				UIGradient: UIGradient;
-				UIAspectRatioConstraint: UIAspectRatioConstraint;
-			};
-			Electro: ImageLabel & {
-				Icon: ImageLabel & {
-					UIAspectRatioConstraint: UIAspectRatioConstraint;
-				};
-				UIGradient: UIGradient;
-				UIAspectRatioConstraint: UIAspectRatioConstraint;
-			};
-			Cryo: ImageLabel & {
-				Icon: ImageLabel & {
-					UIAspectRatioConstraint: UIAspectRatioConstraint;
-				};
-				UIGradient: UIGradient;
-				UIAspectRatioConstraint: UIAspectRatioConstraint;
-			};
 			UIListLayout: UIListLayout;
-			Diabolo: ImageLabel & {
-				UIGradient: UIGradient;
-				Icon: ImageLabel & {
-					UIAspectRatioConstraint: UIAspectRatioConstraint;
-				};
-				UIAspectRatioConstraint: UIAspectRatioConstraint;
-			};
 		};
 		Rarity: ImageLabel & {
 			UIAspectRatioConstraint: UIAspectRatioConstraint;

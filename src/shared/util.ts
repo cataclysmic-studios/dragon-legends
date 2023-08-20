@@ -4,7 +4,7 @@ import StringUtils from "@rbxts/string-utils";
 import Object from "@rbxts/object-utils";
 
 import { StorableVector3 } from "./data-models/utility";
-import { DragonInfo, Rarity } from "./data-models/dragons";
+import { CombatBadge, DragonInfo, Element, Rarity } from "./data-models/dragons";
 import { Habitat } from "./data-models/buildings";
 import { Egg } from "./data-models/inventory";
 import { Exception } from "./exceptions";
@@ -103,7 +103,42 @@ export function getDragonData(dragonModel: Model): DragonInfo {
   return <DragonInfo>require(dataModule);
 }
 
-export function getRarityImage(rarity: Rarity): string {
+export function addElementsToFrame(frame: Frame, elements: Element[]): void {
+  let order = 1;
+  for (const element of elements) {
+    const banner = <ImageLabel>Assets.UI.ElementBanners.WaitForChild(element).Clone();
+    banner.LayoutOrder = order;
+    banner.Parent = frame;
+    order++;
+  }
+}
+
+function getCombatBadgeImage(badge: CombatBadge): string {
+  switch (badge) {
+    case "None": return "rbxassetid://14501660447";
+    case "Bronze I": return "rbxassetid://00000";
+    case "Bronze II": return "rbxassetid://00000";
+    case "Bronze III": return "rbxassetid://00000";
+    case "Silver I": return "rbxassetid://00000";
+    case "Silver II": return "rbxassetid://00000";
+    case "Silver III": return "rbxassetid://00000";
+    case "Gold I": return "rbxassetid://00000";
+    case "Gold II": return "rbxassetid://00000";
+    case "Gold III": return "rbxassetid://00000";
+    case "Platinum I": return "rbxassetid://00000";
+    case "Platinum II": return "rbxassetid://00000";
+    case "Platinum III": return "rbxassetid://00000";
+    case "Diamond I": return "rbxassetid://00000";
+    case "Diamond II": return "rbxassetid://00000";
+    case "Diamond III": return "rbxassetid://00000";
+  }
+}
+
+export function updateCombatBadgeIcon(icon: ImageLabel, badge: CombatBadge): void {
+  icon.Image = getCombatBadgeImage(badge);
+}
+
+function getRarityImage(rarity: Rarity): string {
   switch (rarity) {
     case "Basic": return "rbxassetid://14399932656";
     case "Rare": return "rbxassetid://14400364792";
@@ -111,6 +146,13 @@ export function getRarityImage(rarity: Rarity): string {
     case "Legendary": return "rbxassetid://14400365128";
     case "Mythic": return "rbxassetid://14233300725";
   }
+}
+
+export function updateRarityIcon(icon: ImageLabel & { Abbreviation: TextLabel; }, rarity: Rarity): void {
+  const image = getRarityImage(rarity);
+  const abbreviation = rarity.sub(1, 1);
+  icon.Image = image;
+  icon.Abbreviation.Text = abbreviation;
 }
 
 export function toRegion3({ CFrame, Size }: Part, areaShrink = 0): Region3 {

@@ -1,21 +1,20 @@
 import { OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
-import { CollectionService as Collection, HttpService as HTTP, Workspace as World } from "@rbxts/services";
+import { CollectionService as Collection, HttpService as HTTP } from "@rbxts/services";
 import { BuildingPlacementController } from "client/controllers/building-placement-controller";
 import { NotificationController } from "client/controllers/notification-controller";
 import { NotificationType } from "shared/notification-type";
 import { UIController } from "client/controllers/ui-controller";
 
 import { Egg, InventoryItem } from "shared/data-models/inventory";
-import { Element } from "shared/data-models/dragons";
-import { Assets, Placable, getDragonData, getRarityImage, toSeconds, toSuffixedNumber } from "shared/util";
+import { Assets, Placable, addElementsToFrame, getDragonData, toSeconds, toSuffixedNumber, updateRarityIcon } from "shared/util";
 import { Events, Functions } from "client/network";
 import { MissingAttributeException } from "shared/exceptions";
 
 const { setData, incrementData, addNotificationToButton } = Events;
 const { getData } = Functions;
 
-interface Attributes {}
+interface Attributes { }
 
 @Component({ tag: "ShopContent" })
 export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> implements OnStart {
@@ -98,25 +97,14 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
   private configureSpecifics(contentType: Placable, card: ItemCard, itemModel: Model): void {
     switch (contentType) {
       case "Dragons": {
-        const dragon = getDragonData(itemModel);
-        card.Rarity.Image = getRarityImage(dragon.rarity);
-        card.Rarity.Abbreviation.Text = dragon.rarity.sub(1, 1);
-        this.addElements(dragon.elements, card.Elements);
+        const { rarity, elements } = getDragonData(itemModel);
+        updateRarityIcon(card.Rarity, rarity)
+        addElementsToFrame(card.Elements, elements);
 
         card.Rarity.Visible = true;
         card.Elements.Visible = true;
         break;
       }
-    }
-  }
-
-  private addElements(elements: Element[], frame: Frame): void {
-    let order = 1;
-    for (const element of elements) {
-      const banner = <ImageLabel>Assets.UI.ElementBanners.WaitForChild(element).Clone();
-      banner.LayoutOrder = order;
-      banner.Parent = frame;
-      order++;
     }
   }
 }

@@ -1,5 +1,6 @@
 import { Unique } from "./utility";
 
+const { floor } = math;
 
 export type CombatBadge = "None" |
   "Bronze I" | "Bronze II" | "Bronze III" |
@@ -43,6 +44,7 @@ export interface Ability {
 }
 
 export type DragonInfo = Pick<Dragon, "name" | "elements" | "rarity"> & {
+  readonly index: number;
   readonly hatchTime: string;
   readonly price: number;
 };
@@ -62,4 +64,14 @@ export interface Dragon extends Unique {
   combatBadge: CombatBadge;
   perks: Perks;
   abilities: [Ability, Ability, Ability, Ability];
+}
+
+export namespace Dragons {
+  export function getLevel(dragon: Dragon): number {
+    return floor(dragon.xp / 4) + 1;
+  }
+
+  export function getCurrentLevelXP(dragon: Dragon): number {
+    return dragon.xp % 4;
+  }
 }
