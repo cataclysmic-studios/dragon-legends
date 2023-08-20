@@ -6,7 +6,7 @@ import { UIController } from "client/controllers/ui-controller";
 import { DataValue, DataKey } from "shared/data-models/generic";
 import { Dragon, DragonInfo } from "shared/data-models/dragons";
 import { Assets, getDragonData, newDragonModel } from "shared/utilities/helpers";
-import { addElementsToFrame, updateCombatBadgeIcon, updateRarityIcon } from "shared/utilities/ui";
+import { addElementsToFrame, updateCombatBadgeIcon, updateEmpowermentStars, updateRarityIcon } from "shared/utilities/ui";
 import DragonUtility from "shared/utilities/dragon";
 
 import { DataLinked } from "client/hooks";
@@ -87,6 +87,7 @@ export class Dragonbook extends BaseComponent implements DataLinked, OnStart {
     const dragonUtil = new DragonUtility(dragon);
     card.Viewport.Level.Value.Text = tostring(dragonUtil.getLevel());
     updateCombatBadgeIcon(card.Viewport.CombatBadge, dragon.combatBadge);
+    updateEmpowermentStars(card.Viewport.Empowerment, dragon.empowerment);
     this.setOwnedCardStyle(card, true);
     card.SetAttribute("ID", dragon.id);
   }

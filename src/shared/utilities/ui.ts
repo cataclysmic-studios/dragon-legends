@@ -3,7 +3,7 @@ import { TweenService } from "@rbxts/services";
 import { CombatBadge, Element, Rarity } from "../data-models/dragons";
 import { Assets } from "./helpers";
 
-export function updateEmpowermentStars(frame: Frame & { Star: ImageLabel }, empowerment: number): void {
+export function updateEmpowermentStars(frame: Frame, empowerment: number): void {
   for (const star of frame.GetChildren())
     if (star.IsA("ImageLabel")) {
       const active = star.LayoutOrder <= empowerment;

@@ -5,7 +5,7 @@ import { Janitor } from "@rbxts/janitor";
 import { DataKey } from "shared/data-models/generic";
 import { Dragon } from "shared/data-models/dragons";
 import { newDragonModel, toSuffixedNumber } from "shared/utilities/helpers";
-import { addElementsToFrame, updateCombatBadgeIcon, updateRarityIcon } from "shared/utilities/ui";
+import { addElementsToFrame, updateCombatBadgeIcon, updateEmpowermentStars, updateRarityIcon } from "shared/utilities/ui";
 import DragonUtility from "shared/utilities/dragon";
 
 import { DragonInfoScreen } from "client/ui-types";
@@ -59,10 +59,11 @@ export class DragonInfo extends BaseComponent<Attributes, DragonInfoScreen> impl
       const levelBasedStats = this.instance.ExtraInfo.Stats.LevelBasedStats.List;
       levelBasedStats.Income.Value.Text = toSuffixedNumber(dragon.goldGenerationRate) + "/min";
       levelBasedStats.Power.Value.Text = toSuffixedNumber(dragonUtil.getPower());
-
       this.feedButton.Container.Price.Text = toSuffixedNumber(feedingPrice);
+
       updateRarityIcon(this.instance.Info.Rarity, dragon.rarity);
       updateCombatBadgeIcon(this.instance.LevelContainer.CombatBadge, dragon.combatBadge);
+      updateEmpowermentStars(this.instance.LevelContainer.Empowerment, dragon.empowerment);
       this.janitor.Add(newDragonModel(dragon.name, { parent: this.instance.Viewport }));
     });
 

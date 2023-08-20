@@ -159,7 +159,6 @@ export interface DragonInfoScreen extends ScreenGui {
   LevelContainer: Frame & {
     Empowerment: Frame & {
       UIListLayout: UIListLayout;
-      ["star color"]: ModuleScript;
     };
     UIGradient: UIGradient;
     Title: TextLabel & {
