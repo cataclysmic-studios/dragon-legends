@@ -1,18 +1,15 @@
 import { Controller, OnInit, OnRender } from "@flamework/core";
 import { StarterGui, Workspace as World } from "@rbxts/services";
-import { TweenInfoBuilder } from "@rbxts/builders";
 import { BuildingPlacementController } from "./building-placement-controller";
 import { MouseController } from "./mouse-controller";
-
-import { tween } from "shared/util";
-
-// TODO: scroll to change FOV
 
 @Controller()
 export class CameraController implements OnInit, OnRender {
   private readonly cameraPart = World.Ignore.PlayerCamera;
   private readonly bounds = World.Ignore.CameraBounds;
   private readonly camera = World.CurrentCamera!;
+  private zoomDirection = 0;
+  private zoomPosition = 0;
 
   public constructor(
     private readonly building: BuildingPlacementController,
@@ -21,23 +18,20 @@ export class CameraController implements OnInit, OnRender {
 
   public onInit(): void {
     StarterGui.SetCoreGuiEnabled("All", false);
+    this.camera.FieldOfView = 80;
     this.camera.CameraType = Enum.CameraType.Scriptable;
-    this.mouse.onScroll(direction => this.zoom(direction));
+
+    const islandPosition = World.Islands.Main.Position;
+    this.cameraPart.Position = islandPosition.add(new Vector3(0, 15 - islandPosition.Y, 0));
+    this.mouse.onScroll(direction => {
+      if (this.zoomPosition >= 2 && direction < 0) return;
+      if (this.zoomPosition <= -15 && direction > 0) return;
+      this.zoomDirection -= direction;
+      this.zoomPosition -= direction;
+    });
   }
 
-  private zoom(delta: number): void {
-    const cam = World.CurrentCamera!;
-    const min = 60, max = 85;
-    tween(
-      cam,
-      new TweenInfoBuilder()
-        .SetTime(0.3)
-        .SetEasingStyle(Enum.EasingStyle.Sine),
-      { FieldOfView: math.clamp(cam.FieldOfView + (delta * 4), min, max) }
-    );
-  }
-
-  public onRender(): void {
+  public onRender(dt: number): void {
     const { camera, cameraPart, bounds } = this;
     const { X: dx, Y: dy } = this.mouse.delta().div(16);
     const movementCorrection = CFrame.Angles(-math.rad(cameraPart.Orientation.X), 0, 0);
@@ -61,7 +55,10 @@ export class CameraController implements OnInit, OnRender {
     const mouseDown = this.mouse.down && !this.building.isDragging();
     const mouseBehavior = mouseDown ? Enum.MouseBehavior.LockCurrentPosition : Enum.MouseBehavior.Default;
     this.mouse.setBehavior(mouseBehavior);
-    cameraPart.Position = new Vector3(x, movedPosition.Y, z);
+    cameraPart.Position = new Vector3(x, movedPosition.Y, z)
+      .add(cameraPart.CFrame.LookVector.mul(this.zoomDirection * 60 * dt));
+
+    this.zoomDirection = 0;
     camera.CFrame = cameraPart.CFrame;
   }
 }

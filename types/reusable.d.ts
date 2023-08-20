@@ -11,7 +11,7 @@ interface HatcheryMaximums extends UpgradableMaximums {
 	readonly eggs: number[];
 }
 
-interface DragonbookCard extends Frame {
+interface DragonbookCard extends TextButton {
 	UIGradient: UIGradient;
 	UICorner: UICorner;
 	UIPadding: UIPadding;
