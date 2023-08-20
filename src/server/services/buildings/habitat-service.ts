@@ -100,7 +100,7 @@ export class HabitatService implements OnPlayerJoin, OnStart {
     const habitatModel = getPlacedBuilding<HabitatModel>(habitatID)!;
     const max = <HabitatMaximums>require(habitatModel.Maximums);
     const goldInfo = this.playerMap.mustGet(player).get(habitatID)!;
-    habitat.gold = min(goldInfo.totalGold, max.gold);
+    habitat.gold = min(goldInfo.totalGold, max.gold[habitat.level - 1]);
     this.data.removeBuildingData(player, habitatID);
     this.data.addBuildingData(player, habitat);
     this.updateGoldGeneration(player, habitat);
