@@ -4,6 +4,7 @@ import { RunService as Runtime, Stats } from "@rbxts/services";
 import Object from "@rbxts/object-utils";
 
 import { SelectionController } from "client/controllers/selection-controller";
+import { DebugStatsScreen } from "client/ui-types";
 import { toSuffixedNumber } from "shared/util";
 import Log from "shared/logger";
 import repr from "shared/repr";
@@ -11,19 +12,8 @@ import StringUtils from "@rbxts/string-utils";
 
 const { floor } = math;
 
-interface DebugScreen extends ScreenGui {
-  Info: Frame;
-  Stats: Frame & {
-    MemoryUsage: TextLabel;
-    Incoming: TextLabel;
-    Outgoing: TextLabel;
-    Instances: TextLabel;
-    ViewInfo: TextButton;
-  };
-}
-
 @Component({ tag: "DebugStats" })
-export class DebugStats extends BaseComponent<{}, DebugScreen> implements OnStart {
+export class DebugStats extends BaseComponent<{}, DebugStatsScreen> implements OnStart {
   private active = true;
 
   public constructor(

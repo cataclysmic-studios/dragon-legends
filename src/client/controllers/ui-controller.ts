@@ -1,6 +1,8 @@
 import { Controller } from "@flamework/core";
-import { PlayerController } from "./player-controller";
 import { CollectionService as Collection } from "@rbxts/services";
+import Object from "@rbxts/object-utils";
+
+import { PlayerController } from "./player-controller";
 
 @Controller()
 export class UIController {
@@ -9,7 +11,7 @@ export class UIController {
 
   public constructor(
     private readonly player: PlayerController
-  ) {}
+  ) { }
 
   public open(name: string): void {
     const guis = <ScreenGui[]>this.player.gui.GetChildren();
@@ -25,6 +27,16 @@ export class UIController {
           this.setPage(gui.Name, mainPage);
         }
       }
+  }
+
+  public setScreenState(guiName: string, state: Record<string, AttributeValue>): void {
+    const screen = this.getScreen(guiName);
+    for (const [key, value] of Object.entries(state))
+      screen.SetAttribute(key, value);
+  }
+
+  public getScreenState(guiName: string): Map<string, AttributeValue> {
+    return this.getScreen(guiName).GetAttributes();
   }
 
   public getPage<T extends GuiObject = GuiObject>(guiName: string, pageName: string): T {

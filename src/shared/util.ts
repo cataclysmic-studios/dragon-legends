@@ -1,5 +1,6 @@
 import { Players, ReplicatedFirst, TweenService, UserInputService as UIS, Workspace as World } from "@rbxts/services";
 import { RaycastParamsBuilder, TweenInfoBuilder } from "@rbxts/builders";
+import { Janitor } from "@rbxts/janitor";
 import StringUtils from "@rbxts/string-utils";
 import Object from "@rbxts/object-utils";
 
@@ -103,14 +104,19 @@ export function getDragonData(dragonModel: Model): DragonInfo {
   return <DragonInfo>require(dataModule);
 }
 
-export function addElementsToFrame(frame: Frame, elements: Element[]): void {
+export function addElementsToFrame(frame: Frame, elements: Element[]): Janitor {
+  const janitor = new Janitor
   let order = 1;
+
   for (const element of elements) {
     const banner = <ImageLabel>Assets.UI.ElementBanners.WaitForChild(element).Clone();
     banner.LayoutOrder = order;
     banner.Parent = frame;
+    janitor.Add(banner);
     order++;
   }
+
+  return janitor;
 }
 
 function getCombatBadgeImage(badge: CombatBadge): string {

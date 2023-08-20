@@ -35,13 +35,13 @@ export class Dragonbook extends BaseComponent implements DataLinked, OnStart {
     task.spawn(() => this.updateUnownedDragons());
     for (const dragon of <Dragon[]>value) {
       let card = this.cards.find(card => card.GetAttribute<Maybe<string>>("ID") === dragon.id);
-      if (!card) {
+      if (!card) { // dragon is owned but card doesn't exist yet
         const dragonModels = Assets.Dragons.GetChildren()
           .filter((i): i is Model => i.IsA("Model"));
 
         const dragonModel = dragonModels.find(model => model.Name === dragon.name)!;
         const dragonData = getDragonData(dragonModel);
-        card = this.addCard(dragonData);
+        card = this.addCard(dragonData, dragon.id);
       }
 
       this.updateCard(card, dragon);
@@ -60,7 +60,7 @@ export class Dragonbook extends BaseComponent implements DataLinked, OnStart {
     }
   }
 
-  private addCard(info: DragonInfo): DragonbookCard {
+  private addCard(info: DragonInfo, id?: string): DragonbookCard {
     const card = Assets.UI.DragonbookCard.Clone();
     card.Title.Text = `${info.index}. ${info.name}`;
 
@@ -69,9 +69,11 @@ export class Dragonbook extends BaseComponent implements DataLinked, OnStart {
     newDragonModel(info.name, { parent: card.Viewport });
     this.setOwnedCardStyle(card, false);
 
-    this.janitor.Add(card.MouseButton1Click.Connect(() =>
-      this.ui.open("DragonInfo")
-    ));
+    if (id)
+      this.janitor.Add(card.MouseButton1Click.Connect(() => {
+        this.ui.setScreenState("DragonInfo", { DragonID: id });
+        this.ui.open("DragonInfo");
+      }));
 
     card.LayoutOrder = info.index;
     card.Parent = this.instance;
