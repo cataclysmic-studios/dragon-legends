@@ -4,8 +4,10 @@ import { Janitor } from "@rbxts/janitor";
 import { UIController } from "client/controllers/ui-controller";
 
 import { DataValue, DataKey } from "shared/data-models/generic";
-import { Dragon, DragonInfo, Dragons } from "shared/data-models/dragons";
-import { Assets, addElementsToFrame, getDragonData, newDragonModel, updateCombatBadgeIcon, updateRarityIcon } from "shared/util";
+import { Dragon, DragonInfo } from "shared/data-models/dragons";
+import { Assets, addElementsToFrame, getDragonData, newDragonModel, updateCombatBadgeIcon, updateRarityIcon } from "shared/utilities/helpers";
+import DragonUtility from "shared/utilities/dragon";
+
 import { DataLinked } from "client/hooks";
 import { Functions } from "client/network";
 
@@ -81,7 +83,8 @@ export class Dragonbook extends BaseComponent implements DataLinked, OnStart {
   }
 
   private updateCard(card: DragonbookCard, dragon: Dragon) {
-    card.Viewport.Level.Value.Text = tostring(Dragons.getLevel(dragon));
+    const dragonUtil = new DragonUtility(dragon);
+    card.Viewport.Level.Value.Text = tostring(dragonUtil.getLevel());
     updateCombatBadgeIcon(card.Viewport.CombatBadge, dragon.combatBadge);
     this.setOwnedCardStyle(card, true);
     card.SetAttribute("ID", dragon.id);

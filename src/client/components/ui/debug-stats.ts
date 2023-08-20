@@ -5,7 +5,7 @@ import Object from "@rbxts/object-utils";
 
 import { SelectionController } from "client/controllers/selection-controller";
 import { DebugStatsScreen } from "client/ui-types";
-import { toSuffixedNumber } from "shared/util";
+import { toSuffixedNumber } from "shared/utilities/helpers";
 import Log from "shared/logger";
 import repr from "shared/repr";
 import StringUtils from "@rbxts/string-utils";

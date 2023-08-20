@@ -5,7 +5,7 @@ import { TimerService } from "../timer-service";
 
 import { Egg, InventoryItem } from "shared/data-models/inventory";
 import { Hatchery } from "shared/data-models/buildings";
-import { getPlacedBuilding, newEggMesh } from "shared/util";
+import { getPlacedBuilding, newEggMesh } from "shared/utilities/helpers";
 import { Events } from "server/network";
 
 const { addEggToHatchery, removeEggFromHatchery } = Events;

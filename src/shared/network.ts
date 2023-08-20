@@ -3,7 +3,7 @@ import { DataKey, DataValue, GameDataModel } from "./data-models/generic";
 import { Egg } from "./data-models/inventory";
 import { Dragon, DragonInfo } from "./data-models/dragons";
 import { Building } from "./data-models/buildings";
-import { Placable } from "./util";
+import { Placable } from "./utilities/helpers";
 import { TimerInfo } from "./data-models/time";
 import { NotificationType } from "./notification-type";
 

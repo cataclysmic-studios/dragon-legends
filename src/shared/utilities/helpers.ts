@@ -3,11 +3,10 @@ import { RaycastParamsBuilder, TweenInfoBuilder } from "@rbxts/builders";
 import StringUtils from "@rbxts/string-utils";
 import Object from "@rbxts/object-utils";
 
-import { StorableVector3 } from "./data-models/utility";
-import { CombatBadge, Dragon, DragonInfo, Dragons, Element, Rarity } from "./data-models/dragons";
-import { Habitat } from "./data-models/habitats";
-import { Egg } from "./data-models/inventory";
-import { Exception } from "./exceptions";
+import { StorableVector3 } from "../data-models/utility";
+import { CombatBadge, DragonInfo, Element, Rarity } from "../data-models/dragons";
+import { Egg } from "../data-models/inventory";
+import { Exception } from "../exceptions";
 
 const { floor, log, round, abs, max } = math;
 

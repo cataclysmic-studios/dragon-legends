@@ -3,15 +3,16 @@ import Signal from "@rbxts/signal";
 
 import { DataService } from "./data-service";
 
-import { Building, Buildings } from "shared/data-models/buildings";
+import { Building } from "shared/data-models/buildings";
 import { Habitat } from "shared/data-models/habitats";
 import { TimeInfo } from "shared/data-models/time";
-import { Assets, getDragonData, calculateTotalGoldPerMinute, now, toUsableVector3 } from "shared/util";
+import { Assets, getDragonData, now, toUsableVector3 } from "shared/utilities/helpers";
 import { Events } from "server/network";
 import { HabitatService } from "./buildings/habitat-service";
+import BuildingUtility from "shared/utilities/building";
+import HabitatUtility from "shared/utilities/habitat";
 
 const { dataLoaded, placeBuilding, placeDragon, buildingsLoaded, addEggToHatchery } = Events;
-const { isHabitat, isHatchery } = Buildings;
 const { floor } = math;
 
 type BuildingCategory = Exclude<keyof typeof Assets, keyof Folder | "UI" | "Eggs">;
@@ -45,16 +46,18 @@ export class BuildingLoaderService implements OnStart {
       building.id
     );
 
-    if (isHabitat(building))
+    const buildingUtil = new BuildingUtility(building);
+    if (buildingUtil.isHabitat(building))
       this.loadHabitat(player, building);
-    else if (isHatchery(building))
+    else if (buildingUtil.isHatchery(building))
       for (const egg of building.eggs)
         addEggToHatchery.predict(player, egg, true);
   }
 
   private getBuildingCategory(building: Building): BuildingCategory {
+    const buildingUtil = new BuildingUtility(building);
     let category: BuildingCategory = "Buildings";
-    if (isHabitat(building))
+    if (buildingUtil.isHabitat())
       category = "Habitats";
 
     return category;
@@ -68,8 +71,9 @@ export class BuildingLoaderService implements OnStart {
       placeDragon.predict(player, dragonData, id, dragon.id);
     }
 
+    const habitatUtil = new HabitatUtility(habitat);
     const { lastOnline } = this.data.get<TimeInfo>(player, "timeInfo");
-    const perMinuteGold = calculateTotalGoldPerMinute(habitat);
+    const perMinuteGold = habitatUtil.calculateTotalGoldPerMinute();
     const secondsOffline = lastOnline ? now() - lastOnline : 0;
     const minutesOffline = secondsOffline / 60;
     const gainedGold = floor(perMinuteGold * minutesOffline);

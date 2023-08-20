@@ -6,7 +6,7 @@ import { DataService } from "server/services/data-service";
 
 import { TimeInfo, TimerInfo } from "shared/data-models/time";
 import { Exception } from "shared/exceptions";
-import { Assets, toRemainingTime, now } from "shared/util";
+import { Assets, toRemainingTime, now } from "shared/utilities/helpers";
 import { Events } from "server/network";
 import { LevelService } from "server/services/level-service";
 
@@ -28,9 +28,9 @@ export class Timer extends BaseComponent<Attributes, Model | MeshPart> implement
     const timerUI = Assets.UI.Timer.Clone();
     timerUI.Adornee = this.instance;
     timerUI.Parent = this.instance;
-    
+
     const updateUI = () => {
-      const [ player ] = Players.GetPlayers();
+      const [player] = Players.GetPlayers();
       if (!player) return;
 
       const { timers } = this.data.get<TimeInfo>(player, "timeInfo");

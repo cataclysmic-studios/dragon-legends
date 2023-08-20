@@ -2,12 +2,14 @@ import { OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
 import { Janitor } from "@rbxts/janitor";
 
-import { Dragon, Dragons } from "shared/data-models/dragons";
-import { addElementsToFrame, newDragonModel, toSuffixedNumber, updateCombatBadgeIcon, updateRarityIcon } from "shared/util";
+import { DataKey } from "shared/data-models/generic";
+import { Dragon } from "shared/data-models/dragons";
+import { addElementsToFrame, newDragonModel, toSuffixedNumber, updateCombatBadgeIcon, updateRarityIcon } from "shared/utilities/helpers";
+import DragonUtility from "shared/utilities/dragon";
+
 import { DragonInfoScreen } from "client/ui-types";
 import { DataLinked } from "client/hooks";
 import { Events, Functions } from "client/network";
-import { DataKey } from "shared/data-models/generic";
 
 const { incrementData, addDragonXP } = Events;
 const { getData } = Functions;
@@ -43,18 +45,19 @@ export class DragonInfo extends BaseComponent<Attributes, DragonInfoScreen> impl
     if (!dragon) return;
 
     this.janitor.Cleanup();
-    const feedingPrice = Dragons.calculateFeedingPrice(dragon);
+    const dragonUtil = new DragonUtility(dragon);
+    const feedingPrice = dragonUtil.calculateFeedingPrice();
 
     task.spawn(() => {
-      const level = Dragons.getLevel(dragon);
-      const dragonXP = Dragons.getCurrentLevelXP(dragon);
+      const level = dragonUtil.getLevel();
+      const dragonXP = dragonUtil.getCurrentLevelXP();
       this.instance.DragonName.Value.Text = dragon.name;
       this.instance.LevelContainer.Level.Text = tostring(level);
       this.instance.Viewport.XpBar.Progress.Size = UDim2.fromScale(dragonXP / 4, 1);
 
       const levelBasedStats = this.instance.ExtraInfo.Stats.LevelBasedStats.List;
       levelBasedStats.Income.Value.Text = toSuffixedNumber(dragon.goldGenerationRate) + "/min";
-      levelBasedStats.Power.Value.Text = toSuffixedNumber(Dragons.getPower(dragon));
+      levelBasedStats.Power.Value.Text = toSuffixedNumber(dragonUtil.getPower());
 
       this.feedButton.Container.Price.Text = toSuffixedNumber(feedingPrice);
       updateRarityIcon(this.instance.Info.Rarity, dragon.rarity);

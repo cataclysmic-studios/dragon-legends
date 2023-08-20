@@ -6,7 +6,7 @@ import { BuildingLoaderService } from "./building-loader-service";
 import { Timer } from "server/components/timer";
 import { TimeInfo, TimerInfo, TimerType } from "shared/data-models/time";
 import { Exception, MissingBuildingException } from "shared/exceptions";
-import { getPlacedBuilding, now } from "shared/util";
+import { getPlacedBuilding, now } from "shared/utilities/helpers";
 import { Events, Functions } from "server/network";
 import Log from "shared/logger";
 

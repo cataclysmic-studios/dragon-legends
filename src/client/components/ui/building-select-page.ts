@@ -1,22 +1,23 @@
 import { OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
+import { TweenInfoBuilder } from "@rbxts/builders";
 import { Janitor } from "@rbxts/janitor";
 
 import { SelectionController } from "client/controllers/selection-controller";
 import { DragonPlacementController } from "client/controllers/dragon-placement-controller";
 
 import { DataKey } from "shared/data-models/generic";
-import { Building, Buildings, Hatchery } from "shared/data-models/buildings";
+import { Building, Hatchery, UpgradableBuilding } from "shared/data-models/buildings";
 import { Habitat } from "shared/data-models/habitats";
 import { MissingBuildingException } from "shared/exceptions";
-import { Assets, getPlacedBuilding, newDragonModel, newEggMesh, toSuffixedNumber, tween } from "shared/util";
+import { Assets, getPlacedBuilding, newDragonModel, newEggMesh, toSuffixedNumber, tween } from "shared/utilities/helpers";
+import BuildingUtility from "shared/utilities/building";
+
 import { DataLinked } from "client/hooks";
 import { Events, Functions } from "client/network";
-import { TweenInfoBuilder } from "@rbxts/builders";
 
 const { timerFinished, removeEggFromHatchery, claimHabitatGold } = Events;
 const { getBuildingData, isTimerActive } = Functions;
-const { isUpgradable, isHabitat, isHatchery } = Buildings;
 
 interface Attributes {
   ID?: string;
@@ -145,19 +146,22 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
   }
 
   private updateButtons(building: Building) {
-    this.buttons.CollectGold.Visible = isHabitat(building);
-    this.buttons.Upgrade.Visible = isUpgradable(building);
+    const buildingUtil = new BuildingUtility(building);
+    this.buttons.CollectGold.Visible = buildingUtil.isHabitat();
+    this.buttons.Upgrade.Visible = buildingUtil.isUpgradable();
 
     this.removeExtraButtons();
-    if (isHabitat(building)) {
-      this.buttons.CollectGold.Amount.Text = toSuffixedNumber(building.gold);
+    if (buildingUtil.isHabitat()) {
+      const habitat = <Habitat>building;
+      this.buttons.CollectGold.Amount.Text = toSuffixedNumber(habitat.gold);
       this.janitor.Add(
         this.buttons.CollectGold.MouseButton1Click
-          .Connect(() => this.collectGoldFromBuilding(building))
+          .Connect(() => this.collectGoldFromBuilding(habitat))
       );
-      this.addDragonButtons(building);
-    } else if (isHatchery(building))
-      this.addEggButtons(building);
+
+      this.addDragonButtons(habitat);
+    } else if (buildingUtil.isHatchery())
+      this.addEggButtons(<Hatchery>building);
   }
 
   private collectGoldFromBuilding(building: Habitat): void {
@@ -195,7 +199,11 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
   }
 
   private updateTitle(building: Building): void {
-    const level = isUpgradable(building) ? building.level : undefined;
+    const buildingUtil = new BuildingUtility(building);
+    const level = buildingUtil.isUpgradable() ?
+      (<UpgradableBuilding>building).level
+      : undefined;
+
     this.instance.BuildingTitle.Text = building.name + (level ? ` (level ${level})` : "");
   }
 

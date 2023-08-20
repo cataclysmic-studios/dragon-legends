@@ -2,7 +2,7 @@ import { Controller, OnStart } from "@flamework/core";
 import { TweenInfoBuilder } from "@rbxts/builders";
 import { UIController } from "./ui-controller";
 import { NotificationType } from "shared/notification-type";
-import { tween } from "shared/util";
+import { tween } from "shared/utilities/helpers";
 import { Events } from "client/network";
 
 const { dispatchNotification } = Events;
@@ -50,7 +50,7 @@ export class NotificationController implements OnStart {
     label.TextColor3 = this.getNotificationColor(notificationType);
     label.TextScaled = true;
     label.Text = text;
-    
+
     const stroke = new Instance("UIStroke", label);
     stroke.Thickness = 2;
     stroke.Transparency = 0.4;

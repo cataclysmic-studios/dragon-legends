@@ -1,7 +1,5 @@
-import { toNearestFiveOrTen } from "shared/util";
+import { toNearestFiveOrTen } from "shared/utilities/helpers";
 import { Unique } from "./utility";
-
-const { floor, max } = math;
 
 export type CombatBadge = "None" |
   "Bronze I" | "Bronze II" | "Bronze III" |
@@ -65,29 +63,4 @@ export interface Dragon extends Unique {
   combatBadge: CombatBadge;
   perks: Perks;
   abilities: [Ability, Ability, Ability, Ability];
-}
-
-export namespace Dragons {
-  export function getLevel(dragon: Dragon): number {
-    return floor(dragon.xp / 4) + 1;
-  }
-
-  export function getCurrentLevelXP(dragon: Dragon): number {
-    return dragon.xp % 4;
-  }
-
-  export function getPower({ damage, health, xp, empowerment, goldGenerationRate, abilities }: Dragon): number {
-    const totalAbilityLevel = abilities
-      .map(a => a.level)
-      .reduce((accum, cur) => accum + cur);
-
-    return floor((xp + damage + health) * (empowerment + 1)) + goldGenerationRate + totalAbilityLevel;
-  }
-
-  export function calculateFeedingPrice(dragon: Dragon): number {
-    const base = 5;
-    const dampener = 2.5;
-    const level = Dragons.getLevel(dragon);
-    return max(toNearestFiveOrTen(base * 1.5 ** (level - 1) / dampener), base);
-  }
 }

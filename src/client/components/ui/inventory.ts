@@ -3,21 +3,20 @@ import { UIController } from "client/controllers/ui-controller";
 import { NotificationController } from "client/controllers/notification-controller";
 
 import { DataKey, DataValue } from "shared/data-models/generic";
-import { InventoryItem, InventoryItems } from "shared/data-models/inventory";
+import { Egg, InventoryItem } from "shared/data-models/inventory";
 import { Hatchery } from "shared/data-models/buildings";
 import { NotificationType } from "shared/notification-type";
-import { Assets, getPlacedBuilding, newEggMesh } from "shared/util";
+import { Assets, getPlacedBuilding, newEggMesh } from "shared/utilities/helpers";
+import InventoryItemUtility from "shared/utilities/inventory-item";
+
 import { DataLinked } from "client/hooks";
 import { Events, Functions } from "client/network";
 
 const { addEggToHatchery } = Events;
 const { getBuildingData } = Functions;
-const { isEgg } = InventoryItems;
-
-interface Attributes { }
 
 @Component({ tag: "Inventory" })
-export class Inventory extends BaseComponent<Attributes, ScrollingFrame> implements DataLinked {
+export class Inventory extends BaseComponent<{}, ScrollingFrame> implements DataLinked {
   public constructor(
     private readonly ui: UIController,
     private readonly notification: NotificationController
@@ -36,8 +35,9 @@ export class Inventory extends BaseComponent<Attributes, ScrollingFrame> impleme
       const card = Assets.UI.InventoryCard.Clone();
       card.Title.Text = item.name;
 
-      if (isEgg(item))
-        newEggMesh(item, { parent: card.Viewport });
+      const itemUtil = new InventoryItemUtility(item);
+      if (itemUtil.isEgg())
+        newEggMesh(<Egg>item, { parent: card.Viewport });
 
       this.maid.GiveTask(card.Buttons.Sell.MouseButton1Click.Connect(() => {
         // ugh i still gotta do this?? shit...
@@ -46,7 +46,7 @@ export class Inventory extends BaseComponent<Attributes, ScrollingFrame> impleme
       }));
 
       this.maid.GiveTask(card.Buttons.Use.MouseButton1Click.Connect(async () => {
-        if (isEgg(item)) {
+        if (itemUtil.isEgg()) {
           const hatchery = <Hatchery>await getBuildingData("HATCHERY")
           const hatcheryModel = getPlacedBuilding<HatcheryModel>("HATCHERY");
           const max = <HatcheryMaximums>require(hatcheryModel.Maximums);
@@ -55,7 +55,7 @@ export class Inventory extends BaseComponent<Attributes, ScrollingFrame> impleme
           if (currentEggs >= maxEggs)
             return this.notification.dispatch("Cannot add egg to hatchery, hatchery is full.", NotificationType.Error);
 
-          addEggToHatchery(item);
+          addEggToHatchery(<Egg>item);
           this.ui.open("Main");
         } else {
           print("use item");

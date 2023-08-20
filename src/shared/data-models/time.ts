@@ -1,6 +1,5 @@
 import { Unique } from "./utility";
 
-
 export const enum TimerType {
   Building = "Building",
   Hatch = "Hatch"

@@ -4,7 +4,7 @@ import { Axis, Union } from "@rbxts/gamejoy/out/Actions";
 import { ContextOptions } from "@rbxts/gamejoy/out/Definitions/Types";
 import { HttpService as HTTP, UserInputService } from "@rbxts/services";
 import { StrictMap } from "@rbxts/strict-map";
-import { Player } from "shared/util";
+import { Player } from "shared/utilities/helpers";
 
 export const enum MouseIcon {
   Default,
