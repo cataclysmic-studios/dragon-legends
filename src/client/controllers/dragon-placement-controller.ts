@@ -8,7 +8,7 @@ import { MouseController } from "./mouse-controller";
 import { NotificationController } from "./notification-controller";
 
 import { Element } from "shared/data-models/dragons";
-import { Habitat } from "shared/data-models/buildings";
+import { Habitat } from "shared/data-models/habitats";
 import { NotificationType } from "shared/notification-type";
 import { getDragonData, newDragonModel } from "shared/util";
 import { Events, Functions } from "client/network";

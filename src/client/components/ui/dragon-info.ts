@@ -3,7 +3,7 @@ import { Component, BaseComponent } from "@flamework/components";
 import { Janitor } from "@rbxts/janitor";
 
 import { Dragon, Dragons } from "shared/data-models/dragons";
-import { addElementsToFrame, calculateFeedingPrice, newDragonModel, toSuffixedNumber, updateRarityIcon } from "shared/util";
+import { addElementsToFrame, newDragonModel, toSuffixedNumber, updateCombatBadgeIcon, updateRarityIcon } from "shared/util";
 import { DragonInfoScreen } from "client/ui-types";
 import { DataLinked } from "client/hooks";
 import { Events, Functions } from "client/network";
@@ -43,22 +43,30 @@ export class DragonInfo extends BaseComponent<Attributes, DragonInfoScreen> impl
     if (!dragon) return;
 
     this.janitor.Cleanup();
-    const dragonXP = Dragons.getCurrentLevelXP(dragon);
-    const feedingPrice = calculateFeedingPrice(dragon);
+    const feedingPrice = Dragons.calculateFeedingPrice(dragon);
+
     task.spawn(() => {
+      const level = Dragons.getLevel(dragon);
+      const dragonXP = Dragons.getCurrentLevelXP(dragon);
       this.instance.DragonName.Value.Text = dragon.name;
+      this.instance.LevelContainer.Level.Text = tostring(level);
       this.instance.Viewport.XpBar.Progress.Size = UDim2.fromScale(dragonXP / 4, 1);
+
+      const levelBasedStats = this.instance.ExtraInfo.Stats.LevelBasedStats.List;
+      levelBasedStats.Income.Value.Text = toSuffixedNumber(dragon.goldGenerationRate) + "/min";
+      levelBasedStats.Power.Value.Text = toSuffixedNumber(Dragons.getPower(dragon));
+
       this.feedButton.Container.Price.Text = toSuffixedNumber(feedingPrice);
+      updateRarityIcon(this.instance.Info.Rarity, dragon.rarity);
+      updateCombatBadgeIcon(this.instance.LevelContainer.CombatBadge, dragon.combatBadge);
+      this.janitor.Add(newDragonModel(dragon.name, { parent: this.instance.Viewport }));
     });
 
-    updateRarityIcon(this.instance.Info.Rarity, dragon.rarity);
-    this.janitor.Add(newDragonModel(dragon.name, { parent: this.instance.Viewport }));
     this.janitor.Add(() =>
       addElementsToFrame(this.instance.Info.Elements, dragon.elements)
         .forEach(e => e.Destroy())
     );
 
-    print("update")
     this.janitor.Add(this.feedButton.MouseButton1Click.Connect(async () => {
       if (this.feedDebounce) return;
       this.feedDebounce = true;

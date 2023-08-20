@@ -3,7 +3,8 @@ import Signal from "@rbxts/signal";
 
 import { DataService } from "./data-service";
 
-import { Building, Buildings, Habitat } from "shared/data-models/buildings";
+import { Building, Buildings } from "shared/data-models/buildings";
+import { Habitat } from "shared/data-models/habitats";
 import { TimeInfo } from "shared/data-models/time";
 import { Assets, getDragonData, calculateTotalGoldPerMinute, now, toUsableVector3 } from "shared/util";
 import { Events } from "server/network";

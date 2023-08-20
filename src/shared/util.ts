@@ -5,7 +5,7 @@ import Object from "@rbxts/object-utils";
 
 import { StorableVector3 } from "./data-models/utility";
 import { CombatBadge, Dragon, DragonInfo, Dragons, Element, Rarity } from "./data-models/dragons";
-import { Habitat } from "./data-models/buildings";
+import { Habitat } from "./data-models/habitats";
 import { Egg } from "./data-models/inventory";
 import { Exception } from "./exceptions";
 
@@ -26,21 +26,6 @@ export function toNearestFiveOrTen(n: number): number {
     result += 10 - result % 10;
 
   return result;
-}
-
-export function calculateFeedingPrice(dragon: Dragon): number {
-  const base = 5;
-  const dampener = 2.5;
-  const level = Dragons.getLevel(dragon);
-  return max(toNearestFiveOrTen(base * 1.5 ** (level - 1) / dampener), base);
-}
-
-export function calculateTotalGoldPerMinute(habitat: Habitat): number {
-  return habitat.dragons.size() > 0 ?
-    habitat.dragons
-      .map(d => d.goldGenerationRate)
-      .reduce((accum, cur) => accum + cur)
-    : 0;
 }
 
 export function newDragonModel(name: string, options?: {

@@ -6,7 +6,8 @@ import { SelectionController } from "client/controllers/selection-controller";
 import { DragonPlacementController } from "client/controllers/dragon-placement-controller";
 
 import { DataKey } from "shared/data-models/generic";
-import { Building, Buildings, Habitat, Hatchery } from "shared/data-models/buildings";
+import { Building, Buildings, Hatchery } from "shared/data-models/buildings";
+import { Habitat } from "shared/data-models/habitats";
 import { MissingBuildingException } from "shared/exceptions";
 import { Assets, getPlacedBuilding, newDragonModel, newEggMesh, toSuffixedNumber, tween } from "shared/util";
 import { DataLinked } from "client/hooks";

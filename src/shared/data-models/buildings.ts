@@ -1,7 +1,6 @@
 import { Unique, StorableVector3 } from "./utility";
 import { Egg } from "shared/data-models/inventory";
-import { Dragon } from "shared/data-models/dragons";
-
+import { Habitat } from "./habitats";
 
 export interface Building extends Unique {
   readonly name: string;
@@ -10,11 +9,6 @@ export interface Building extends Unique {
 
 export interface UpgradableBuilding extends Building {
   level: number;
-}
-
-export interface Habitat extends UpgradableBuilding {
-  gold: number;
-  dragons: Dragon[];
 }
 
 export interface Hatchery extends UpgradableBuilding {
