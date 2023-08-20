@@ -11,6 +11,75 @@ interface HatcheryMaximums extends UpgradableMaximums {
 	readonly eggs: number[];
 }
 
+interface DragonbookCard extends Frame {
+	UIGradient: UIGradient;
+	UICorner: UICorner;
+	UIPadding: UIPadding;
+	Shine: Frame & {
+		UICorner: UICorner;
+		UIGradient: UIGradient;
+	};
+	Viewport: ViewportFrame & {
+		CombatBadge: ImageLabel & {
+			UIAspectRatioConstraint: UIAspectRatioConstraint;
+		};
+		Elements: Frame & {
+			Geo: ImageLabel & {
+				Icon: ImageLabel & {
+					UIAspectRatioConstraint: UIAspectRatioConstraint;
+				};
+				UIGradient: UIGradient;
+				UIAspectRatioConstraint: UIAspectRatioConstraint;
+			};
+			Electro: ImageLabel & {
+				Icon: ImageLabel & {
+					UIAspectRatioConstraint: UIAspectRatioConstraint;
+				};
+				UIGradient: UIGradient;
+				UIAspectRatioConstraint: UIAspectRatioConstraint;
+			};
+			Cryo: ImageLabel & {
+				Icon: ImageLabel & {
+					UIAspectRatioConstraint: UIAspectRatioConstraint;
+				};
+				UIGradient: UIGradient;
+				UIAspectRatioConstraint: UIAspectRatioConstraint;
+			};
+			UIListLayout: UIListLayout;
+			Diabolo: ImageLabel & {
+				UIGradient: UIGradient;
+				Icon: ImageLabel & {
+					UIAspectRatioConstraint: UIAspectRatioConstraint;
+				};
+				UIAspectRatioConstraint: UIAspectRatioConstraint;
+			};
+		};
+		Rarity: ImageLabel & {
+			UIAspectRatioConstraint: UIAspectRatioConstraint;
+			Abbreviation: TextLabel & {
+				UIStroke: UIStroke;
+			};
+		};
+		UICorner: UICorner;
+		Level: Frame & {
+			UICorner: UICorner;
+			Value: TextLabel & {
+				UIPadding: UIPadding;
+				UIStroke: UIStroke;
+			};
+		};
+		UIAspectRatioConstraint: UIAspectRatioConstraint;
+		UIStroke: UIStroke;
+	};
+	UIStroke: UIStroke & {
+		UIGradient: UIGradient;
+	};
+	UIAspectRatioConstraint: UIAspectRatioConstraint;
+	Title: TextLabel & {
+		UIStroke: UIStroke;
+	};
+}
+
 interface ItemCard extends Frame {
 	UIPadding: UIPadding;
 	UICorner: UICorner;

@@ -16,10 +16,11 @@ interface ReplicatedFirst extends Instance {
 		};
 		Buildings: Folder & {
 			Hatchery: HatcheryModel;
-		};	
+		};
 		UI: Folder & {
 			InventoryCard: InventoryCard;
 			ItemCard: ItemCard;
+			DragonbookCard: DragonbookCard;
 			ClaimFood: ClaimGui;
 			ClaimGold: ClaimGui;
 			ClaimXP: ClaimGui;
@@ -30,7 +31,7 @@ interface ReplicatedFirst extends Instance {
 				Amount: TextLabel & {
 					UIStroke: UIStroke;
 				};
-			};			
+			};
 			HatcheryEggButton: ImageButton & {
 				Viewport: ViewportFrame & {
 					UICorner: UICorner;
@@ -44,7 +45,7 @@ interface ReplicatedFirst extends Instance {
 					ambientShadow: ImageLabel;
 					penumbraShadow: ImageLabel;
 				};
-			};	
+			};
 			HabitatDragonButton: ImageButton & {
 				DragonName: TextLabel & {
 					UIStroke: UIStroke;
@@ -61,7 +62,7 @@ interface ReplicatedFirst extends Instance {
 					ambientShadow: ImageLabel;
 					penumbraShadow: ImageLabel;
 				};
-			};			
+			};
 			ButtonNotification: Frame & {
 				shadowHolder: Frame & {
 					umbraShadow: ImageLabel;
@@ -76,7 +77,7 @@ interface ReplicatedFirst extends Instance {
 				UIStroke: UIStroke;
 				UIAspectRatioConstraint: UIAspectRatioConstraint;
 				UIGradient: UIGradient;
-			};			
+			};
 			Timer: BillboardGui & {
 				Icon: ImageLabel & {
 					UIAspectRatioConstraint: UIAspectRatioConstraint;

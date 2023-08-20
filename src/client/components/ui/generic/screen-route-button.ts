@@ -6,16 +6,15 @@ interface Attributes {
   To?: string;
 }
 
-@Component({ tag: "PageRouteButton" })
-export class PageRouteButton extends BaseComponent<Attributes, GuiButton> implements OnStart {
+@Component({ tag: "ScreenRouteButton" })
+export class ScreenRouteButton extends BaseComponent<Attributes, GuiButton> implements OnStart {
   public constructor(
     private readonly ui: UIController
   ) { super(); }
 
   public onStart(): void {
-    const gui = this.ui.getScreen(this.instance);
     this.maid.GiveTask(this.instance.MouseButton1Click.Connect(() =>
-      this.ui.setPage(gui.Name, this.attributes.To ?? this.instance.Name)
+      this.ui.open(this.attributes.To ?? this.instance.Name)
     ));
   }
 }

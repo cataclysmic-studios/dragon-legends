@@ -88,6 +88,8 @@ export class PlacementService implements OnInit {
       id, name, elements, rarity,
       damage: 100,
       health: 500,
+      xp: 0, // 4 xp = 1 level
+      kills: 0,
       goldGenerationRate: 10,
       empowerment: 0,
       power: 5,
