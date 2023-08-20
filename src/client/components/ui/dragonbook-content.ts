@@ -10,12 +10,9 @@ import { addElementsToFrame, updateCombatBadgeIcon, updateEmpowermentStars, upda
 import DragonUtility from "shared/utilities/dragon";
 
 import { DataLinked } from "client/hooks";
-import { Functions } from "client/network";
-
-const { getData } = Functions;
 
 @Component({ tag: "DragonbookContent" })
-export class Dragonbook extends BaseComponent implements DataLinked, OnStart {
+export class Dragonbook extends BaseComponent implements DataLinked {
   private readonly janitor = new Janitor;
   private readonly cards: DragonbookCard[] = [];
   private readonly dragonModels = Assets.Dragons.GetChildren()
@@ -25,17 +22,13 @@ export class Dragonbook extends BaseComponent implements DataLinked, OnStart {
     private readonly ui: UIController
   ) { super(); }
 
-  public onStart(): void {
-    this.updateUnownedDragons();
-  }
-
   public onDataUpdate(key: DataKey, value: DataValue): void {
     if (key !== "dragons") return;
 
     this.janitor.Cleanup();
     this.cards.clear();
 
-    task.spawn(() => this.updateUnownedDragons());
+    task.spawn(() => this.updateUnownedDragons(<Dragon[]>value));
     for (const dragon of <Dragon[]>value) {
       let card = this.cards.find(card => card.GetAttribute<Maybe<string>>("ID") === dragon.id);
       if (!card) { // dragon is owned but card doesn't exist yet
@@ -51,9 +44,7 @@ export class Dragonbook extends BaseComponent implements DataLinked, OnStart {
     }
   }
 
-  private async updateUnownedDragons(): Promise<void> {
-    const dragons = <Dragon[]>await getData("dragons");
-
+  private async updateUnownedDragons(dragons: Dragon[]): Promise<void> {
     for (const dragonModel of this.dragonModels) {
       const dragon = dragons.find(d => d.name === dragonModel.Name);
       if (!dragon) {
