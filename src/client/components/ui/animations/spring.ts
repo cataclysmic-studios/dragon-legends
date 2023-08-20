@@ -1,5 +1,5 @@
 import { OnStart } from "@flamework/core";
-import { Component, Components } from "@flamework/components";
+import { Component } from "@flamework/components";
 import { TweenInfoBuilder } from "@rbxts/builders";
 
 import { tween } from "shared/util";
@@ -11,7 +11,7 @@ const { EasingStyle } = Enum;
 export class SpringAnimation extends ButtonAnimation implements OnStart {
   private readonly scale = this.instance.FindFirstChildOfClass("UIScale") ?? new Instance("UIScale", this.instance);
   private readonly scaleIncrement = 0.05;
-  
+
   protected readonly tweenInfo = new TweenInfoBuilder()
     .SetEasingStyle(EasingStyle.Elastic)
     .SetTime(0.35);
@@ -25,7 +25,7 @@ export class SpringAnimation extends ButtonAnimation implements OnStart {
       Scale: 1
     });
   }
-  
+
   protected active(): void {
     tween(this.scale, this.tweenInfo, {
       Scale: 1 + this.scaleIncrement

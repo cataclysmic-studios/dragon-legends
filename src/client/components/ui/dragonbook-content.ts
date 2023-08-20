@@ -1,6 +1,7 @@
 import { OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
 import { Janitor } from "@rbxts/janitor";
+import { UIController } from "client/controllers/ui-controller";
 
 import { DataValue, DataKey } from "shared/data-models/generic";
 import { Dragon, DragonInfo, Dragons } from "shared/data-models/dragons";
@@ -10,14 +11,16 @@ import { Functions } from "client/network";
 
 const { getData } = Functions;
 
-interface Attributes { }
-
 @Component({ tag: "DragonbookContent" })
-export class Dragonbook extends BaseComponent<Attributes> implements DataLinked, OnStart {
+export class Dragonbook extends BaseComponent implements DataLinked, OnStart {
   private readonly janitor = new Janitor;
   private readonly cards: DragonbookCard[] = [];
   private readonly dragonModels = Assets.Dragons.GetChildren()
     .filter((i): i is Model => i.IsA("Model"));
+
+  public constructor(
+    private readonly ui: UIController
+  ) { super(); }
 
   public onStart(): void {
     this.updateUnownedDragons();
@@ -66,9 +69,12 @@ export class Dragonbook extends BaseComponent<Attributes> implements DataLinked,
     newDragonModel(info.name, { parent: card.Viewport });
     this.setOwnedCardStyle(card, false);
 
+    this.janitor.Add(card.MouseButton1Click.Connect(() =>
+      this.ui.open("DragonInfo")
+    ));
+
     card.LayoutOrder = info.index;
     card.Parent = this.instance;
-    card.SetAttribute("DragonName", info.name);
     return this.janitor.Add(card);
   }
 
