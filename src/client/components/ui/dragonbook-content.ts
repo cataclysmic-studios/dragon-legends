@@ -5,7 +5,8 @@ import { UIController } from "client/controllers/ui-controller";
 
 import { DataValue, DataKey } from "shared/data-models/generic";
 import { Dragon, DragonInfo } from "shared/data-models/dragons";
-import { Assets, addElementsToFrame, getDragonData, newDragonModel, updateCombatBadgeIcon, updateRarityIcon } from "shared/utilities/helpers";
+import { Assets, getDragonData, newDragonModel } from "shared/utilities/helpers";
+import { addElementsToFrame, updateCombatBadgeIcon, updateRarityIcon } from "shared/utilities/ui";
 import DragonUtility from "shared/utilities/dragon";
 
 import { DataLinked } from "client/hooks";

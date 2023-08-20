@@ -4,7 +4,8 @@ import { Janitor } from "@rbxts/janitor";
 
 import { DataKey } from "shared/data-models/generic";
 import { Dragon } from "shared/data-models/dragons";
-import { addElementsToFrame, newDragonModel, toSuffixedNumber, updateCombatBadgeIcon, updateRarityIcon } from "shared/utilities/helpers";
+import { newDragonModel, toSuffixedNumber } from "shared/utilities/helpers";
+import { addElementsToFrame, updateCombatBadgeIcon, updateRarityIcon } from "shared/utilities/ui";
 import DragonUtility from "shared/utilities/dragon";
 
 import { DragonInfoScreen } from "client/ui-types";

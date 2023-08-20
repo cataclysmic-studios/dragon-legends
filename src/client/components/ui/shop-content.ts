@@ -7,7 +7,8 @@ import { NotificationType } from "shared/notification-type";
 import { UIController } from "client/controllers/ui-controller";
 
 import { Egg, InventoryItem } from "shared/data-models/inventory";
-import { Assets, Placable, addElementsToFrame, getDragonData, toSeconds, toSuffixedNumber, updateRarityIcon } from "shared/utilities/helpers";
+import { Assets, Placable, getDragonData, toSeconds, toSuffixedNumber } from "shared/utilities/helpers";
+import { addElementsToFrame, updateRarityIcon } from "shared/utilities/ui";
 import { Events, Functions } from "client/network";
 import { MissingAttributeException } from "shared/exceptions";
 

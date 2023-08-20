@@ -2,7 +2,7 @@ import { Controller, OnStart } from "@flamework/core";
 import { TweenInfoBuilder } from "@rbxts/builders";
 import { UIController } from "./ui-controller";
 import { NotificationType } from "shared/notification-type";
-import { tween } from "shared/utilities/helpers";
+import { tween } from "shared/utilities/ui";
 import { Events } from "client/network";
 
 const { dispatchNotification } = Events;

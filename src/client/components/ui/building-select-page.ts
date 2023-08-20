@@ -10,7 +10,8 @@ import { DataKey } from "shared/data-models/generic";
 import { Building, Hatchery, UpgradableBuilding } from "shared/data-models/buildings";
 import { Habitat } from "shared/data-models/habitats";
 import { MissingBuildingException } from "shared/exceptions";
-import { Assets, getPlacedBuilding, newDragonModel, newEggMesh, toSuffixedNumber, tween } from "shared/utilities/helpers";
+import { Assets, getPlacedBuilding, newDragonModel, newEggMesh, toSuffixedNumber } from "shared/utilities/helpers";
+import { tween } from "shared/utilities/ui";
 import BuildingUtility from "shared/utilities/building";
 
 import { DataLinked } from "client/hooks";
