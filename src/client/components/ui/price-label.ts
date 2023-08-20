@@ -4,6 +4,7 @@ import { parseSuffixedNumber } from "shared/utilities/helpers";
 import { DataLinked } from "client/hooks";
 import { OnStart } from "@flamework/core";
 import { Functions } from "client/network";
+import { Exception } from "shared/exceptions";
 
 const { getData } = Functions;
 
@@ -30,6 +31,9 @@ export class PriceLabel extends BaseComponent<Attributes, TextLabel & { UIStroke
   private async updateText(value?: number) {
     value ??= <number>await getData(this.currency);
     const price = parseSuffixedNumber(this.instance.Text);
+    if (!price)
+      throw new Exception("SuffixedNumberParsing", `Failed to parse "${this.instance.Text}" into a number on ${this.instance.ClassName} "${this.instance.Name}"`);
+
     const canAfford = value >= price;
     this.instance.UIStroke.Color = canAfford ? new Color3 : Color3.fromHex("#a13434");
   }

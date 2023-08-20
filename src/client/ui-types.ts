@@ -120,9 +120,6 @@ export interface DragonInfoScreen extends ScreenGui {
         UIGradient: UIGradient;
         UICorner: UICorner;
         UIStroke: UIStroke;
-        Price: TextLabel & {
-          UIStroke: UIStroke;
-        };
       };
       Find: TextButton & {
         shadowHolder: Frame & {
@@ -134,7 +131,7 @@ export interface DragonInfoScreen extends ScreenGui {
         UICorner: UICorner;
         UIStroke: UIStroke;
         Container: Frame & {
-          Price: TextLabel & {
+          Text: TextLabel & {
             UIStroke: UIStroke;
           };
           UIPadding: UIPadding;

@@ -19,13 +19,12 @@ interface DragonbookCard extends TextButton {
 		UICorner: UICorner;
 		UIGradient: UIGradient;
 	};
+	Empowerment: Frame & {
+		UIListLayout: UIListLayout;
+	};
 	Viewport: ViewportFrame & {
 		CombatBadge: ImageLabel & {
 			UIAspectRatioConstraint: UIAspectRatioConstraint;
-		};
-		Empowerment: Frame & {
-			UIListLayout: UIListLayout;
-			Star: ImageLabel;
 		};
 		Elements: Frame & {
 			UIListLayout: UIListLayout;

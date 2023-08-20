@@ -87,7 +87,7 @@ export class Dragonbook extends BaseComponent implements DataLinked, OnStart {
     const dragonUtil = new DragonUtility(dragon);
     card.Viewport.Level.Value.Text = tostring(dragonUtil.getLevel());
     updateCombatBadgeIcon(card.Viewport.CombatBadge, dragon.combatBadge);
-    updateEmpowermentStars(card.Viewport.Empowerment, dragon.empowerment);
+    updateEmpowermentStars(card.Empowerment, dragon.empowerment);
     this.setOwnedCardStyle(card, true);
     card.SetAttribute("ID", dragon.id);
   }

@@ -178,7 +178,7 @@ export function toSuffixedNumber(n: number): string {
   return baseNumber + (index < 0 ? "" : suffixes[index]);
 }
 
-export function parseSuffixedNumber(suffixed: string): number {
+export function parseSuffixedNumber(suffixed: string): Maybe<number> {
   const match = suffixed.gsub(",", "")[0].match("^([0-9.]+)([KMBT]?)$");
   if (!match)
     throw new Exception("InvalidSuffixedNumber", "Invalid suffixed number format");
