@@ -4,9 +4,10 @@ import { DragonInfoScreen } from "client/ui-types";
 import { Events, Functions } from "client/network";
 import { Dragon } from "shared/data-models/dragons";
 import { Janitor } from "@rbxts/janitor";
-import { addElementsToFrame, newDragonModel, updateRarityIcon } from "shared/util";
+import { addElementsToFrame, calculateFeedingPrice, newDragonModel, toSuffixedNumber, updateRarityIcon } from "shared/util";
 
-// const { incrementData, addDragonXP } = Events;
+// addDragonXP
+const { incrementData } = Events;
 const { getData } = Functions;
 
 interface Attributes {
@@ -27,18 +28,19 @@ export class DragonInfo extends BaseComponent<Attributes, DragonInfoScreen> impl
     if (!this.attributes.DragonID) return;
     this.janitor.Cleanup();
 
-    // TODO: implement calculateFeedingPrice(dragon: Dragon): number
-    // const feedingPrice = calculateFeedingPrice(dragon);
     const dragon = await this.getUpdatedDragon();
+    const feedingPrice = calculateFeedingPrice(dragon);
     this.instance.DragonName.Value.Text = dragon.name;
-    this.instance.Viewport.XpBar.Size = UDim2.fromScale(dragon.xp / 4, 1);
-    // this.feedButton.Container.Price.Text = toSuffixedNumber(feedingPrice);
+    this.instance.Viewport.XpBar.Progress.Size = UDim2.fromScale(dragon.xp / 4, 1);
+    this.feedButton.Container.Price.Text = toSuffixedNumber(feedingPrice);
     this.janitor.Add(addElementsToFrame(this.instance.Info.Elements, dragon.elements));
     this.janitor.Add(newDragonModel(dragon.name, { parent: this.instance.Viewport }));
     updateRarityIcon(this.instance.Info.Rarity, dragon.rarity);
 
-    this.janitor.Add(this.feedButton.MouseButton1Click.Connect(() => {
-      // incrementData("food", -feedingPrice);
+    this.janitor.Add(this.feedButton.MouseButton1Click.Connect(async () => {
+      const food = <number>await getData("food");
+      if (food < feedingPrice) return;
+      incrementData("food", -feedingPrice);
       // addDragonXP();
     }))
   }

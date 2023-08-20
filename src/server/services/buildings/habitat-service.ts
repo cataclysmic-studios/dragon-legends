@@ -8,7 +8,7 @@ import { SchedulingService } from "../scheduling-service";
 
 import { Habitat } from "shared/data-models/buildings";
 import { MissingDataException } from "shared/exceptions";
-import { getPlacedBuilding, getTotalGoldPerMinute } from "shared/util";
+import { getPlacedBuilding, calculateTotalGoldPerMinute } from "shared/util";
 import { OnPlayerJoin } from "server/hooks";
 import { Events, Functions } from "server/network";
 
@@ -61,7 +61,7 @@ export class HabitatService implements OnPlayerJoin, OnStart {
   }
 
   public updateGoldGeneration(player: Player, habitat: Habitat): void {
-    const goldPerMinute = getTotalGoldPerMinute(habitat);
+    const goldPerMinute = calculateTotalGoldPerMinute(habitat);
     const goldInfoMap = this.playerMap.mustGet(player);
     goldInfoMap.set(habitat.id, {
       goldPerMinute,

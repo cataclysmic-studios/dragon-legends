@@ -5,7 +5,7 @@ import StringUtils from "@rbxts/string-utils";
 import Object from "@rbxts/object-utils";
 
 import { StorableVector3 } from "./data-models/utility";
-import { CombatBadge, DragonInfo, Element, Rarity } from "./data-models/dragons";
+import { CombatBadge, Dragon, DragonInfo, Dragons, Element, Rarity } from "./data-models/dragons";
 import { Habitat } from "./data-models/buildings";
 import { Egg } from "./data-models/inventory";
 import { Exception } from "./exceptions";
@@ -21,7 +21,21 @@ export const now = () => round(tick());
 export const toStorableVector3 = ({ X, Y, Z }: Vector3) => ({ x: X, y: Y, z: Z })
 export const toUsableVector3 = ({ x, y, z }: StorableVector3) => new Vector3(x, y, z);
 
-export function getTotalGoldPerMinute(habitat: Habitat): number {
+export function toNearestFiveOrTen(n: number): number {
+  let result = floor(n / 5 + 0.5) * 5;
+  if (result % 10 !== 0)
+    result += 10 - result % 10;
+
+  return result;
+}
+
+export function calculateFeedingPrice(dragon: Dragon): number {
+  const dampener = 2;
+  const level = Dragons.getLevel(dragon);
+  return toNearestFiveOrTen(5 * 2 ** (level - 1) / dampener);
+}
+
+export function calculateTotalGoldPerMinute(habitat: Habitat): number {
   return habitat.dragons.size() > 0 ?
     habitat.dragons
       .map(d => d.goldGenerationRate)

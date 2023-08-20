@@ -5,7 +5,7 @@ import { DataService } from "./data-service";
 
 import { Building, Buildings, Habitat } from "shared/data-models/buildings";
 import { TimeInfo } from "shared/data-models/time";
-import { Assets, getDragonData, getTotalGoldPerMinute, now, toUsableVector3 } from "shared/util";
+import { Assets, getDragonData, calculateTotalGoldPerMinute, now, toUsableVector3 } from "shared/util";
 import { Events } from "server/network";
 import { HabitatService } from "./buildings/habitat-service";
 
@@ -68,7 +68,7 @@ export class BuildingLoaderService implements OnStart {
     }
 
     const { lastOnline } = this.data.get<TimeInfo>(player, "timeInfo");
-    const perMinuteGold = getTotalGoldPerMinute(habitat);
+    const perMinuteGold = calculateTotalGoldPerMinute(habitat);
     const secondsOffline = lastOnline ? now() - lastOnline : 0;
     const minutesOffline = secondsOffline / 60;
     const gainedGold = floor(perMinuteGold * minutesOffline);
