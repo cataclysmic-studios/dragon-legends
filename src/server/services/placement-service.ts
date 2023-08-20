@@ -2,6 +2,7 @@ import { Service, OnInit } from "@flamework/core";
 import { HttpService as HTTP, RunService as Runtime, Workspace as World } from "@rbxts/services";
 
 import { DataService } from "./data-service";
+import { BuildingDataService } from "./building-data-service";
 import { TimerService } from "./timer-service";
 import { HabitatService } from "./buildings/habitat-service";
 
@@ -17,6 +18,7 @@ const { placeBuilding, placeDragon } = Events;
 export class PlacementService implements OnInit {
   public constructor(
     private readonly data: DataService,
+    private readonly buildingData: BuildingDataService,
     private readonly timer: TimerService,
     private readonly habitat: HabitatService
   ) { }
@@ -81,9 +83,8 @@ export class PlacementService implements OnInit {
     habitatID: string
   ): void {
 
-    const buildings = this.data.get<Building[]>(player, "buildings");
     const dragons = this.data.get<Dragon[]>(player, "dragons");
-    const habitat = this.data.getBuildingData<Habitat>(player, habitatID)!;
+    const habitat = this.buildingData.get<Habitat>(player, habitatID)!;
     const dragon: Dragon = {
       id, name, elements, rarity,
       damage: 100,
@@ -125,8 +126,7 @@ export class PlacementService implements OnInit {
     habitat.dragons = [...habitat.dragons, dragon];
     dragons.push(dragon);
 
-    this.data.removeBuildingData(player, habitatID);
-    this.data.addBuildingData(player, habitat);
+    this.buildingData.update(player, habitat);
     this.data.set(player, "dragons", dragons);
   }
 

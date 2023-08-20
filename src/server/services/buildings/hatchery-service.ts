@@ -1,19 +1,20 @@
 import { Service, OnInit } from "@flamework/core";
 import { DataService } from "../data-service";
+import { BuildingDataService } from "../building-data-service";
 import { TimerService } from "../timer-service";
 
 import { Egg, InventoryItem } from "shared/data-models/inventory";
 import { Hatchery } from "shared/data-models/buildings";
-import { NotificationType } from "shared/notification-type";
 import { getPlacedBuilding, newEggMesh } from "shared/util";
 import { Events } from "server/network";
 
-const { addEggToHatchery, removeEggFromHatchery, dispatchNotification } = Events;
+const { addEggToHatchery, removeEggFromHatchery } = Events;
 
 @Service()
 export class HatcheryService implements OnInit {
   public constructor(
     private readonly data: DataService,
+    private readonly buildingData: BuildingDataService,
     private readonly timer: TimerService
   ) { }
 
@@ -23,7 +24,7 @@ export class HatcheryService implements OnInit {
   }
 
   private removeEgg(player: Player, eggID: string): void {
-    const hatchery = this.data.getBuildingData<Hatchery>(player, "HATCHERY");
+    const hatchery = this.buildingData.get<Hatchery>(player, "HATCHERY");
     const hatcheryModel = getPlacedBuilding<HatcheryModel>("HATCHERY");
     hatcheryModel.Eggs
       .GetChildren()
@@ -31,12 +32,11 @@ export class HatcheryService implements OnInit {
       ?.Destroy();
 
     hatchery.eggs = hatchery.eggs.filter(egg => egg.id !== eggID);
-    this.data.removeBuildingData(player, "HATCHERY");
-    this.data.addBuildingData(player, hatchery);
+    this.buildingData.update(player, hatchery);
   }
 
   private addEgg(player: Player, egg: Egg, isLoading = false): void {
-    const hatchery = this.data.getBuildingData<Hatchery>(player, "HATCHERY");
+    const hatchery = this.buildingData.get<Hatchery>(player, "HATCHERY");
     const hatcheryModel = getPlacedBuilding<HatcheryModel>("HATCHERY");
     const eggPositionIndex = tostring(hatcheryModel.Eggs.GetChildren().size() + 1);
     const eggPositionPart = <Part>hatcheryModel.EggPositions.WaitForChild(eggPositionIndex);
@@ -53,9 +53,8 @@ export class HatcheryService implements OnInit {
     const newInventory = inventory.filter(i => i.id !== egg.id);
     this.data.set(player, "inventory", newInventory);
 
-    this.data.removeBuildingData(player, "HATCHERY");
     hatchery.eggs = [...hatchery.eggs, egg];
-    this.data.addBuildingData(player, hatchery);
+    this.buildingData.update(player, hatchery);
     this.timer.addHatchTimer(player, egg.id, egg.hatchTime);
   }
 }

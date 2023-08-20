@@ -10,7 +10,7 @@ import { Events, Functions } from "server/network";
 import Log from "shared/logger";
 
 const { initializeData, setData, incrementData, dataLoaded, dataUpdate } = Events;
-const { getData, getBuildingData } = Functions;
+const { getData } = Functions;
 
 @Service()
 export class DataService implements OnInit, OnPlayerLeave {
@@ -20,37 +20,12 @@ export class DataService implements OnInit, OnPlayerLeave {
 		setData.connect((player, key, value) => this.set(player, key, value));
 		incrementData.connect((player, key, amount) => this.increment(player, key, amount))
 		getData.setCallback((player, key) => this.get(player, key));
-		getBuildingData.setCallback((player, id) => this.getBuildingData(player, id));
 	}
 
 	public onPlayerLeave(player: Player): void {
 		const timeInfo = this.get<TimeInfo>(player, "timeInfo");
 		timeInfo.lastOnline = now();
 		this.set(player, "timeInfo", timeInfo);
-	}
-
-	public addTimerData(player: Player, timer: TimerInfo): void {
-		Log.info(`Added new ${timer.type} timer (ID ${timer.id})`);
-		const timeInfo = this.get<TimeInfo>(player, "timeInfo");
-		timeInfo.timers = [...timeInfo.timers, timer];
-		this.set(player, "timeInfo", timeInfo);
-	}
-
-	public addBuildingData(player: Player, building: Building): void {
-		const buildings = this.get<Building[]>(player, "buildings");
-		buildings.push(building);
-		this.set(player, "buildings", buildings);
-	}
-
-	public removeBuildingData(player: Player, buildingID: string): void {
-		const buildings = this.get<Building[]>(player, "buildings");
-		const newBuildings = buildings.filter(b => b.id !== buildingID);
-		this.set(player, "buildings", newBuildings);
-	}
-
-	public getBuildingData<T extends Building = Building>(player: Player, buildingID: string): T extends Hatchery ? T : Maybe<T> {
-		const buildings = this.get<Building[]>(player, "buildings");
-		return <T extends Hatchery ? T : Maybe<T>>buildings.find(building => building.id === buildingID);
 	}
 
 	public increment(player: Player, key: DataKey, amount = 1): void {

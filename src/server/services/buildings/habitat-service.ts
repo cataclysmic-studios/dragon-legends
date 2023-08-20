@@ -4,6 +4,7 @@ import { StrictMap } from "@rbxts/strict-map";
 import StringUtils from "@rbxts/string-utils";
 
 import { DataService } from "../data-service";
+import { BuildingDataService } from "../building-data-service";
 import { SchedulingService } from "../scheduling-service";
 
 import { Habitat } from "shared/data-models/buildings";
@@ -28,6 +29,7 @@ export class HabitatService implements OnPlayerJoin, OnStart {
 
   public constructor(
     private readonly data: DataService,
+    private readonly buildingData: BuildingDataService,
     private readonly schedule: SchedulingService
   ) { }
 
@@ -49,13 +51,12 @@ export class HabitatService implements OnPlayerJoin, OnStart {
   }
 
   public addGold(player: Player, habitatID: string, amount: number): void {
-    const habitat = this.data.getBuildingData<Habitat>(player, habitatID);
+    const habitat = this.buildingData.get<Habitat>(player, habitatID);
     if (!habitat)
       throw new MissingDataException(habitatID, "Missing habitat building data");
 
     habitat.gold += amount;
-    this.data.removeBuildingData(player, habitatID);
-    this.data.addBuildingData(player, habitat);
+    this.buildingData.update(player, habitat);
     this.setTotalGold(player, habitatID, habitat.gold);
     this.updateGoldData(player, habitatID);
   }
@@ -72,7 +73,7 @@ export class HabitatService implements OnPlayerJoin, OnStart {
   }
 
   private claimGold(player: Player, habitatID: string): void {
-    const habitat = this.data.getBuildingData<Habitat>(player, habitatID);
+    const habitat = this.buildingData.get<Habitat>(player, habitatID);
     if (!habitat)
       throw new MissingDataException(habitatID, "Missing habitat building data");
 
@@ -93,7 +94,7 @@ export class HabitatService implements OnPlayerJoin, OnStart {
   }
 
   private updateGoldData(player: Player, habitatID: string): void {
-    const habitat = this.data.getBuildingData<Habitat>(player, habitatID);
+    const habitat = this.buildingData.get<Habitat>(player, habitatID);
     if (!habitat)
       throw new MissingDataException(habitatID, "Missing habitat building data");
 
@@ -101,8 +102,8 @@ export class HabitatService implements OnPlayerJoin, OnStart {
     const max = <HabitatMaximums>require(habitatModel.Maximums);
     const goldInfo = this.playerMap.mustGet(player).get(habitatID)!;
     habitat.gold = min(goldInfo.totalGold, max.gold[habitat.level - 1]);
-    this.data.removeBuildingData(player, habitatID);
-    this.data.addBuildingData(player, habitat);
+    this.buildingData.remove(player, habitatID);
+    this.buildingData.add(player, habitat);
     this.updateGoldGeneration(player, habitat);
   }
 
@@ -111,7 +112,7 @@ export class HabitatService implements OnPlayerJoin, OnStart {
     if (habitatModel.Dragons.GetChildren().size() <= 0) return;
 
     const habitatID = habitatModel.GetAttribute<string>("ID");
-    const habitat = this.data.getBuildingData<Habitat>(player, habitatID);
+    const habitat = this.buildingData.get<Habitat>(player, habitatID);
     if (!habitat)
       throw new MissingDataException(habitatID, "Missing habitat building data");
 

@@ -8,6 +8,7 @@ import { TimeInfo, TimerInfo, TimerType } from "shared/data-models/time";
 import { Exception, MissingBuildingException } from "shared/exceptions";
 import { getPlacedBuilding, now } from "shared/util";
 import { Events, Functions } from "server/network";
+import Log from "shared/logger";
 
 const { updateTimers, timerFinished } = Events;
 const { isTimerActive } = Functions;
@@ -28,7 +29,7 @@ export class TimerService implements OnInit {
   }
 
   public addHatchTimer(player: Player, eggID: string, length: number): void {
-    this.data.addTimerData(player, {
+    this.addTimerData(player, {
       id: eggID,
       type: TimerType.Hatch,
       beganAt: now(),
@@ -38,7 +39,7 @@ export class TimerService implements OnInit {
   }
 
   public addBuildingTimer(player: Player, id: string, length: number): void {
-    this.data.addTimerData(player, {
+    this.addTimerData(player, {
       id,
       type: TimerType.Building,
       beganAt: now(),
@@ -47,13 +48,20 @@ export class TimerService implements OnInit {
     this.updateTimers(player);
   }
 
-  public removeTimer(player: Player, id: string): void {
+  private removeTimerData(player: Player, id: string): void {
     const timeInfo = this.data.get<TimeInfo>(player, "timeInfo");
     timeInfo.timers = timeInfo.timers.filter(timer => timer.id !== id);
     this.data.set(player, "timeInfo", timeInfo);
   }
 
-  public isTimerActive(player: Player, buildingID: string): boolean {
+  private addTimerData(player: Player, timer: TimerInfo): void {
+    Log.info(`Added new ${timer.type} timer (ID ${timer.id})`);
+    const timeInfo = this.data.get<TimeInfo>(player, "timeInfo");
+    timeInfo.timers = [...timeInfo.timers, timer];
+    this.data.set(player, "timeInfo", timeInfo);
+  }
+
+  private isTimerActive(player: Player, buildingID: string): boolean {
     const { timers } = this.data.get<TimeInfo>(player, "timeInfo");
     return timers.find(timer => timer.id === buildingID) !== undefined;
   }
@@ -66,7 +74,7 @@ export class TimerService implements OnInit {
 
       if (now() >= completionTime) {
         timerFinished(player, timer);
-        this.removeTimer(player, timer.id);
+        this.removeTimerData(player, timer.id);
         if (this.components.getComponent<Timer>(modelForTimer))
           this.components.removeComponent<Timer>(modelForTimer);
       } else
