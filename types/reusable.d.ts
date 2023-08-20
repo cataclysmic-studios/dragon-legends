@@ -23,6 +23,10 @@ interface DragonbookCard extends Frame {
 		CombatBadge: ImageLabel & {
 			UIAspectRatioConstraint: UIAspectRatioConstraint;
 		};
+		Empowerment: Frame & {
+			UIListLayout: UIListLayout;
+			Star: ImageLabel;
+		};
 		Elements: Frame & {
 			UIListLayout: UIListLayout;
 		};

@@ -63,6 +63,7 @@ export class Dragonbook extends BaseComponent<Attributes> implements DataLinked,
 
     addElementsToFrame(card.Viewport.Elements, info.elements);
     updateRarityIcon(card.Viewport.Rarity, info.rarity);
+    newDragonModel(info.name, { parent: card.Viewport });
     this.setOwnedCardStyle(card, false);
 
     card.LayoutOrder = info.index;
@@ -74,7 +75,6 @@ export class Dragonbook extends BaseComponent<Attributes> implements DataLinked,
   private updateCard(card: DragonbookCard, dragon: Dragon) {
     card.Viewport.Level.Value.Text = tostring(Dragons.getLevel(dragon));
     updateCombatBadgeIcon(card.Viewport.CombatBadge, dragon.combatBadge);
-    newDragonModel(dragon.name, { parent: card.Viewport });
     this.setOwnedCardStyle(card, true);
     card.SetAttribute("ID", dragon.id);
   }
