@@ -6,8 +6,7 @@ import { Dragon } from "shared/data-models/dragons";
 import { Janitor } from "@rbxts/janitor";
 import { addElementsToFrame, calculateFeedingPrice, newDragonModel, toSuffixedNumber, updateRarityIcon } from "shared/util";
 
-// addDragonXP
-const { incrementData } = Events;
+const { incrementData, updateDragonData } = Events;
 const { getData } = Functions;
 
 interface Attributes {
@@ -40,8 +39,10 @@ export class DragonInfo extends BaseComponent<Attributes, DragonInfoScreen> impl
     this.janitor.Add(this.feedButton.MouseButton1Click.Connect(async () => {
       const food = <number>await getData("food");
       if (food < feedingPrice) return;
+
+      dragon.xp++;
+      updateDragonData(dragon);
       incrementData("food", -feedingPrice);
-      // addDragonXP();
     }))
   }
 

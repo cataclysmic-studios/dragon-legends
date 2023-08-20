@@ -1,7 +1,7 @@
 import { Networking } from "@flamework/networking";
 import { DataKey, DataValue, GameDataModel } from "./data-models/generic";
 import { Egg } from "./data-models/inventory";
-import { DragonInfo } from "./data-models/dragons";
+import { Dragon, DragonInfo } from "./data-models/dragons";
 import { Building } from "./data-models/buildings";
 import { Placable } from "./util";
 import { TimerInfo } from "./data-models/time";
@@ -16,6 +16,8 @@ interface ServerEvents {
   placeBuilding(buildingName: string, category: Placable, position: Vector3, idOverride?: string): void;
   placeDragon(dragonData: DragonInfo, habitatID: string, idOverride?: string): void;
   updateTimers(): void;
+
+  updateDragonData(dragon: Dragon): void;
 
   addEggToHatchery(egg: Egg, isLoaded?: boolean): void;
   removeEggFromHatchery(eggID: string): void;
