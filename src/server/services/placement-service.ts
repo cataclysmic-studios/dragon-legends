@@ -123,12 +123,10 @@ export class PlacementService implements OnInit {
     };
 
     habitat.dragons = [...habitat.dragons, dragon];
-
-    const newBuildings = buildings.filter(b => b.id !== habitatID);
-    newBuildings.push(habitat);
     dragons.push(dragon);
 
-    this.data.set(player, "buildings", newBuildings);
+    this.data.removeBuildingData(player, habitatID);
+    this.data.addBuildingData(player, habitat);
     this.data.set(player, "dragons", dragons);
   }
 

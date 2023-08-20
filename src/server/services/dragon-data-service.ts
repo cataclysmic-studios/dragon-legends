@@ -3,7 +3,7 @@ import { Dragon } from "shared/data-models/dragons";
 import { DataService } from "./data-service";
 import { Events } from "server/network";
 
-const { updateDragonData } = Events;
+const { addDragonXP } = Events;
 
 @Service()
 export class DragonDataService implements OnInit {
@@ -12,28 +12,36 @@ export class DragonDataService implements OnInit {
   ) { }
 
   public onInit(): void {
-    updateDragonData.connect((player, dragon) => this.updateData(player, dragon))
+    addDragonXP.connect((player, id) => {
+      const dragon = this.get(player, id);
+      if (!dragon) return;
+      dragon.xp++;
+      this.update(player, dragon);
+    });
   }
 
-  public updateData(player: Player, dragon: Dragon): void {
-    this.removeData(player, dragon.id);
-    this.addData(player, dragon);
+  public update(player: Player, dragon: Dragon): void {
+    this.remove(player, dragon.id);
+    this.add(player, dragon);
   }
 
-  public addData(player: Player, dragon: Dragon): void {
+  public add(player: Player, dragon: Dragon): void {
     const dragons = this.data.get<Dragon[]>(player, "dragons");
     dragons.push(dragon);
     this.data.set(player, "dragons", dragons);
   }
 
-  public removeData(player: Player, dragonID: string): void {
-    const dragons = this.data.get<Dragon[]>(player, "dragons");
-    const newDragons = dragons.filter(d => d.id !== dragonID);
+  public remove(player: Player, dragonID: string): void {
+    const newDragons = this.data
+      .get<Dragon[]>(player, "dragons")
+      .filter(d => d.id !== dragonID);
+
     this.data.set(player, "dragons", newDragons);
   }
 
-  public getData(player: Player, dragonID: string): Maybe<Dragon> {
-    const dragons = this.data.get<Dragon[]>(player, "buildings");
-    return dragons.find(dragon => dragon.id === dragonID);
+  public get(player: Player, dragonID: string): Maybe<Dragon> {
+    return this.data
+      .get<Dragon[]>(player, "dragons")
+      .find(dragon => dragon.id === dragonID);
   }
 }

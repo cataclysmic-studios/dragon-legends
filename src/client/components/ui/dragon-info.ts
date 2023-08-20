@@ -1,12 +1,15 @@
 import { OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
-import { DragonInfoScreen } from "client/ui-types";
-import { Events, Functions } from "client/network";
-import { Dragon } from "shared/data-models/dragons";
 import { Janitor } from "@rbxts/janitor";
-import { addElementsToFrame, calculateFeedingPrice, newDragonModel, toSuffixedNumber, updateRarityIcon } from "shared/util";
 
-const { incrementData, updateDragonData } = Events;
+import { Dragon, Dragons } from "shared/data-models/dragons";
+import { addElementsToFrame, calculateFeedingPrice, newDragonModel, toSuffixedNumber, updateRarityIcon } from "shared/util";
+import { DragonInfoScreen } from "client/ui-types";
+import { DataLinked } from "client/hooks";
+import { Events, Functions } from "client/network";
+import { DataKey } from "shared/data-models/generic";
+
+const { incrementData, addDragonXP } = Events;
 const { getData } = Functions;
 
 interface Attributes {
@@ -14,40 +17,62 @@ interface Attributes {
 }
 
 @Component({ tag: "DragonInfo" })
-export class DragonInfo extends BaseComponent<Attributes, DragonInfoScreen> implements OnStart {
+export class DragonInfo extends BaseComponent<Attributes, DragonInfoScreen> implements DataLinked, OnStart {
   private readonly janitor = new Janitor;
   private readonly feedButton = this.instance.Viewport.Feed;
+
+  private feedDebounce = false;
+  private updateDebounce = false;
 
   public onStart(): void {
     this.instance.GetAttributeChangedSignal("DragonID")
       .Connect(() => this.update())
   }
 
-  private async update(): Promise<void> {
-    if (!this.attributes.DragonID) return;
-    this.janitor.Cleanup();
-
-    const dragon = await this.getUpdatedDragon();
-    const feedingPrice = calculateFeedingPrice(dragon);
-    this.instance.DragonName.Value.Text = dragon.name;
-    this.instance.Viewport.XpBar.Progress.Size = UDim2.fromScale(dragon.xp / 4, 1);
-    this.feedButton.Container.Price.Text = toSuffixedNumber(feedingPrice);
-    this.janitor.Add(addElementsToFrame(this.instance.Info.Elements, dragon.elements));
-    this.janitor.Add(newDragonModel(dragon.name, { parent: this.instance.Viewport }));
-    updateRarityIcon(this.instance.Info.Rarity, dragon.rarity);
-
-    this.janitor.Add(this.feedButton.MouseButton1Click.Connect(async () => {
-      const food = <number>await getData("food");
-      if (food < feedingPrice) return;
-
-      dragon.xp++;
-      updateDragonData(dragon);
-      incrementData("food", -feedingPrice);
-    }))
+  public async onDataUpdate(key: DataKey): Promise<void> {
+    if (key !== "dragons") return;
+    this.update();
   }
 
-  private async getUpdatedDragon(): Promise<Dragon> {
+  private async update(): Promise<void> {
+    if (this.updateDebounce) return;
+    this.updateDebounce = true;
+    task.delay(0.1, () => this.updateDebounce = false);
+
+    const dragon = await this.getUpdatedDragon();
+    if (!dragon) return;
+
+    this.janitor.Cleanup();
+    const dragonXP = Dragons.getCurrentLevelXP(dragon);
+    const feedingPrice = calculateFeedingPrice(dragon);
+    task.spawn(() => {
+      this.instance.DragonName.Value.Text = dragon.name;
+      this.instance.Viewport.XpBar.Progress.Size = UDim2.fromScale(dragonXP / 4, 1);
+      this.feedButton.Container.Price.Text = toSuffixedNumber(feedingPrice);
+    });
+
+    updateRarityIcon(this.instance.Info.Rarity, dragon.rarity);
+    this.janitor.Add(newDragonModel(dragon.name, { parent: this.instance.Viewport }));
+    this.janitor.Add(() =>
+      addElementsToFrame(this.instance.Info.Elements, dragon.elements)
+        .forEach(e => e.Destroy())
+    );
+
+    print("update")
+    this.janitor.Add(this.feedButton.MouseButton1Click.Connect(async () => {
+      if (this.feedDebounce) return;
+      this.feedDebounce = true;
+      task.delay(0.75, () => this.feedDebounce = false);
+
+      const food = <number>await getData("food");
+      if (food < feedingPrice) return;
+      incrementData("food", -feedingPrice);
+      addDragonXP(dragon.id);
+    }));
+  }
+
+  private async getUpdatedDragon(): Promise<Maybe<Dragon>> {
     const dragons = <Dragon[]>await getData("dragons");
-    return dragons.find(d => d.id === this.attributes.DragonID)!;
+    return dragons.find(d => d.id === this.attributes.DragonID);
   }
 }

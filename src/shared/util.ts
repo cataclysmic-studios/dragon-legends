@@ -1,6 +1,5 @@
 import { Players, ReplicatedFirst, TweenService, UserInputService as UIS, Workspace as World } from "@rbxts/services";
 import { RaycastParamsBuilder, TweenInfoBuilder } from "@rbxts/builders";
-import { Janitor } from "@rbxts/janitor";
 import StringUtils from "@rbxts/string-utils";
 import Object from "@rbxts/object-utils";
 
@@ -10,7 +9,7 @@ import { Habitat } from "./data-models/buildings";
 import { Egg } from "./data-models/inventory";
 import { Exception } from "./exceptions";
 
-const { floor, log, round, abs } = math;
+const { floor, log, round, abs, max } = math;
 
 export type Placable = "Decor" | "Buildings" | "Habitats" | "Dragons";
 
@@ -30,9 +29,10 @@ export function toNearestFiveOrTen(n: number): number {
 }
 
 export function calculateFeedingPrice(dragon: Dragon): number {
-  const dampener = 2;
+  const base = 5;
+  const dampener = 2.5;
   const level = Dragons.getLevel(dragon);
-  return toNearestFiveOrTen(5 * 2 ** (level - 1) / dampener);
+  return max(toNearestFiveOrTen(base * 1.5 ** (level - 1) / dampener), base);
 }
 
 export function calculateTotalGoldPerMinute(habitat: Habitat): number {
@@ -68,7 +68,6 @@ export function newEggMesh(egg: Egg, options?: {
   eggMesh.Position = options?.position ?? new Vector3;
 
   if (options?.attributes)
-    // my secret weapon 😈 (Object.entries)
     for (const [name, value] of Object.entries(options.attributes))
       eggMesh.SetAttribute(name, value);
 
@@ -118,19 +117,19 @@ export function getDragonData(dragonModel: Model): DragonInfo {
   return <DragonInfo>require(dataModule);
 }
 
-export function addElementsToFrame(frame: Frame, elements: Element[]): Janitor {
-  const janitor = new Janitor
+export function addElementsToFrame(frame: Frame, elements: Element[]): ImageLabel[] {
+  const elementLabels: ImageLabel[] = [];
   let order = 1;
 
   for (const element of elements) {
     const banner = <ImageLabel>Assets.UI.ElementBanners.WaitForChild(element).Clone();
     banner.LayoutOrder = order;
     banner.Parent = frame;
-    janitor.Add(banner);
+    elementLabels.push(banner);
     order++;
   }
 
-  return janitor;
+  return elementLabels;
 }
 
 function getCombatBadgeImage(badge: CombatBadge): string {
@@ -267,7 +266,7 @@ export function toSuffixedNumber(n: number): string {
 }
 
 export function parseSuffixedNumber(suffixed: string): number {
-  const match = suffixed.gsub(",", "")[0].match("^([0-9,.]+)([KMBT]?)$");
+  const match = suffixed.gsub(",", "")[0].match("^([0-9.]+)([KMBT]?)$");
   if (!match)
     throw new Exception("InvalidSuffixedNumber", "Invalid suffixed number format");
 
@@ -275,7 +274,7 @@ export function parseSuffixedNumber(suffixed: string): number {
   const suffix = tostring(match[1]);
 
   if (suffix && suffix !== "" && suffix !== "nil") {
-    const index = (<readonly string[]>suffixes).indexOf(suffix.lower());
+    const index = (<readonly string[]>suffixes).indexOf(suffix);
     if (index === -1)
       throw new Exception("InvalidNumberSuffix", "Invalid suffix in suffixed number");
 

@@ -17,7 +17,7 @@ interface ServerEvents {
   placeDragon(dragonData: DragonInfo, habitatID: string, idOverride?: string): void;
   updateTimers(): void;
 
-  updateDragonData(dragon: Dragon): void;
+  addDragonXP(dragonID: string): void;
 
   addEggToHatchery(egg: Egg, isLoaded?: boolean): void;
   removeEggFromHatchery(eggID: string): void;
