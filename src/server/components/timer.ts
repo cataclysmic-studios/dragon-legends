@@ -2,7 +2,7 @@ import { OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
 import { Players } from "@rbxts/services";
 import { SchedulingService } from "server/services/scheduling-service";
-import { DataService } from "server/services/data-management/data-service";
+import { PlayerDataService } from "server/services/data-management/player-data-service";
 
 import { TimeInfo, TimerInfo } from "shared/data-models/time";
 import { Exception } from "shared/exceptions";
@@ -19,7 +19,7 @@ interface Attributes {
 @Component({ tag: "Timer" })
 export class Timer extends BaseComponent<Attributes, Model | MeshPart> implements OnStart {
   public constructor(
-    private readonly data: DataService,
+    private readonly data: PlayerDataService,
     private readonly levels: LevelService,
     private readonly schedule: SchedulingService
   ) { super(); }

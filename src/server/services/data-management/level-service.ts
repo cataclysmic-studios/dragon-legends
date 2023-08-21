@@ -1,5 +1,5 @@
 import { OnStart, Service } from "@flamework/core";
-import { DataService } from "./data-service";
+import { PlayerDataService } from "./player-data-service";
 import { Functions } from "server/network";
 
 const { calculateXPUntilNextLevel } = Functions;
@@ -7,7 +7,7 @@ const { calculateXPUntilNextLevel } = Functions;
 @Service()
 export class LevelService implements OnStart {
   public constructor(
-    private readonly data: DataService
+    private readonly data: PlayerDataService
   ) { }
 
   public onStart(): void {

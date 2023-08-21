@@ -1,6 +1,6 @@
 import { Service, OnInit } from "@flamework/core";
 import { Components } from "@flamework/components";
-import { DataService } from "./data-service";
+import { PlayerDataService } from "./player-data-service";
 import { BuildingLoaderService } from "../building-loader-service";
 
 import { Timer } from "server/components/timer";
@@ -16,7 +16,7 @@ const { isTimerActive } = Functions;
 @Service()
 export class TimerService implements OnInit {
   public constructor(
-    private readonly data: DataService,
+    private readonly data: PlayerDataService,
     private readonly buildingLoader: BuildingLoaderService,
     private readonly components: Components
   ) { }

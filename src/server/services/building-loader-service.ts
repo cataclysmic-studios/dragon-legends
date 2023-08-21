@@ -1,7 +1,7 @@
 import { OnStart, Service } from "@flamework/core";
 import Signal from "@rbxts/signal";
 
-import { DataService } from "./data-management/data-service";
+import { PlayerDataService } from "./data-management/player-data-service";
 import { DragonDataService } from "./data-management/dragon-data-service";
 import { HabitatService } from "./buildings/habitat-service";
 
@@ -28,7 +28,7 @@ export class BuildingLoaderService implements OnStart {
   private finished = false;
 
   public constructor(
-    private readonly data: DataService,
+    private readonly data: PlayerDataService,
     private readonly dragonData: DragonDataService,
     private readonly habitats: HabitatService
   ) { }

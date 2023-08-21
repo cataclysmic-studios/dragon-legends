@@ -3,7 +3,7 @@ import { Workspace as World } from "@rbxts/services";
 import { StrictMap } from "@rbxts/strict-map";
 import StringUtils from "@rbxts/string-utils";
 
-import { DataService } from "../data-management/data-service";
+import { PlayerDataService } from "../data-management/player-data-service";
 import { BuildingDataService } from "../data-management/building-data-service";
 import { SchedulingService } from "../scheduling-service";
 
@@ -29,7 +29,7 @@ export class HabitatService implements OnPlayerJoin, OnStart {
   private readonly playerMap = new StrictMap<Player, Map<string, HabitatGoldInfo>>();
 
   public constructor(
-    private readonly data: DataService,
+    private readonly data: PlayerDataService,
     private readonly buildingData: BuildingDataService,
     private readonly schedule: SchedulingService
   ) { }

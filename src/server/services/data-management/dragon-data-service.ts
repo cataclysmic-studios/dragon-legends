@@ -1,5 +1,5 @@
 import { Service, OnInit } from "@flamework/core";
-import { DataService } from "./data-service";
+import { PlayerDataService } from "./player-data-service";
 import { BuildingDataService } from "./building-data-service";
 
 import { Dragon } from "shared/data-models/dragons";
@@ -15,7 +15,7 @@ const { clamp } = math;
 @Service()
 export class DragonDataService implements OnInit {
   public constructor(
-    private readonly data: DataService,
+    private readonly data: PlayerDataService,
     private readonly buildingData: BuildingDataService
   ) { }
 

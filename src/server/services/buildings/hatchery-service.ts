@@ -1,5 +1,5 @@
 import { Service, OnInit } from "@flamework/core";
-import { DataService } from "../data-management/data-service";
+import { PlayerDataService } from "../data-management/player-data-service";
 import { BuildingDataService } from "../data-management/building-data-service";
 import { TimerService } from "../data-management/timer-service";
 
@@ -13,7 +13,7 @@ const { addEggToHatchery, removeEggFromHatchery } = Events;
 @Service()
 export class HatcheryService implements OnInit {
   public constructor(
-    private readonly data: DataService,
+    private readonly data: PlayerDataService,
     private readonly buildingData: BuildingDataService,
     private readonly timer: TimerService
   ) { }

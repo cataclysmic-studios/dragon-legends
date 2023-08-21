@@ -13,7 +13,7 @@ const { initializeData, setData, incrementData, dataLoaded, dataUpdate } = Event
 const { getData } = Functions;
 
 @Service()
-export class DataService implements OnInit, OnPlayerLeave {
+export class PlayerDataService implements OnInit, OnPlayerLeave {
 	public onInit(): void {
 		DataStore2.Combine("DATA", ...DataKeys);
 		initializeData.connect((player) => this.setup(player));

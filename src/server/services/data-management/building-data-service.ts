@@ -1,14 +1,14 @@
 import { Service, OnInit } from "@flamework/core";
 import { Functions } from "server/network";
 import { Building, Hatchery } from "shared/data-models/buildings";
-import { DataService } from "./data-service";
+import { PlayerDataService } from "./player-data-service";
 
 const { getBuildingData } = Functions;
 
 @Service()
 export class BuildingDataService implements OnInit {
   public constructor(
-    private readonly data: DataService
+    private readonly data: PlayerDataService
   ) { }
 
   public onInit(): void {
