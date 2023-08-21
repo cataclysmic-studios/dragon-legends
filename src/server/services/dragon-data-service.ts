@@ -9,6 +9,8 @@ import { Events, Functions } from "server/network";
 const { addDragonXP } = Events;
 const { getDragonData } = Functions;
 
+const { clamp } = math;
+
 @Service()
 export class DragonDataService implements OnInit {
   public constructor(
@@ -22,6 +24,7 @@ export class DragonDataService implements OnInit {
       const dragon = this.get(player, id);
       if (!dragon) return;
       dragon.xp++;
+      dragon.xp = clamp(dragon.xp, 0, (40 + (dragon.empowerment * 5)) * 4)
       this.update(player, dragon);
     });
   }
