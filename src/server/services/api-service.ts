@@ -1,5 +1,5 @@
 import { Service } from "@flamework/core";
-import { fetch } from "@rbxts/fetch";
+import { HttpService as HTTP } from "@rbxts/services";
 import { HttpException } from "shared/exceptions";
 
 interface GameApiError {
@@ -34,11 +34,12 @@ function didFail(body: object): body is ErrorBody {
 
 @Service()
 export class ApiService {
-  private readonly gamepassesEndpoint = `https://games.roproxy.com/v1/games/${game.GameId}/game-passes?limit=100&sortOrder=Asc`;
+  private readonly gamepassesEndpoint = `http://games.roproxy.com/v1/games/${game.GameId}/game-passes?limit=100&sortOrder=Asc`;
 
   public async getGamepasses(): Promise<readonly GamepassInfo[]> {
     try {
-      const body = await fetch(this.gamepassesEndpoint).then(res => res.json());
+      const json = HTTP.GetAsync(this.gamepassesEndpoint);
+      const body = <object>HTTP.JSONDecode(json);
       if (didFail(body)) {
         const [err] = body.errors;
         throw new HttpException(`Failed to fetch game gamepass info: ${err.userFacingMessage} - ${err.message}`);

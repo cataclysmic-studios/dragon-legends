@@ -66,6 +66,8 @@ export class PlayerDataService implements OnInit, OnPlayerLeave {
 			}
 		]);
 
+		this.initialize(player, "purchaseHistory", []);
+
 		Log.info("Initialized data");
 		dataLoaded.predict(player);
 	}

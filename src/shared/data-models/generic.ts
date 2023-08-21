@@ -13,6 +13,7 @@ export interface GameDataModel {
   level: number;
   xp: number;
   buildings: Building[];
+  purchaseHistory: string[];
 }
 
 export type DataValue = GameDataModel[DataKey];

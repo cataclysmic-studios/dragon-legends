@@ -31,7 +31,6 @@
     "@rbxts/builders": "^1.0.2",
     "@rbxts/crypto": "^1.2.1",
     "@rbxts/datastore2": "^1.4.0-ts.0",
-    "@rbxts/fetch": "^1.1.4-a",
     "@rbxts/gamejoy": "^1.1.4",
     "@rbxts/janitor": "^1.15.4-ts.0",
     "@rbxts/object-utils": "^1.0.4",
