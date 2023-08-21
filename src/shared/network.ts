@@ -7,6 +7,7 @@ import { Egg } from "./data-models/inventory";
 
 import { Placable } from "./utilities/helpers";
 import { NotificationType } from "./notification-type";
+import { Rank } from "./rank";
 
 interface ServerEvents {
   playerChatted(message: string): void;
@@ -45,7 +46,9 @@ interface ServerFunctions {
   calculateXPUntilNextLevel(): number;
 }
 
-interface ClientFunctions { }
+interface ClientFunctions {
+  getRank(): Rank;
+}
 
 export const GlobalEvents = Networking.createEvent<ServerEvents, ClientEvents>();
 export const GlobalFunctions = Networking.createFunction<ServerFunctions, ClientFunctions>();
