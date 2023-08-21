@@ -2,19 +2,22 @@ import { OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
 import { RunService as Runtime, Stats } from "@rbxts/services";
 import Object from "@rbxts/object-utils";
+import StringUtils from "@rbxts/string-utils";
 
 import { SelectionController } from "client/controllers/selection-controller";
-import { DebugStatsScreen } from "client/ui-types";
+
 import { toSuffixedNumber } from "shared/utilities/helpers";
 import Log from "shared/logger";
 import repr from "shared/repr";
-import StringUtils from "@rbxts/string-utils";
 
-const { floor } = math;
+import { DebugStatsScreen } from "client/ui-types";
+import RoFraps from "client/classes/rofraps";
+
+const { floor, ceil } = math;
 
 @Component({ tag: "DebugStats" })
 export class DebugStats extends BaseComponent<{}, DebugStatsScreen> implements OnStart {
-  private active = true;
+  private readonly rofraps = new RoFraps(0.33);
 
   public constructor(
     private readonly selection: SelectionController
@@ -24,7 +27,6 @@ export class DebugStats extends BaseComponent<{}, DebugStatsScreen> implements O
     Log.info("Displaying debug stats");
 
     this.instance.Enabled = Runtime.IsStudio();
-    this.maid.GiveTask(() => this.active = false);
     this.maid.GiveTask(this.instance.Stats.ViewInfo.MouseButton1Click.Connect(async () => {
       const selectedBuilding = await this.selection.getSelectedBuilding();
       if (!selectedBuilding) return;
@@ -44,12 +46,9 @@ export class DebugStats extends BaseComponent<{}, DebugStatsScreen> implements O
       this.updateInfoFrame(selectedBuilding);
     }));
 
-    task.spawn(() => {
-      while (this.active) {
-        this.updateStatsFrame();
-        task.wait(0.5);
-      }
-    });
+    this.rofraps.Start();
+    this.maid.GiveTask(this.rofraps.DataUpdated.Connect(() => this.updateStatsFrame()));
+    this.maid.GiveTask(this.rofraps);
   }
 
   private updateInfoFrame(info: Record<string, unknown>): void {
@@ -64,6 +63,18 @@ export class DebugStats extends BaseComponent<{}, DebugStatsScreen> implements O
       this.addInfoPropertyLabel(value, key, order);
       order++;
     }
+  }
+
+  private updateStatsFrame(): void {
+    const stats = this.instance.Stats;
+    stats.MemoryUsage.Text = `MemoryUsage: ${toSuffixedNumber(floor(Stats.GetTotalMemoryUsageMb()))} MB`;
+    stats.Incoming.Text = `NetworkIncoming: ${floor(Stats.DataReceiveKbps)} kb/s`;
+    stats.Outgoing.Text = `NetworkOutgoing: ${floor(Stats.DataSendKbps)} kb/s`;
+    stats.Instances.Text = "Instances: " + toSuffixedNumber(Stats.InstanceCount);
+    stats.FPS.Text = "FPS: " + floor(this.rofraps.Framerate);
+    stats.AverageFPS.Text = "Average FPS: " + floor(this.rofraps.FramerateAverage);
+    stats["1PercentLowFPS"].Text = "1% Low FPS: " + floor(this.rofraps.OnePercentLow);
+    stats["0.1PercentLowFPS"].Text = "0.1% Low FPS: " + ceil(this.rofraps.PointOnePercentLow);
   }
 
   private addInfoPropertyLabel(value: defined, key: string, layoutOrder: number) {
@@ -134,14 +145,6 @@ export class DebugStats extends BaseComponent<{}, DebugStatsScreen> implements O
       pretty: true,
       sortKeys: true
     }));
-  }
-
-  private updateStatsFrame(): void {
-    const stats = this.instance.Stats;
-    stats.MemoryUsage.Text = `MemoryUsage: ${toSuffixedNumber(floor(Stats.GetTotalMemoryUsageMb()))} MB`;
-    stats.Incoming.Text = `NetworkIncoming: ${floor(Stats.DataReceiveKbps)} kb/s`;
-    stats.Outgoing.Text = `NetworkOutgoing: ${floor(Stats.DataSendKbps)} kb/s`;
-    stats.Instances.Text = "Instances: " + toSuffixedNumber(Stats.InstanceCount);
   }
 
   private getTypeColor(value: unknown, isID = false): Maybe<string> {

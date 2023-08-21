@@ -6,7 +6,13 @@ export interface DebugStatsScreen extends ScreenGui {
     Outgoing: TextLabel;
     Instances: TextLabel;
     ViewInfo: TextButton;
-  };
+    Blank: TextLabel;
+    FPS: TextLabel;
+    AverageFPS: TextLabel;
+    ["1PercentLowFPS"]: TextLabel;
+    ["0.1PercentLowFPS"]: TextLabel;
+  }
+
 }
 
 export interface DragonInfoScreen extends ScreenGui {

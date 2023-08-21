@@ -29,6 +29,8 @@ export class MouseController implements OnInit {
   });
 
   public onInit(): void {
+    // TODO: overhaul mobile controls
+    // UIS.TouchPinch.Connect()
     this.input
       .Bind(this.clickAction, () => {
         this.down = true;
