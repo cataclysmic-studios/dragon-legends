@@ -23,7 +23,7 @@ export class HatcheryService implements OnInit {
     removeEggFromHatchery.connect((player, eggID) => this.removeEgg(player, eggID));
   }
 
-  private removeEgg(player: Player, eggID: string): void {
+  public removeEgg(player: Player, eggID: string): void {
     const hatchery = this.buildingData.get<Hatchery>(player, "HATCHERY");
     const hatcheryModel = getPlacedBuilding<HatcheryModel>("HATCHERY");
     hatcheryModel.Eggs
@@ -35,7 +35,7 @@ export class HatcheryService implements OnInit {
     this.buildingData.update(player, hatchery);
   }
 
-  private addEgg(player: Player, egg: Egg, isLoading = false): void {
+  public addEgg(player: Player, egg: Egg, isLoading = false): void {
     const hatchery = this.buildingData.get<Hatchery>(player, "HATCHERY");
     const hatcheryModel = getPlacedBuilding<HatcheryModel>("HATCHERY");
     const eggPositionIndex = tostring(hatcheryModel.Eggs.GetChildren().size() + 1);

@@ -3,12 +3,14 @@ import { Component, BaseComponent } from "@flamework/components";
 import { TweenInfoBuilder } from "@rbxts/builders";
 import { Janitor } from "@rbxts/janitor";
 
+import { UIController } from "client/controllers/ui-controller";
 import { SelectionController } from "client/controllers/selection-controller";
 import { DragonPlacementController } from "client/controllers/dragon-placement-controller";
 
 import { DataKey } from "shared/data-models/generic";
 import { Building, Hatchery, UpgradableBuilding } from "shared/data-models/buildings";
 import { Habitat } from "shared/data-models/habitats";
+import { Dragon } from "shared/data-models/dragons";
 import { MissingBuildingException } from "shared/exceptions";
 import { Assets, getPlacedBuilding, newDragonModel, newEggMesh, toSuffixedNumber } from "shared/utilities/helpers";
 import { tween } from "shared/utilities/ui";
@@ -18,7 +20,7 @@ import { DataLinked } from "client/hooks";
 import { Events, Functions } from "client/network";
 
 const { timerFinished, removeEggFromHatchery, claimHabitatGold } = Events;
-const { getBuildingData, isTimerActive } = Functions;
+const { getBuildingData, getDragonData, isTimerActive } = Functions;
 
 interface Attributes {
   ID?: string;
@@ -44,6 +46,7 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
   private eggButtonDebounce = false;
 
   public constructor(
+    private readonly ui: UIController,
     private readonly selection: SelectionController,
     private readonly dragon: DragonPlacementController
   ) { super(); }
@@ -74,13 +77,14 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
     this.updateButtons(building);
   }
 
-  private addDragonButtons({ dragons }: Habitat): void {
+  private async addDragonButtons({ dragonIDs }: Habitat): Promise<void> {
     if (this.dragonButtonDebounce) return;
     this.dragonButtonDebounce = true;
     task.delay(2, () => this.dragonButtonDebounce = false);
 
     const janitor = new Janitor;
-    for (const dragon of dragons) {
+    for (const dragonID of dragonIDs) {
+      const dragon = <Dragon>await getDragonData(dragonID);
       const button = Assets.UI.HabitatDragonButton.Clone();
       newDragonModel(dragon.name, {
         parent: button.Viewport
@@ -89,11 +93,12 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
       // button.Boost
       button.DragonName.Text = dragon.name;
       button.Parent = this.buttons;
-      button.SetAttribute("DragonID", dragon.id);
+      button.SetAttribute("DragonID", dragonID);
 
       janitor.LinkToInstance(button, true);
       janitor.Add(button.MouseButton1Click.Connect(() => {
-        // display dragon page in dragon index
+        this.ui.setScreenState("DragonInfo", { DragonID: dragonID });
+        this.ui.open("DragonInfo");
       }));
     }
   }

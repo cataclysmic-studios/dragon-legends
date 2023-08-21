@@ -1,10 +1,11 @@
 import { Networking } from "@flamework/networking";
 import { DataKey, DataValue, GameDataModel } from "./data-models/generic";
-import { Egg } from "./data-models/inventory";
 import { Dragon, DragonInfo } from "./data-models/dragons";
 import { Building } from "./data-models/buildings";
-import { Placable } from "./utilities/helpers";
 import { TimerInfo } from "./data-models/time";
+import { Egg } from "./data-models/inventory";
+
+import { Placable } from "./utilities/helpers";
 import { NotificationType } from "./notification-type";
 
 interface ServerEvents {
@@ -36,6 +37,7 @@ interface ClientEvents {
 interface ServerFunctions {
   getData(key: DataKey): DataValue;
   getBuildingData(id: string): Maybe<Building>;
+  getDragonData(id: string): Maybe<Dragon>;
   isTimerActive(buildingID: string): boolean;
   calculateXPUntilNextLevel(): number;
 }

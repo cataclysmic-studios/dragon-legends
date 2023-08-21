@@ -1,9 +1,9 @@
 export class Unique implements Record<string, unknown> {
-  [key: string]: unknown;
-  
+  readonly [key: string]: unknown;
+
   public constructor(
     public readonly id: string
-  ) {}
+  ) { }
 }
 
 export interface StorableVector3 {

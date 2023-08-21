@@ -8,7 +8,7 @@ export default class BuildingUtility extends Utility<Building> {
   }
 
   public isHabitat(v = this.data): v is Habitat {
-    return "dragons" in v && "gold" in v && this.isUpgradable(v);
+    return "dragonIDs" in v && "gold" in v && this.isUpgradable(v);
   }
 
   public isUpgradable(v = this.data): v is UpgradableBuilding {

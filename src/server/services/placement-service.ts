@@ -3,12 +3,13 @@ import { HttpService as HTTP, RunService as Runtime, Workspace as World } from "
 
 import { DataService } from "./data-service";
 import { BuildingDataService } from "./building-data-service";
+import { DragonDataService } from "./dragon-data-service";
 import { TimerService } from "./timer-service";
 import { HabitatService } from "./buildings/habitat-service";
 
-import { Dragon, DragonInfo } from "shared/data-models/dragons";
-import { Building } from "shared/data-models/buildings";
+import { DragonInfo } from "shared/data-models/dragons";
 import { Habitat } from "shared/data-models/habitats";
+import { createDefaultDragon } from "shared/data-models/defaults";
 import { MissingBuildingException } from "shared/exceptions";
 import { Assets, Placable, toStorableVector3, toSeconds, getPlacedBuilding, newDragonModel } from "shared/utilities/helpers";
 import { Events } from "server/network";
@@ -20,6 +21,7 @@ export class PlacementService implements OnInit {
   public constructor(
     private readonly data: DataService,
     private readonly buildingData: BuildingDataService,
+    private readonly dragonData: DragonDataService,
     private readonly timer: TimerService,
     private readonly habitat: HabitatService
   ) { }
@@ -84,51 +86,8 @@ export class PlacementService implements OnInit {
     habitatID: string
   ): void {
 
-    const dragons = this.data.get<Dragon[]>(player, "dragons");
-    const habitat = this.buildingData.get<Habitat>(player, habitatID)!;
-    const dragon: Dragon = {
-      id, name, elements, rarity,
-      damage: 100,
-      health: 500,
-      xp: 0, // 4 xp = 1 level
-      kills: 0,
-      goldGenerationRate: 10,
-      empowerment: 0,
-      power: 5,
-      combatBadge: "None",
-
-      perks: {
-        character: [],
-        combat1: [],
-        combat2: []
-      },
-
-      abilities: [
-        {
-          element: "Physical",
-          level: 1,
-          damage: 100
-        }, {
-          element: "Inferno",
-          level: 1,
-          damage: 250
-        }, {
-          element: "Physical",
-          level: 1,
-          damage: 150
-        }, {
-          element: "Inferno",
-          level: 1,
-          damage: 150
-        }
-      ]
-    };
-
-    habitat.dragons = [...habitat.dragons, dragon];
-    dragons.push(dragon);
-
-    this.buildingData.update(player, habitat);
-    this.data.set(player, "dragons", dragons);
+    const dragon = createDefaultDragon(id, name, elements, rarity, habitatID);
+    this.dragonData.add(player, dragon);
   }
 
   private saveBuildingInfo(
@@ -140,7 +99,6 @@ export class PlacementService implements OnInit {
     timerLength: number
   ): void {
 
-    const buildings = this.data.get<Building[]>(player, "buildings");
     switch (category) {
       case "Habitats": {
         const habitat: Habitat = {
@@ -148,16 +106,15 @@ export class PlacementService implements OnInit {
           position: toStorableVector3(position),
           level: 1,
           gold: 0,
-          dragons: []
+          dragonIDs: []
         }
 
-        buildings.push(habitat);
+        this.buildingData.add(player, habitat);
         this.habitat.updateGoldGeneration(player, habitat);
         break;
       }
     }
 
-    this.data.set(player, "buildings", buildings);
     this.timer.addBuildingTimer(player, id, timerLength);
   }
 }

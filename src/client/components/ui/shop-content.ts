@@ -7,7 +7,7 @@ import { NotificationType } from "shared/notification-type";
 import { UIController } from "client/controllers/ui-controller";
 
 import { Egg, InventoryItem } from "shared/data-models/inventory";
-import { Assets, Placable, getDragonData, toSeconds, toSuffixedNumber } from "shared/utilities/helpers";
+import { Assets, Placable, getStaticDragonInfo, toSeconds, toSuffixedNumber } from "shared/utilities/helpers";
 import { addElementsToFrame, updateRarityIcon } from "shared/utilities/ui";
 import { Events, Functions } from "client/network";
 import { MissingAttributeException } from "shared/exceptions";
@@ -39,7 +39,7 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
       viewportModel.PrimaryPart!.Position = new Vector3;
       viewportModel.Parent = card.Viewport;
 
-      const price = item.GetAttribute<Maybe<number>>("Price") ?? getDragonData(item).price;
+      const price = item.GetAttribute<Maybe<number>>("Price") ?? getStaticDragonInfo(item).price;
       if (!price)
         throw new MissingAttributeException(item, "Price");
 
@@ -74,7 +74,7 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
     switch (contentType) {
       case "Dragons":
         const inventory = <InventoryItem[]>await getData("inventory");
-        const { hatchTime } = getDragonData(itemModel);
+        const { hatchTime } = getStaticDragonInfo(itemModel);
         const egg: Egg = {
           id: HTTP.GenerateGUID(),
           name: itemModel.Name + " Egg",
@@ -98,7 +98,7 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
   private configureSpecifics(contentType: Placable, card: ItemCard, itemModel: Model): void {
     switch (contentType) {
       case "Dragons": {
-        const { rarity, elements } = getDragonData(itemModel);
+        const { rarity, elements } = getStaticDragonInfo(itemModel);
         updateRarityIcon(card.Rarity, rarity)
         addElementsToFrame(card.Elements, elements);
 

@@ -65,7 +65,7 @@ export function getPlacedBuilding<T extends Model = Model>(id: string): T extend
     .find(b => b.GetAttribute<string>("ID") === id);
 }
 
-export function getDragonData(dragonModel: Model): DragonInfo {
+export function getStaticDragonInfo(dragonModel: Model): DragonInfo {
   const dataModule = <ModuleScript>dragonModel.WaitForChild("Data");
   return <DragonInfo>require(dataModule);
 }

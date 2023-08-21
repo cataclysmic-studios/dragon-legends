@@ -12,7 +12,7 @@ import { MissingDataException } from "shared/exceptions";
 import { getPlacedBuilding } from "shared/utilities/helpers";
 import { OnPlayerJoin } from "server/hooks";
 import { Events, Functions } from "server/network";
-import HabitatUtility from "shared/utilities/habitat";
+import HabitatUtility from "server/utilities/habitat";
 
 const { claimHabitatGold } = Events;
 const { isTimerActive } = Functions;
@@ -64,7 +64,7 @@ export class HabitatService implements OnPlayerJoin, OnStart {
 
   public updateGoldGeneration(player: Player, habitat: Habitat): void {
     const habitatUtil = new HabitatUtility(habitat);
-    const goldPerMinute = habitatUtil.calculateTotalGoldPerMinute();
+    const goldPerMinute = habitatUtil.calculateTotalGoldPerMinute(player);
     const goldInfoMap = this.playerMap.mustGet(player);
     goldInfoMap.set(habitat.id, {
       goldPerMinute,

@@ -1,17 +1,23 @@
 import { Service, OnInit } from "@flamework/core";
-import { Dragon } from "shared/data-models/dragons";
 import { DataService } from "./data-service";
-import { Events } from "server/network";
+import { BuildingDataService } from "./building-data-service";
+
+import { Dragon } from "shared/data-models/dragons";
+import { Habitat } from "shared/data-models/habitats";
+import { Events, Functions } from "server/network";
 
 const { addDragonXP } = Events;
+const { getDragonData } = Functions;
 
 @Service()
 export class DragonDataService implements OnInit {
   public constructor(
-    private readonly data: DataService
+    private readonly data: DataService,
+    private readonly buildingData: BuildingDataService
   ) { }
 
   public onInit(): void {
+    getDragonData.setCallback((player, dragonID) => this.get(player, dragonID));
     addDragonXP.connect((player, id) => {
       const dragon = this.get(player, id);
       if (!dragon) return;
@@ -26,9 +32,12 @@ export class DragonDataService implements OnInit {
   }
 
   public add(player: Player, dragon: Dragon): void {
+    const habitat = this.buildingData.get<Habitat>(player, dragon.habitatID)!;
     const dragons = this.data.get<Dragon[]>(player, "dragons");
+    habitat.dragonIDs = [...habitat.dragonIDs, dragon.id];
     dragons.push(dragon);
     this.data.set(player, "dragons", dragons);
+    this.buildingData.update(player, habitat);
   }
 
   public remove(player: Player, dragonID: string): void {

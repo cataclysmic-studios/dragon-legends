@@ -1,11 +1,10 @@
-import { OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
 import { Janitor } from "@rbxts/janitor";
 import { UIController } from "client/controllers/ui-controller";
 
 import { DataValue, DataKey } from "shared/data-models/generic";
 import { Dragon, DragonInfo } from "shared/data-models/dragons";
-import { Assets, getDragonData, newDragonModel } from "shared/utilities/helpers";
+import { Assets, getStaticDragonInfo, newDragonModel } from "shared/utilities/helpers";
 import { addElementsToFrame, updateCombatBadgeIcon, updateEmpowermentStars, updateRarityIcon } from "shared/utilities/ui";
 import DragonUtility from "shared/utilities/dragon";
 
@@ -36,7 +35,7 @@ export class Dragonbook extends BaseComponent implements DataLinked {
           .filter((i): i is Model => i.IsA("Model"));
 
         const dragonModel = dragonModels.find(model => model.Name === dragon.name)!;
-        const dragonData = getDragonData(dragonModel);
+        const dragonData = getStaticDragonInfo(dragonModel);
         card = this.addCard(dragonData, dragon.id);
       }
 
@@ -48,7 +47,7 @@ export class Dragonbook extends BaseComponent implements DataLinked {
     for (const dragonModel of this.dragonModels) {
       const dragon = dragons.find(d => d.name === dragonModel.Name);
       if (!dragon) {
-        const dragonData = getDragonData(dragonModel);
+        const dragonData = getStaticDragonInfo(dragonModel);
         this.addCard(dragonData);
       }
     }

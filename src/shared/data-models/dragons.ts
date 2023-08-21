@@ -52,6 +52,7 @@ export interface Dragon extends Unique {
   readonly name: string;
   readonly elements: Element[];
   readonly rarity: Rarity;
+  habitatID: string
   damage: number;
   health: number;
   xp: number;
