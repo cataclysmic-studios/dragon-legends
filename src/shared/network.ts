@@ -34,6 +34,7 @@ interface ClientEvents {
   timerFinished(timer: TimerInfo): void;
   addNotificationToButton(buttonName: string): void;
   dispatchNotification(message: string, notificationType?: NotificationType): void;
+  replicateChatMessage(sender: string, message: string): void;
 }
 
 interface ServerFunctions {

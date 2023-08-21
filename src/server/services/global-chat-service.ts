@@ -1,10 +1,11 @@
 import { Service, OnInit } from "@flamework/core";
-import { LocalizationService as Localization, MessagingService as Messaging } from "@rbxts/services";
+import { LocalizationService as Localization, MessagingService as Messaging, Players, TextService as Text } from "@rbxts/services";
 import { Events } from "server/network";
 
-const { playerChatted } = Events;
+const { playerChatted, replicateChatMessage } = Events;
 
 interface GlobalChatMessage {
+  readonly sender: string;
   readonly senderID: number;
   readonly content: string;
 }
@@ -19,12 +20,18 @@ export class GlobalChatService implements OnInit {
         .fromUnixTimestamp(packet.Sent)
         .FormatLocalTime("LTS", Localization.SystemLocaleId);
 
-      print("message sent: " + message.content, "\nat " + sentTimestamp);
+      for (const player of Players.GetPlayers())
+        task.spawn(() => {
+          const filterResult = Text.FilterStringAsync(message.content, message.senderID, "PublicChat");
+          const messageText = filterResult.GetChatForUserAsync(player.UserId);
+          replicateChatMessage.fire(player, message.sender, messageText);
+        });
     });
   }
 
   public send(player: Player, message: string): void {
     Messaging.PublishAsync<GlobalChatMessage>("GLOBAL_CHAT", {
+      sender: player.DisplayName,
       senderID: player.UserId,
       content: message
     });

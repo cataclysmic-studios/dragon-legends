@@ -1,3 +1,23 @@
+export interface ChatScreen extends ScreenGui {
+  Container: Frame & {
+    Input: TextBox & {
+      UICorner: UICorner;
+      UIPadding: UIPadding;
+    };
+    Box: ScrollingFrame & {
+      UIPadding: UIPadding;
+      UIStroke: UIStroke;
+      UIAspectRatioConstraint: UIAspectRatioConstraint;
+      List: Folder & {
+        Message: TextLabel & {
+          UISizeConstraint: UISizeConstraint;
+        };
+        UIListLayout: UIListLayout;
+      };
+    };
+  };
+}
+
 export interface DebugStatsScreen extends ScreenGui {
   Info: Frame;
   Stats: Frame & {
