@@ -9,6 +9,8 @@ import { Placable } from "./utilities/helpers";
 import { NotificationType } from "./notification-type";
 
 interface ServerEvents {
+  playerChatted(message: string): void;
+
   initializeData(): void;
   dataLoaded(): void;
   setData(key: DataKey, value: DataValue): void;
