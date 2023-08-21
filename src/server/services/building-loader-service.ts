@@ -33,6 +33,7 @@ export class BuildingLoaderService implements OnInit {
   ) { }
 
   public onInit(): void {
+    this.janitor.Add(this.onBuildingsLoaded);
     this.janitor.Add(dataLoaded.connect(player => {
       const buildings = this.data.get<Building[]>(player, "buildings");
       for (const building of buildings)

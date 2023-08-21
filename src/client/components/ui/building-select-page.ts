@@ -144,13 +144,15 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
   private removeExtraButtons(): void {
     this.janitor.Cleanup();
     for (const button of this.buttons.GetChildren())
-      if (button.GetAttribute("DragonID")) {
-        if (this.dragonButtonDebounce) return;
-        button.Destroy();
-      } else if (button.GetAttribute("EggID")) {
-        if (this.eggButtonDebounce) return;
-        button.Destroy();
-      }
+      task.spawn(() => {
+        if (button.GetAttribute("DragonID")) {
+          if (this.dragonButtonDebounce) return;
+          button.Destroy();
+        } else if (button.GetAttribute("EggID")) {
+          if (this.eggButtonDebounce) return;
+          button.Destroy();
+        }
+      });
   }
 
   private updateButtons(building: Building) {
