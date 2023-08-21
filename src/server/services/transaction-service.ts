@@ -51,6 +51,6 @@ export class TransactionService implements OnInit, OnPlayerJoin {
   }
 
   public onPlayerJoin(player: Player): void {
-    Market.PromptGamePassPurchase(player, 239189441);
+    // Market.PromptProductPurchase(player, 00000);
   }
 }

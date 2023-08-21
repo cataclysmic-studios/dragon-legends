@@ -12,7 +12,7 @@ import Log from "shared/logger";
 const { initializeData, setData, incrementData, dataLoaded, dataUpdated } = Events;
 const { getData } = Functions;
 
-@Service()
+@Service({ loadOrder: 0 })
 export class PlayerDataService implements OnInit, OnPlayerLeave {
 	public onInit(): void {
 		DataStore2.Combine("DATA", ...DataKeys);
@@ -87,6 +87,6 @@ export class PlayerDataService implements OnInit, OnPlayerLeave {
 	}
 
 	private getDataStore<T extends DataValue = DataValue>(player: Player, key: DataKey): DataStore2<T> {
-		return DataStore2<T>("TEST18_" + key, player);
+		return DataStore2<T>("TEST19_" + key, player);
 	}
 }

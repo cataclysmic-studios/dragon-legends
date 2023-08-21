@@ -1,4 +1,4 @@
-import { OnStart, Service } from "@flamework/core";
+import { OnInit, Service } from "@flamework/core";
 import Signal from "@rbxts/signal";
 
 import { PlayerDataService } from "./data-management/player-data-service";
@@ -21,11 +21,10 @@ const { floor } = math;
 type BuildingCategory = Exclude<keyof typeof Assets, keyof Folder | "UI" | "Eggs">;
 
 @Service()
-export class BuildingLoaderService implements OnStart {
+export class BuildingLoaderService implements OnInit {
   public readonly onBuildingsLoaded = new Signal<(player: Player) => void>();
 
   private readonly janitor = new Janitor;
-  private finished = false;
 
   public constructor(
     private readonly data: PlayerDataService,
@@ -33,7 +32,7 @@ export class BuildingLoaderService implements OnStart {
     private readonly habitats: HabitatService
   ) { }
 
-  public onStart(): void {
+  public onInit(): void {
     this.janitor.Add(dataLoaded.connect(player => {
       const buildings = this.data.get<Building[]>(player, "buildings");
       for (const building of buildings)
