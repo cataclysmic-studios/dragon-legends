@@ -15,7 +15,7 @@ export class MissingAttributeException extends Exception {
 }
 
 export class FlameworkIgnitionException extends Exception {
-	public constructor(public readonly message: string) {
+	public constructor(message: string) {
 		super("FlameworkIgnition", message);
 	}
 }
@@ -29,5 +29,11 @@ export class MissingBuildingException extends Exception {
 export class MissingDataException extends Exception {
 	public constructor(id: string, message: string) {
 		super("MissingData", `${message} (ID ${id})`);
+	}
+}
+
+export class HttpException extends Exception {
+	public constructor(message: string) {
+		super("Http", message);
 	}
 }
