@@ -1,9 +1,9 @@
 import { Service, OnInit } from "@flamework/core";
 import { HttpService as HTTP, RunService as Runtime, Workspace as World } from "@rbxts/services";
 
-import { BuildingDataService } from "./building-data-service";
-import { DragonDataService } from "./dragon-data-service";
-import { TimerService } from "./timer-service";
+import { BuildingDataService } from "./data-management/building-data-service";
+import { DragonDataService } from "./data-management/dragon-data-service";
+import { TimerService } from "./data-management/timer-service";
 import { HabitatService } from "./buildings/habitat-service";
 
 import { DragonInfo } from "shared/data-models/dragons";

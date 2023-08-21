@@ -1,5 +1,5 @@
 import { Dependency } from "@flamework/core";
-import { DragonDataService } from "server/services/dragon-data-service";
+import { DragonDataService } from "server/services/data-management/dragon-data-service";
 import { Habitat } from "shared/data-models/habitats";
 import Utility from "shared/utilities/base-utility";
 

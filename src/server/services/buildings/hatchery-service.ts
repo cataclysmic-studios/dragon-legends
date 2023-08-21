@@ -1,7 +1,7 @@
 import { Service, OnInit } from "@flamework/core";
-import { DataService } from "../data-service";
-import { BuildingDataService } from "../building-data-service";
-import { TimerService } from "../timer-service";
+import { DataService } from "../data-management/data-service";
+import { BuildingDataService } from "../data-management/building-data-service";
+import { TimerService } from "../data-management/timer-service";
 
 import { Egg, InventoryItem } from "shared/data-models/inventory";
 import { Hatchery } from "shared/data-models/buildings";

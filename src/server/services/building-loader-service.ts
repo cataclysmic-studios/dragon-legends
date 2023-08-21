@@ -1,8 +1,8 @@
 import { OnStart, Service } from "@flamework/core";
 import Signal from "@rbxts/signal";
 
-import { DataService } from "./data-service";
-import { DragonDataService } from "./dragon-data-service";
+import { DataService } from "./data-management/data-service";
+import { DragonDataService } from "./data-management/dragon-data-service";
 import { HabitatService } from "./buildings/habitat-service";
 
 import { Building } from "shared/data-models/buildings";

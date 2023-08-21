@@ -1,7 +1,7 @@
 import { Service, OnInit } from "@flamework/core";
 import { Components } from "@flamework/components";
 import { DataService } from "./data-service";
-import { BuildingLoaderService } from "./building-loader-service";
+import { BuildingLoaderService } from "../building-loader-service";
 
 import { Timer } from "server/components/timer";
 import { TimeInfo, TimerInfo, TimerType } from "shared/data-models/time";

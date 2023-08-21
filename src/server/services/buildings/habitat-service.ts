@@ -3,8 +3,8 @@ import { Workspace as World } from "@rbxts/services";
 import { StrictMap } from "@rbxts/strict-map";
 import StringUtils from "@rbxts/string-utils";
 
-import { DataService } from "../data-service";
-import { BuildingDataService } from "../building-data-service";
+import { DataService } from "../data-management/data-service";
+import { BuildingDataService } from "../data-management/building-data-service";
 import { SchedulingService } from "../scheduling-service";
 
 import { Habitat } from "shared/data-models/habitats";
