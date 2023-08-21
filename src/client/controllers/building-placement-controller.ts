@@ -5,7 +5,7 @@ import { Janitor } from "@rbxts/janitor";
 import { UIController } from "./ui-controller";
 import { MouseController, MouseIcon } from "./mouse-controller";
 
-import { Assets, Placable, getMouseWorldPosition, toRegion3 } from "shared/utilities/helpers";
+import { Assets, Placable, toRegion3 } from "shared/utilities/helpers";
 import { Events } from "client/network";
 
 const { incrementData, placeBuilding } = Events;
@@ -43,7 +43,7 @@ export class BuildingPlacementController implements OnRender, OnInit {
     this.updateHighlight();
 
     if (this.currentlyPlacing!.Name !== this.targetOnClick?.Parent?.Name) return;
-    this.currentlyPlacing!.PrimaryPart!.Position = this.snap(getMouseWorldPosition());
+    this.currentlyPlacing!.PrimaryPart!.Position = this.snap(this.mouse.getWorldPosition());
   }
 
   public inPlacementMode(): boolean {

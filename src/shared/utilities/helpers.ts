@@ -1,5 +1,4 @@
-import { Players, ReplicatedFirst, UserInputService as UIS, Workspace as World } from "@rbxts/services";
-import { RaycastParamsBuilder } from "@rbxts/builders";
+import { Players, ReplicatedFirst, Workspace as World } from "@rbxts/services";
 import StringUtils from "@rbxts/string-utils";
 import Object from "@rbxts/object-utils";
 
@@ -64,22 +63,6 @@ export function newEggMesh(egg: Egg, options?: {
 export function getPlacedBuilding<T extends Model = Model>(id: string): T extends HatcheryModel ? T : Maybe<T> {
   return <T extends HatcheryModel ? T : Maybe<T>>World.Buildings.GetChildren()
     .find(b => b.GetAttribute<string>("ID") === id);
-}
-
-const RAY_DISTANCE = 1000;
-export function getMouseWorldPosition(distance = RAY_DISTANCE): Vector3 {
-  const { X, Y } = UIS.GetMouseLocation();
-  const { Origin, Direction } = World.CurrentCamera!.ViewportPointToRay(X, Y);
-  const raycastParams = new RaycastParamsBuilder()
-    .SetIgnoreWater(true)
-    .AddToFilter(World.Ignore)
-    .Build();
-
-  const raycastResult = World.Raycast(Origin, Direction.mul(distance), raycastParams);
-  if (raycastResult)
-    return raycastResult.Position;
-  else
-    return Origin.add(Direction.mul(distance));
 }
 
 export function getDragonData(dragonModel: Model): DragonInfo {
