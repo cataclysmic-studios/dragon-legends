@@ -18,6 +18,19 @@ export const now = () => round(tick());
 export const toStorableVector3 = ({ X, Y, Z }: Vector3) => ({ x: X, y: Y, z: Z })
 export const toUsableVector3 = ({ x, y, z }: StorableVector3) => new Vector3(x, y, z);
 
+export function getPageContents<T extends defined>(pageManager: Pages<T>): T[] {
+  const contents: T[] = [];
+  while (!pageManager.IsFinished) {
+    const page = pageManager.GetCurrentPage();
+    for (const item of page)
+      contents.push(item);
+
+    pageManager.AdvanceToNextPageAsync();
+  }
+
+  return contents;
+}
+
 export function toNearestFiveOrTen(n: number): number {
   let result = floor(n / 5 + 0.5) * 5;
   if (result % 10 !== 0)

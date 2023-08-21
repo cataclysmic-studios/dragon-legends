@@ -29,7 +29,7 @@ interface ServerEvents {
 }
 
 interface ClientEvents {
-  dataUpdate(key: DataKey, value: DataValue): void;
+  dataUpdated(key: DataKey, value: DataValue): void;
   buildingsLoaded(buildings: Building[]): void;
   timerFinished(timer: TimerInfo): void;
   addNotificationToButton(buttonName: string): void;

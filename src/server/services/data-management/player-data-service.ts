@@ -9,7 +9,7 @@ import { OnPlayerLeave } from "server/hooks";
 import { Events, Functions } from "server/network";
 import Log from "shared/logger";
 
-const { initializeData, setData, incrementData, dataLoaded, dataUpdate } = Events;
+const { initializeData, setData, incrementData, dataLoaded, dataUpdated } = Events;
 const { getData } = Functions;
 
 @Service()
@@ -34,13 +34,13 @@ export class PlayerDataService implements OnInit, OnPlayerLeave {
 	}
 
 	public get<T extends DataValue = DataValue>(player: Player, key: DataKey): T {
-		const store = this.getStore<T>(player, key);
-		return store.Get()!;
+		const data = this.getDataStore<T>(player, key);
+		return data.Get()!;
 	}
 
 	public set<T extends DataValue = DataValue>(player: Player, key: DataKey, value: T): void {
-		const store = this.getStore<T>(player, key);
-		store.Set(value);
+		const data = this.getDataStore<T>(player, key);
+		data.Set(value);
 	}
 
 	private setup(player: Player): void {
@@ -77,23 +77,14 @@ export class PlayerDataService implements OnInit, OnPlayerLeave {
 	): void {
 
 		task.spawn(() => {
-			const store = this.getStore(player, key);
-			const value = store.Get(defaultValue);
-			this.sendToClient(player, key, value);
-			store.OnUpdate((value) => this.sendToClient(player, key, value));
+			const data = this.getDataStore(player, key);
+			const value = data.Get(defaultValue);
+			dataUpdated(player, key, value);
+			data.OnUpdate((value) => dataUpdated(player, key, value));
 		});
 	}
 
-	private sendToClient<T extends DataValue = DataValue>(
-		player: Player,
-		key: DataKey,
-		value: T
-	): void {
-
-		dataUpdate(player, key, value);
-	}
-
-	private getStore<T extends DataValue = DataValue>(player: Player, key: DataKey): DataStore2<T> {
+	private getDataStore<T extends DataValue = DataValue>(player: Player, key: DataKey): DataStore2<T> {
 		return DataStore2<T>("TEST18_" + key, player);
 	}
 }
