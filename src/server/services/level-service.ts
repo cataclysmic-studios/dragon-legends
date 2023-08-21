@@ -8,15 +8,10 @@ const { calculateXPUntilNextLevel } = Functions;
 export class LevelService implements OnStart {
   public constructor(
     private readonly data: DataService
-  ) {}
+  ) { }
 
   public onStart(): void {
     calculateXPUntilNextLevel.setCallback(player => this.calculateXPUntilNextLevel(player));
-  }
-  
-  private calculateXPUntilNextLevel(player: Player): number {
-    const level = this.data.get<number>(player, "level") + 1;
-    return (level ** 2 + level) / 2 * 100 - (level * 100);
   }
 
   public addXP(player: Player, amount: number): void {
@@ -30,6 +25,11 @@ export class LevelService implements OnStart {
     }
 
     this.data.increment(player, "xp", amount);
+  }
+
+  private calculateXPUntilNextLevel(player: Player): number {
+    const level = this.data.get<number>(player, "level") + 1;
+    return (level ** 2 + level) / 2 * 100 - (level * 100);
   }
 
   private addLevel(player: Player): void {

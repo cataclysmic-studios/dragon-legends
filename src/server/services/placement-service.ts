@@ -1,7 +1,6 @@
 import { Service, OnInit } from "@flamework/core";
 import { HttpService as HTTP, RunService as Runtime, Workspace as World } from "@rbxts/services";
 
-import { DataService } from "./data-service";
 import { BuildingDataService } from "./building-data-service";
 import { DragonDataService } from "./dragon-data-service";
 import { TimerService } from "./timer-service";
@@ -19,7 +18,6 @@ const { placeBuilding, placeDragon } = Events;
 @Service()
 export class PlacementService implements OnInit {
   public constructor(
-    private readonly data: DataService,
     private readonly buildingData: BuildingDataService,
     private readonly dragonData: DragonDataService,
     private readonly timer: TimerService,

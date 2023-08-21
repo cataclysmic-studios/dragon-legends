@@ -76,10 +76,12 @@ export class DataService implements OnInit, OnPlayerLeave {
 		defaultValue: T
 	): void {
 
-		const store = this.getStore(player, key);
-		const value = store.Get(defaultValue);
-		this.sendToClient(player, key, value);
-		store.OnUpdate((value) => this.sendToClient(player, key, value));
+		task.spawn(() => {
+			const store = this.getStore(player, key);
+			const value = store.Get(defaultValue);
+			this.sendToClient(player, key, value);
+			store.OnUpdate((value) => this.sendToClient(player, key, value));
+		});
 	}
 
 	private sendToClient<T extends DataValue = DataValue>(

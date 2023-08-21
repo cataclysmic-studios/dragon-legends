@@ -68,19 +68,20 @@ export class TimerService implements OnInit {
 
   private async updateTimers(player: Player): Promise<void> {
     const { timers } = this.data.get<TimeInfo>(player, "timeInfo");
-    for (const timer of timers) {
-      const modelForTimer = this.getModelForTimer(timer);
-      const completionTime = timer.beganAt + timer.length;
+    for (const timer of timers)
+      task.spawn(() => {
+        const modelForTimer = this.getModelForTimer(timer);
+        const completionTime = timer.beganAt + timer.length;
 
-      if (now() >= completionTime) {
-        timerFinished(player, timer);
-        this.removeTimerData(player, timer.id);
-        if (this.components.getComponent<Timer>(modelForTimer))
-          this.components.removeComponent<Timer>(modelForTimer);
-      } else
-        if (!this.components.getComponent<Timer>(modelForTimer))
-          this.components.addComponent<Timer>(modelForTimer);
-    }
+        if (now() >= completionTime) {
+          timerFinished(player, timer);
+          this.removeTimerData(player, timer.id);
+          if (this.components.getComponent<Timer>(modelForTimer))
+            this.components.removeComponent<Timer>(modelForTimer);
+        } else
+          if (!this.components.getComponent<Timer>(modelForTimer))
+            this.components.addComponent<Timer>(modelForTimer);
+      });
   }
 
   private getModelForTimer(timer: TimerInfo): Model | MeshPart {

@@ -17,7 +17,7 @@ const { floor, ceil } = math;
 
 @Component({ tag: "DebugStats" })
 export class DebugStats extends BaseComponent<{}, DebugStatsScreen> implements OnStart {
-  private readonly rofraps = new RoFraps(0.33);
+  private readonly rofraps = new RoFraps(0.25);
 
   public constructor(
     private readonly selection: SelectionController

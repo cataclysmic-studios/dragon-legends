@@ -13,6 +13,7 @@ import BuildingUtility from "shared/utilities/building";
 import HabitatUtility from "server/utilities/habitat";
 
 import { Events } from "server/network";
+import { Janitor } from "@rbxts/janitor";
 
 const { dataLoaded, placeBuilding, placeDragon, buildingsLoaded, addEggToHatchery } = Events;
 const { floor } = math;
@@ -23,6 +24,9 @@ type BuildingCategory = Exclude<keyof typeof Assets, keyof Folder | "UI" | "Eggs
 export class BuildingLoaderService implements OnStart {
   public readonly onBuildingsLoaded = new Signal<(player: Player) => void>();
 
+  private readonly janitor = new Janitor;
+  private finished = false;
+
   public constructor(
     private readonly data: DataService,
     private readonly dragonData: DragonDataService,
@@ -30,15 +34,15 @@ export class BuildingLoaderService implements OnStart {
   ) { }
 
   public onStart(): void {
-    const conn = dataLoaded.connect(player => {
+    this.janitor.Add(dataLoaded.connect(player => {
       const buildings = this.data.get<Building[]>(player, "buildings");
       for (const building of buildings)
-        this.loadBuilding(player, building);
+        task.spawn(() => this.loadBuilding(player, building));
 
       this.onBuildingsLoaded.Fire(player);
       buildingsLoaded(player, buildings);
-      conn.Disconnect();
-    });
+      this.janitor.Cleanup();
+    }));
   }
 
   private loadBuilding(player: Player, building: Building): void {
@@ -68,12 +72,13 @@ export class BuildingLoaderService implements OnStart {
 
   private loadHabitat(player: Player, habitat: Habitat) {
     const { id, dragonIDs } = habitat;
-    for (const dragonID of dragonIDs) {
-      const dragon = this.dragonData.get(player, dragonID)!;
-      const dragonModel = <Model>Assets.Dragons.WaitForChild(dragon.name);
-      const dragonData = getStaticDragonInfo(dragonModel);
-      placeDragon.predict(player, dragonData, id, dragon.id);
-    }
+    for (const dragonID of dragonIDs)
+      task.spawn(() => {
+        const dragon = this.dragonData.get(player, dragonID)!;
+        const dragonModel = <Model>Assets.Dragons.WaitForChild(dragon.name);
+        const dragonData = getStaticDragonInfo(dragonModel);
+        placeDragon.predict(player, dragonData, id, dragon.id);
+      });
 
     const habitatUtil = new HabitatUtility(habitat);
     const { lastOnline } = this.data.get<TimeInfo>(player, "timeInfo");

@@ -11,13 +11,14 @@ export class SchedulingService implements OnTick {
 
   public onTick(step: number): void {
     this.counter += step;
-    for (const [unit, signal] of Object.entries(this.every)) {
-      const increment = this.getIncrement(unit);
-      if (this.counter >= increment) {
-        this.counter -= increment;
-        signal.Fire();
-      }
-    }
+    for (const [unit, signal] of Object.entries(this.every))
+      task.spawn(() => {
+        const increment = this.getIncrement(unit);
+        if (this.counter >= increment) {
+          this.counter -= increment;
+          signal.Fire();
+        }
+      });
   }
 
   private getIncrement(unit: keyof typeof this.every): number {
