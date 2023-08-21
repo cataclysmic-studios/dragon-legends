@@ -56,13 +56,14 @@ export class DebugStats extends BaseComponent<{}, DebugStatsScreen> implements O
       .filter(i => i.IsA("TextLabel"));
 
     for (const label of infoLabels)
-      label.Destroy();
+      task.spawn(() => label.Destroy());
 
     let order = 1;
-    for (const [key, value] of Object.entries(info)) {
-      this.addInfoPropertyLabel(value, key, order);
-      order++;
-    }
+    for (const [key, value] of Object.entries(info))
+      task.spawn(() => {
+        this.addInfoPropertyLabel(value, key, order);
+        order++;
+      });
   }
 
   private updateStatsFrame(): void {

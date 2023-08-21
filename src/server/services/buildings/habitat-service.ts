@@ -47,7 +47,7 @@ export class HabitatService implements OnPlayerJoin, OnStart {
         .filter(i => StringUtils.endsWith(i.Name, "Habitat"));
 
       for (const habitatModel of habitats)
-        this.generateGold(player, habitatModel);
+        task.spawn(() => this.generateGold(player, habitatModel));
     });
   }
 

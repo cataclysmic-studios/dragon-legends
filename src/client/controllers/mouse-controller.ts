@@ -34,7 +34,7 @@ export class MouseController implements OnInit {
     this.input
       .Bind(this.clickAction, () => {
         this.down = true;
-        this.clickCallbacks.forEach(callback => callback());
+        this.clickCallbacks.forEach(callback => task.spawn(callback));
       })
       .BindEvent("onRelease", this.clickAction.Released, () => {
         this.down = false

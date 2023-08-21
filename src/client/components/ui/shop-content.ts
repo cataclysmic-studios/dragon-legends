@@ -31,38 +31,39 @@ export class ShopContent extends BaseComponent<Attributes, ScrollingFrame> imple
       .GetChildren()
       .filter(i => i.IsA("Model") && !Collection.HasTag(i, "NotPurchasable"));
 
-    for (const item of items) {
-      const card = Assets.UI.ItemCard.Clone();
-      card.Title.Text = item.Name;
+    for (const item of items)
+      task.spawn(() => {
+        const card = Assets.UI.ItemCard.Clone();
+        card.Title.Text = item.Name;
 
-      const viewportModel = item.Clone();
-      viewportModel.PrimaryPart!.Position = new Vector3;
-      viewportModel.Parent = card.Viewport;
+        const viewportModel = item.Clone();
+        viewportModel.PrimaryPart!.Position = new Vector3;
+        viewportModel.Parent = card.Viewport;
 
-      const price = item.GetAttribute<Maybe<number>>("Price") ?? getStaticDragonInfo(item).price;
-      if (!price)
-        throw new MissingAttributeException(item, "Price");
+        const price = item.GetAttribute<Maybe<number>>("Price") ?? getStaticDragonInfo(item).price;
+        if (!price)
+          throw new MissingAttributeException(item, "Price");
 
-      card.Purchase.Container.Price.Text = toSuffixedNumber(price);
-      this.configureSpecifics(contentType, card, item);
+        card.Purchase.Container.Price.Text = toSuffixedNumber(price);
+        this.configureSpecifics(contentType, card, item);
 
-      let db = false;
-      this.maid.GiveTask(card.Purchase.MouseButton1Click.Connect(async () => {
-        if (db) return;
-        db = true;
-        task.delay(1, () => db = false);
+        let db = false;
+        this.maid.GiveTask(card.Purchase.MouseButton1Click.Connect(async () => {
+          if (db) return;
+          db = true;
+          task.delay(1, () => db = false);
 
-        const gold = <number>await getData("gold");
-        if (price > gold)
-          return this.notification.dispatch(`You need ${toSuffixedNumber(price - gold)} more gold to purchase this.`, NotificationType.Error);
+          const gold = <number>await getData("gold");
+          if (price > gold)
+            return this.notification.dispatch(`You need ${toSuffixedNumber(price - gold)} more gold to purchase this.`, NotificationType.Error);
 
-        this.ui.open("Main");
-        this.onPurchaseClick(item, contentType, price);
-      }));
+          this.ui.open("Main");
+          this.onPurchaseClick(item, contentType, price);
+        }));
 
-      card.Parent = this.instance;
-      this.maid.GiveTask(card);
-    }
+        card.Parent = this.instance;
+        this.maid.GiveTask(card);
+      });
   }
 
   private async onPurchaseClick(

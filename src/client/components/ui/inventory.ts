@@ -29,41 +29,42 @@ export class Inventory extends BaseComponent<{}, ScrollingFrame> implements Data
 
   private updateItems(inventory: InventoryItem[]): void {
     for (const card of this.instance.GetChildren().filter(i => i.IsA("Frame")))
-      card.Destroy();
+      task.spawn(() => card.Destroy());
 
-    for (const item of inventory) {
-      const card = Assets.UI.InventoryCard.Clone();
-      card.Title.Text = item.name;
+    for (const item of inventory)
+      task.spawn(() => {
+        const card = Assets.UI.InventoryCard.Clone();
+        card.Title.Text = item.name;
 
-      const itemUtil = new InventoryItemUtility(item);
-      if (itemUtil.isEgg())
-        newEggMesh(<Egg>item, { parent: card.Viewport });
+        const itemUtil = new InventoryItemUtility(item);
+        if (itemUtil.isEgg())
+          newEggMesh(<Egg>item, { parent: card.Viewport });
 
-      this.maid.GiveTask(card.Buttons.Sell.MouseButton1Click.Connect(() => {
-        // ugh i still gotta do this?? shit...
-        // UGHH FUCK
-        print("sell item");
-      }));
+        this.maid.GiveTask(card.Buttons.Sell.MouseButton1Click.Connect(() => {
+          // ugh i still gotta do this?? shit...
+          // UGHH FUCK
+          print("sell item");
+        }));
 
-      this.maid.GiveTask(card.Buttons.Use.MouseButton1Click.Connect(async () => {
-        if (itemUtil.isEgg()) {
-          const hatchery = <Hatchery>await getBuildingData("HATCHERY")
-          const hatcheryModel = getPlacedBuilding<HatcheryModel>("HATCHERY");
-          const max = <HatcheryMaximums>require(hatcheryModel.Maximums);
-          const currentEggs = hatcheryModel.Eggs.GetChildren().size();
-          const maxEggs = max.eggs[hatchery.level - 1];
-          if (currentEggs >= maxEggs)
-            return this.notification.dispatch("Cannot add egg to hatchery, hatchery is full.", NotificationType.Error);
+        this.maid.GiveTask(card.Buttons.Use.MouseButton1Click.Connect(async () => {
+          if (itemUtil.isEgg()) {
+            const hatchery = <Hatchery>await getBuildingData("HATCHERY")
+            const hatcheryModel = getPlacedBuilding<HatcheryModel>("HATCHERY");
+            const max = <HatcheryMaximums>require(hatcheryModel.Maximums);
+            const currentEggs = hatcheryModel.Eggs.GetChildren().size();
+            const maxEggs = max.eggs[hatchery.level - 1];
+            if (currentEggs >= maxEggs)
+              return this.notification.dispatch("Cannot add egg to hatchery, hatchery is full.", NotificationType.Error);
 
-          addEggToHatchery(<Egg>item);
-          this.ui.open("Main");
-        } else {
-          print("use item");
-        }
-      }));
+            addEggToHatchery(<Egg>item);
+            this.ui.open("Main");
+          } else {
+            print("use item");
+          }
+        }));
 
-      card.Parent = this.instance;
-      this.maid.GiveTask(card);
-    }
+        card.Parent = this.instance;
+        this.maid.GiveTask(card);
+      });
   }
 }

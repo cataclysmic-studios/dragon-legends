@@ -28,19 +28,20 @@ export class Dragonbook extends BaseComponent implements DataLinked {
     this.cards.clear();
 
     task.spawn(() => this.updateUnownedDragons(<Dragon[]>value));
-    for (const dragon of <Dragon[]>value) {
-      let card = this.cards.find(card => card.GetAttribute<Maybe<string>>("ID") === dragon.id);
-      if (!card) { // dragon is owned but card doesn't exist yet
-        const dragonModels = Assets.Dragons.GetChildren()
-          .filter((i): i is Model => i.IsA("Model"));
+    for (const dragon of <Dragon[]>value)
+      task.spawn(() => {
+        let card = this.cards.find(card => card.GetAttribute<Maybe<string>>("ID") === dragon.id);
+        if (!card) { // dragon is owned but card doesn't exist yet
+          const dragonModels = Assets.Dragons.GetChildren()
+            .filter((i): i is Model => i.IsA("Model"));
 
-        const dragonModel = dragonModels.find(model => model.Name === dragon.name)!;
-        const dragonData = getStaticDragonInfo(dragonModel);
-        card = this.addCard(dragonData, dragon.id);
-      }
+          const dragonModel = dragonModels.find(model => model.Name === dragon.name)!;
+          const dragonData = getStaticDragonInfo(dragonModel);
+          card = this.addCard(dragonData, dragon.id);
+        }
 
-      this.updateCard(card, dragon);
-    }
+        this.updateCard(card, dragon);
+      });
   }
 
   private async updateUnownedDragons(dragons: Dragon[]): Promise<void> {

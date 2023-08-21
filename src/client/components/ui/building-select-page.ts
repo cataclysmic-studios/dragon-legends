@@ -77,66 +77,68 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
     this.updateButtons(building);
   }
 
-  private async addDragonButtons({ dragonIDs }: Habitat): Promise<void> {
+  private addDragonButtons({ dragonIDs }: Habitat): void {
     if (this.dragonButtonDebounce) return;
     this.dragonButtonDebounce = true;
     task.delay(2, () => this.dragonButtonDebounce = false);
 
     const janitor = new Janitor;
-    for (const dragonID of dragonIDs) {
-      const dragon = <Dragon>await getDragonData(dragonID);
-      const button = Assets.UI.HabitatDragonButton.Clone();
-      newDragonModel(dragon.name, {
-        parent: button.Viewport
+    for (const dragonID of dragonIDs)
+      task.spawn(async () => {
+        const dragon = <Dragon>await getDragonData(dragonID);
+        const button = Assets.UI.HabitatDragonButton.Clone();
+        newDragonModel(dragon.name, {
+          parent: button.Viewport
+        });
+
+        // button.Boost
+        button.DragonName.Text = dragon.name;
+        button.Parent = this.buttons;
+        button.SetAttribute("DragonID", dragonID);
+
+        janitor.LinkToInstance(button, true);
+        janitor.Add(button.MouseButton1Click.Connect(() => {
+          this.ui.setScreenState("DragonInfo", { DragonID: dragonID });
+          this.ui.open("DragonInfo");
+        }));
       });
-
-      // button.Boost
-      button.DragonName.Text = dragon.name;
-      button.Parent = this.buttons;
-      button.SetAttribute("DragonID", dragonID);
-
-      janitor.LinkToInstance(button, true);
-      janitor.Add(button.MouseButton1Click.Connect(() => {
-        this.ui.setScreenState("DragonInfo", { DragonID: dragonID });
-        this.ui.open("DragonInfo");
-      }));
-    }
   }
 
-  private async addEggButtons({ eggs }: Hatchery): Promise<void> {
+  private addEggButtons({ eggs }: Hatchery): void {
     if (this.eggButtonDebounce) return;
     this.eggButtonDebounce = true;
     task.delay(1, () => this.eggButtonDebounce = false);
 
     const janitor = new Janitor;
-    for (const egg of eggs) {
-      const button = Assets.UI.HatcheryEggButton.Clone();
-      newEggMesh(egg, {
-        parent: button.Viewport
+    for (const egg of eggs)
+      task.spawn(async () => {
+        const button = Assets.UI.HatcheryEggButton.Clone();
+        newEggMesh(egg, {
+          parent: button.Viewport
+        });
+
+        let eggTimerFinished = !await isTimerActive(egg.id);
+        button.Parent = this.buttons;
+        button.Place.Visible = eggTimerFinished;
+        button.SetAttribute("EggID", egg.id);
+
+        janitor.LinkToInstance(button, true);
+        janitor.Add(button.MouseButton1Click.Connect(async () => {
+          if (!eggTimerFinished) return;
+          const [dragonName] = egg.name.gsub(" Egg", "");
+          const placed = await this.dragon.place(dragonName);
+          if (placed) {
+            removeEggFromHatchery(egg.id);
+            button.Destroy();
+          }
+        }));
+
+        janitor.Add(timerFinished.connect(timer => {
+          if (timer.id !== egg.id) return;
+          eggTimerFinished = true;
+          button.Place.Visible = true;
+        }));
       });
-
-      let eggTimerFinished = !await isTimerActive(egg.id);
-      button.Parent = this.buttons;
-      button.Place.Visible = eggTimerFinished;
-      button.SetAttribute("EggID", egg.id);
-
-      janitor.LinkToInstance(button, true);
-      janitor.Add(button.MouseButton1Click.Connect(async () => {
-        if (!eggTimerFinished) return;
-        const [dragonName] = egg.name.gsub(" Egg", "");
-        const placed = await this.dragon.place(dragonName);
-        if (placed) {
-          removeEggFromHatchery(egg.id);
-          button.Destroy();
-        }
-      }));
-
-      janitor.Add(timerFinished.connect(timer => {
-        if (timer.id !== egg.id) return;
-        eggTimerFinished = true;
-        button.Place.Visible = true;
-      }));
-    }
   }
 
   private removeExtraButtons(): void {

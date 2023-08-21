@@ -5,10 +5,12 @@ import { Assets } from "./helpers";
 
 export function updateEmpowermentStars(frame: Frame, empowerment: number): void {
   for (const star of frame.GetChildren())
-    if (star.IsA("ImageLabel")) {
-      const active = star.LayoutOrder <= empowerment;
-      star.ImageColor3 = active ? Color3.fromRGB(255, 242, 57) : new Color3;
-    }
+    task.spawn(() => {
+      if (star.IsA("ImageLabel")) {
+        const active = star.LayoutOrder <= empowerment;
+        star.ImageColor3 = active ? Color3.fromRGB(255, 242, 57) : new Color3;
+      }
+    });
 }
 
 export function updateCombatBadgeIcon(icon: ImageLabel, badge: CombatBadge): void {
@@ -26,13 +28,14 @@ export function addElementsToFrame(frame: Frame, elements: Element[]): ImageLabe
   const elementLabels: ImageLabel[] = [];
   let order = 1;
 
-  for (const element of elements) {
-    const banner = <ImageLabel>Assets.UI.ElementBanners.WaitForChild(element).Clone();
-    banner.LayoutOrder = order;
-    banner.Parent = frame;
-    elementLabels.push(banner);
-    order++;
-  }
+  for (const element of elements)
+    task.spawn(() => {
+      const banner = <ImageLabel>Assets.UI.ElementBanners.WaitForChild(element).Clone();
+      banner.LayoutOrder = order;
+      banner.Parent = frame;
+      elementLabels.push(banner);
+      order++;
+    });
 
   return elementLabels;
 }
