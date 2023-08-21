@@ -8,6 +8,8 @@ import StringUtils from "@rbxts/string-utils";
 
 import { Player } from "shared/utilities/helpers";
 
+const { abs } = math;
+
 export const enum MouseIcon {
   Default,
   Drag,
@@ -53,8 +55,14 @@ export class MouseController implements OnInit {
     return disconnect;
   }
 
-  public onScroll(callback: (direction: 1 | -1) => void) {
+  public onScroll(callback: (direction: 1 | -1) => void): Callback {
     this.input.Bind(this.scrollAction, () => callback(<1 | -1>-this.scrollAction.Position.Z));
+    const pinchConn = UIS.TouchPinch.Connect((_, scale) => abs(scale) / scale);
+
+    return () => {
+      this.input.Unbind(this.scrollAction);
+      pinchConn.Disconnect();
+    };
   }
 
   public getWorldPosition(distance = this.mouseRayDistance): Vector3 {
