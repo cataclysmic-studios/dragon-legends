@@ -7,13 +7,19 @@ import { OnPlayerJoin } from "server/hooks";
 import { getDevProducts } from "shared/utilities/helpers";
 
 const enum ProductIDs {
-  Gold5000 = 0
+  Gold5000 = 1620635951,
+  Gold25000 = 1620636385,
+  Gold75000 = 1620637847,
+  Gold150K = 1620636384
 }
 
 @Service()
 export class TransactionService implements OnInit, OnPlayerJoin {
   private readonly rewardHandlers: Record<number, (player: Player) => void> = {
-    [ProductIDs.Gold5000]: player => this.data.increment(player, "gold", 5000)
+    [ProductIDs.Gold5000]: player => this.data.increment(player, "gold", 5000),
+    [ProductIDs.Gold25000]: player => this.data.increment(player, "gold", 25000),
+    [ProductIDs.Gold75000]: player => this.data.increment(player, "gold", 75000),
+    [ProductIDs.Gold150K]: player => this.data.increment(player, "gold", 150000)
   }
 
   public constructor(

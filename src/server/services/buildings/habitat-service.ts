@@ -41,7 +41,7 @@ export class HabitatService implements OnPlayerJoin, OnStart {
   }
 
   public onPlayerJoin(player: Player): void {
-    this.playerMap.set(player, new Map<string, HabitatGoldInfo>)
+    this.playerMap.set(player, new Map);
     this.schedule.every.second.Connect(() => {
       const habitats = <HabitatModel[]>World.Buildings.GetChildren()
         .filter(i => StringUtils.endsWith(i.Name, "Habitat"));
