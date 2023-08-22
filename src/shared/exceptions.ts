@@ -1,10 +1,14 @@
 export class Exception {
 	public constructor(
-		name: string,
+		protected readonly name: string,
 		public readonly message: string
 	) {
-		warn(`${name}Exception: ${message}`);
+		warn(this.toString());
 		// throw $error(`${name}Exception: ${message}`, (level ?? 0) + 1);
+	}
+
+	public toString(): string {
+		return `${this.name}Exception: ${this.message}`;
 	}
 }
 
