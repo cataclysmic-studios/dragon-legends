@@ -5,12 +5,15 @@ import { DataKey, DataValue, DataKeys } from "shared/data-models/generic";
 import { TimeInfo } from "shared/data-models/time";
 import { Building, Hatchery } from "shared/data-models/buildings";
 import { Assets, now, toStorableVector3 } from "shared/utilities/helpers";
-import { OnPlayerLeave } from "server/hooks";
-import { Events, Functions } from "server/network";
+import { Rank } from "shared/rank";
 import Log from "shared/logger";
 
+import { OnPlayerLeave } from "server/hooks";
+import { Events, Functions } from "server/network";
+import BanManager from "server/utilities/ban-manager";
+
 const { initializeData, setData, incrementData, dataLoaded, dataUpdated } = Events;
-const { getData } = Functions;
+const { getData, getRank } = Functions;
 
 @Service({ loadOrder: 0 })
 export class PlayerDataService implements OnInit, OnPlayerLeave {
@@ -38,9 +41,26 @@ export class PlayerDataService implements OnInit, OnPlayerLeave {
 		return data.Get()!;
 	}
 
-	public set<T extends DataValue = DataValue>(player: Player, key: DataKey, value: T): void {
+	public async set<T extends DataValue = DataValue>(player: Player, key: DataKey, value: T): Promise<void> {
+		const rank = await getRank(player);
+		const maximum = this.getMaximum(key);
+		if (typeOf(value) === "number" && rank === Rank.None && <number>value >= (maximum ?? math.huge))
+			return BanManager.Ban(player.Name, "Exploiting: data exceeded maximum value");
+
 		const data = this.getDataStore<T>(player, key);
 		data.Set(value);
+	}
+
+	private getMaximum(key: DataKey): Maybe<number> {
+		switch (key) {
+			case "level": return 250;
+
+			case "xp":
+			case "gold": return 1_000_000_000_000;
+
+			case "diamonds":
+			case "food": return 1_000_000_000;
+		}
 	}
 
 	private setup(player: Player): void {
