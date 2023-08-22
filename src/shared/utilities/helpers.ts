@@ -7,7 +7,7 @@ import { DragonInfo } from "../data-models/dragons";
 import { Egg } from "../data-models/inventory";
 import { Exception } from "../exceptions";
 
-const { floor, log, round, abs } = math;
+const { floor, log, round, abs, huge: inf } = math;
 
 export type Placable = "Decor" | "Buildings" | "Habitats" | "Dragons";
 
@@ -151,6 +151,11 @@ export function toRemainingTime(seconds: number): string {
 }
 
 export function commaFormat(n: number | string): string {
+  if (tonumber(n)! >= inf)
+    return "Infinity";
+  if (tonumber(n)! <= -inf)
+    return "-Infinity";
+
   let formatted = tostring(n);
   const parts: string[] = [];
 
@@ -163,9 +168,9 @@ export function commaFormat(n: number | string): string {
   return parts.join(",");
 }
 
-const suffixes = <const>["K", "M", "B", "T", "Q"];
+const suffixes = <const>["K", "M", "B", "T", "Q", "QN", "SX", "SP", "O", "N", "D", "UD", "DD", "TD", "QD", "QND", "SXD", "SPD", "OD", "ND", "VG"];
 export function toSuffixedNumber(n: number): string {
-  if (n < 100_000)
+  if (n < 100_000 || n >= inf || n <= -inf)
     return commaFormat(n);
 
   const index = floor(log(n, 1e3)) - 1;

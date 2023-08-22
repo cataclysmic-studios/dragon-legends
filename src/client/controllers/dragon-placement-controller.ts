@@ -38,20 +38,21 @@ export class DragonPlacementController {
       .filter(b => StringUtils.endsWith(b.Name, "Habitat"));
 
     const usableHabitats: HabitatModel[] = [];
-    for (const habitatModel of habitats) {
-      const [element] = <[Element, string]>habitatModel.Name.split(" ");
-      const id = habitatModel.GetAttribute<string>("ID");
-      const habitat = <Habitat>await getBuildingData(id);
+    for (const habitatModel of habitats)
+      task.spawn(async () => {
+        const [element] = <[Element, string]>habitatModel.Name.split(" ");
+        const id = habitatModel.GetAttribute<string>("ID");
+        const habitat = <Habitat>await getBuildingData(id);
 
-      const max = <HabitatMaximums>require(habitatModel.Maximums);
-      const usable = dragon.elements.includes(element) &&
-        !await isTimerActive(id) &&
-        habitatModel.Dragons.GetChildren().size() < max.dragons[habitat.level - 1];
+        const max = <HabitatMaximums>require(habitatModel.Maximums);
+        const usable = dragon.elements.includes(element) &&
+          !await isTimerActive(id) &&
+          habitatModel.Dragons.GetChildren().size() < max.dragons[habitat.level - 1];
 
-      habitatModel.Highlight.Enabled = usable;
-      if (usable)
-        usableHabitats.push(habitatModel);
-    }
+        habitatModel.Highlight.Enabled = usable;
+        if (usable)
+          usableHabitats.push(habitatModel);
+      });
 
     if (usableHabitats.size() === 0)
       return this.notification.dispatch("Cannot place dragon, you own no usable habitats for this dragon.", NotificationType.Error);

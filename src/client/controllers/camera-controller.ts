@@ -9,7 +9,7 @@ export class CameraController implements OnInit, OnRender {
   private readonly bounds = World.Ignore.CameraBounds;
   private readonly camera = World.CurrentCamera!;
   private zoomDirection = 0;
-  private zoomPosition = 0;
+  private zoomPosition = 2;
 
   public constructor(
     private readonly building: BuildingPlacementController,
@@ -24,7 +24,7 @@ export class CameraController implements OnInit, OnRender {
     const islandPosition = World.Islands.Main.Position;
     this.cameraPart.Position = islandPosition.add(new Vector3(0, 15 - islandPosition.Y, 0));
     this.mouse.onScroll(direction => {
-      if (this.zoomPosition >= 2 && direction < 0) return;
+      if (this.zoomPosition >= 8 && direction < 0) return;
       if (this.zoomPosition <= -15 && direction > 0) return;
       this.zoomDirection -= direction;
       this.zoomPosition -= direction;

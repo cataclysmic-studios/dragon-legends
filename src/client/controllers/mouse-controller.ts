@@ -31,8 +31,6 @@ export class MouseController implements OnInit {
   });
 
   public onInit(): void {
-    // TODO: overhaul mobile controls
-    // UIS.TouchPinch.Connect()
     this.input
       .Bind(this.clickAction, () => {
         this.down = true;
@@ -41,6 +39,9 @@ export class MouseController implements OnInit {
       .BindEvent("onRelease", this.clickAction.Released, () => {
         this.down = false
       });
+
+    UIS.TouchStarted.Connect(() => this.down = true);
+    UIS.TouchEnded.Connect(() => this.down = false);
   }
 
   // returns a function that removes the listener
@@ -55,9 +56,9 @@ export class MouseController implements OnInit {
     return disconnect;
   }
 
-  public onScroll(callback: (direction: 1 | -1) => void): Callback {
-    this.input.Bind(this.scrollAction, () => callback(<1 | -1>-this.scrollAction.Position.Z));
-    const pinchConn = UIS.TouchPinch.Connect((_, scale) => abs(scale) / scale);
+  public onScroll(callback: (direction: number) => void): Callback {
+    this.input.Bind(this.scrollAction, () => callback(-this.scrollAction.Position.Z));
+    const pinchConn = UIS.TouchPinch.Connect((_, scale) => callback((scale < 1 ? 1 : -1) * abs(scale - 2)));
 
     return () => {
       this.input.Unbind(this.scrollAction);
