@@ -1,4 +1,4 @@
-import { Players, ReplicatedFirst, Workspace as World } from "@rbxts/services";
+import { Players, ReplicatedFirst, Workspace as World, MarketplaceService as Marketplace } from "@rbxts/services";
 import StringUtils from "@rbxts/string-utils";
 import Object from "@rbxts/object-utils";
 
@@ -17,6 +17,18 @@ export const Player = Players.LocalPlayer;
 export const now = () => round(tick());
 export const toStorableVector3 = ({ X, Y, Z }: Vector3) => ({ x: X, y: Y, z: Z })
 export const toUsableVector3 = ({ x, y, z }: StorableVector3) => new Vector3(x, y, z);
+
+export interface DevProductInfo {
+  Description: string;
+  PriceInRobux: number;
+  ProductId: number;
+  IconImageAssetId: number;
+  Name: string;
+}
+
+export function getDevProducts(): DevProductInfo[] {
+  return getPageContents(Marketplace.GetDeveloperProductsAsync());
+}
 
 export function getPageContents<T extends defined>(pageManager: Pages<T>): T[] {
   const contents: T[] = [];

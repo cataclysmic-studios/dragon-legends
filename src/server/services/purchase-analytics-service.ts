@@ -1,24 +1,15 @@
 import { Service, OnInit } from "@flamework/core";
-import { MarketplaceService as Marketplace } from "@rbxts/services";
 
-import { GlobalDataService } from "./global-data-service";
-import { ApiService } from "../api-service";
+import { GlobalDataService } from "./data-management/global-data-service";
+import { ApiService } from "./api-service";
 
 import { PurchaseAnalytics } from "shared/data-models/global";
-import { getPageContents, toSuffixedNumber } from "shared/utilities/helpers";
-import { DiscordLogService, DiscordLogType } from "../discord-log-service";
+import { getDevProducts, toSuffixedNumber } from "shared/utilities/helpers";
+import { DiscordLogService, DiscordLogType } from "./discord-log-service";
 
-const enum ProductType {
+export const enum ProductType {
   Gamepass = "Gamepass",
   DevProduct = "Developer Product"
-}
-
-interface DevProductInfo {
-  Description: string;
-  PriceInRobux: number;
-  ProductId: number;
-  IconImageAssetId: number;
-  Name: string;
 }
 
 @Service()
@@ -52,8 +43,8 @@ export class PurchaseAnalyticsService implements OnInit {
       productName = pass.name;
       productPrice = pass.price;
     } else {
-      const products = this.getProducts();
-      const product = products.find(product => product.ProductId === id)!;
+      const products = getDevProducts();
+      const product = products.find((product) => product.ProductId === id)!;
       productName = product.Name;
       productPrice = product.PriceInRobux;
     }
@@ -78,7 +69,7 @@ export class PurchaseAnalyticsService implements OnInit {
   private async initializeData(): Promise<void> {
     const purchasedProductCount: Record<number, number> = {};
     const purchasedPassCount: Record<number, number> = {};
-    const products = this.getProducts();
+    const products = getDevProducts();
     const gamepasses = await this.api.getGamepasses();
 
     for (const product of products)
@@ -90,10 +81,6 @@ export class PurchaseAnalyticsService implements OnInit {
       purchasedPassCount,
       purchasedProductCount
     });
-  }
-
-  private getProducts(): DevProductInfo[] {
-    return getPageContents(Marketplace.GetDeveloperProductsAsync());
   }
 
   private updateData(data: PurchaseAnalytics): void {

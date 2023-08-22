@@ -2,21 +2,23 @@ import { OnInit, Service } from "@flamework/core";
 import { MarketplaceService as Market, Players } from "@rbxts/services";
 
 import { PlayerDataService } from "./data-management/player-data-service";
+import { ProductType, PurchaseAnalyticsService } from "./purchase-analytics-service";
 import { OnPlayerJoin } from "server/hooks";
-import Log from "shared/logger";
+import { getDevProducts } from "shared/utilities/helpers";
 
 const enum ProductIDs {
-  DoubleGold = 239189441
+  Gold5000 = 0
 }
 
 @Service()
 export class TransactionService implements OnInit, OnPlayerJoin {
   private readonly rewardHandlers: Record<number, (player: Player) => void> = {
-
+    [ProductIDs.Gold5000]: player => this.data.increment(player, "gold", 5000)
   }
 
   public constructor(
-    private readonly data: PlayerDataService
+    private readonly data: PlayerDataService,
+    private readonly purchaseAnalytics: PurchaseAnalyticsService
   ) { }
 
   public onInit(): void {
@@ -35,8 +37,13 @@ export class TransactionService implements OnInit, OnPlayerJoin {
       let success = true;
       try {
         const grantReward = this.rewardHandlers[ProductId];
-        if (player && grantReward)
-          grantReward(player);
+        if (player) {
+          const isDevProduct = getDevProducts().map<number>(p => p.ProductId).includes(ProductId);
+          const productType = isDevProduct ? ProductType.DevProduct : ProductType.Gamepass;
+          this.purchaseAnalytics.trackPurchase(player, ProductId, productType);
+          if (grantReward)
+            grantReward(player);
+        }
       } catch (e) {
         success = false;
         purchaseRecorded = undefined;
