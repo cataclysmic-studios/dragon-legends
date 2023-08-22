@@ -41,11 +41,13 @@ export class PlayerDataService implements OnInit, OnPlayerLeave {
 		return data.Get()!;
 	}
 
-	public async set<T extends DataValue = DataValue>(player: Player, key: DataKey, value: T): Promise<void> {
-		const rank = await getRank(player);
-		const maximum = this.getMaximum(key);
-		if (typeOf(value) === "number" && rank === Rank.None && <number>value >= (maximum ?? math.huge))
-			return BanManager.Ban(player.Name, "Exploiting: data exceeded maximum value");
+	public set<T extends DataValue = DataValue>(player: Player, key: DataKey, value: T): void {
+		task.spawn(async () => {
+			const rank = await getRank(player);
+			const maximum = this.getMaximum(key);
+			if (typeOf(value) === "number" && rank === Rank.None && <number>value >= (maximum ?? math.huge))
+				return BanManager.Ban(player.Name, "Exploiting: data exceeded maximum value");
+		});
 
 		const data = this.getDataStore<T>(player, key);
 		data.Set(value);
@@ -107,6 +109,6 @@ export class PlayerDataService implements OnInit, OnPlayerLeave {
 	}
 
 	private getDataStore<T extends DataValue = DataValue>(player: Player, key: DataKey): DataStore2<T> {
-		return DataStore2<T>("TEST19_" + key, player);
+		return DataStore2<T>("TEST20_" + key, player);
 	}
 }

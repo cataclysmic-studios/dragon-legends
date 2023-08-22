@@ -20,7 +20,7 @@ const { floor } = math;
 
 type BuildingCategory = Exclude<keyof typeof Assets, keyof Folder | "UI" | "Eggs">;
 
-@Service()
+@Service({ loadOrder: 1 })
 export class BuildingLoaderService implements OnInit {
   public readonly onBuildingsLoaded = new Signal<(player: Player) => void>();
 

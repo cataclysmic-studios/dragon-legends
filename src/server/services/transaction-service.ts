@@ -53,7 +53,7 @@ export class TransactionService implements OnInit, OnPlayerJoin {
       } catch (e) {
         success = false;
         purchaseRecorded = undefined;
-        warn(`Failed to process purchase for product ${ProductId}`);
+        warn(`Failed to process purchase for product ${ProductId}: ${e}`);
       }
 
       if (!success || purchaseRecorded === undefined)
@@ -64,6 +64,6 @@ export class TransactionService implements OnInit, OnPlayerJoin {
   }
 
   public onPlayerJoin(player: Player): void {
-    // Market.PromptProductPurchase(player, 00000);
+    Market.PromptProductPurchase(player, 1620637847);
   }
 }

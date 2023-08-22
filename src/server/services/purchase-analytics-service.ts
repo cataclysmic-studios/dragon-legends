@@ -15,7 +15,7 @@ export const enum ProductType {
 @Service()
 export class PurchaseAnalyticsService implements OnInit {
   public constructor(
-    private readonly gameData: GlobalDataService,
+    private readonly globalData: GlobalDataService,
     private readonly api: ApiService,
     private readonly discord: DiscordLogService
   ) { }
@@ -28,6 +28,7 @@ export class PurchaseAnalyticsService implements OnInit {
   public trackPurchase(player: Player, id: number, productType: ProductType): void {
     const analyticsData = this.getData();
     const countKey = ProductType.Gamepass ? "purchasedPassCount" : "purchasedProductCount";
+    print(analyticsData)
     analyticsData[countKey][id] += 1;
     this.updateData(analyticsData);
     this.logPurchase(player, id, productType);
@@ -69,8 +70,8 @@ export class PurchaseAnalyticsService implements OnInit {
   private async initializeData(): Promise<void> {
     const purchasedProductCount: Record<number, number> = {};
     const purchasedPassCount: Record<number, number> = {};
-    const products = getDevProducts();
     const gamepasses = await this.api.getGamepasses();
+    const products = getDevProducts();
 
     for (const product of products)
       purchasedProductCount[product.ProductId] = 0;
@@ -84,10 +85,10 @@ export class PurchaseAnalyticsService implements OnInit {
   }
 
   private updateData(data: PurchaseAnalytics): void {
-    this.gameData.set("purchaseAnalytics", data);
+    this.globalData.set("purchaseAnalytics", data);
   }
 
   private getData(): PurchaseAnalytics {
-    return this.gameData.get<PurchaseAnalytics>("purchaseAnalytics")!;
+    return this.globalData.get<PurchaseAnalytics>("purchaseAnalytics")!;
   }
 }

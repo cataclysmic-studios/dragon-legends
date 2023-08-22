@@ -7,7 +7,8 @@ type GlobalDataValue = PurchaseAnalytics;
 
 @Service()
 export class GlobalDataService {
-  private readonly storage = DataStore.GetDataStore("GameData");
+  private readonly scope = "TEST3";
+  private readonly storage = DataStore.GetDataStore(this.scope + "_GameData");
 
   public set(key: GlobalDataKey, value: Maybe<GlobalDataValue>) {
     this.storage.SetAsync(key, value);
