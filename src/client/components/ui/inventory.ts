@@ -6,8 +6,8 @@ import { DataKey, DataValue } from "shared/data-models/generic";
 import { Egg, InventoryItem } from "shared/data-models/inventory";
 import { Hatchery } from "shared/data-models/buildings";
 import { NotificationType } from "shared/notification-type";
-import { Assets, getPlacedBuilding, newEggMesh } from "shared/utilities/helpers";
-import InventoryItemUtility from "shared/utilities/inventory-item";
+import { Assets, getPlacedBuilding, newEggMesh } from "shared/data-utilities/helpers";
+import InventoryItemUtility from "shared/data-utilities/inventory-item";
 
 import { DataLinked } from "client/hooks";
 import { Events, Functions } from "client/network";

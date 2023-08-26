@@ -8,8 +8,8 @@ import { HabitatService } from "./buildings/habitat-service";
 import { Building } from "shared/data-models/buildings";
 import { Habitat } from "shared/data-models/habitats";
 import { TimeInfo } from "shared/data-models/time";
-import { Assets, getStaticDragonInfo, now, toUsableVector3 } from "shared/utilities/helpers";
-import BuildingUtility from "shared/utilities/building";
+import { Assets, getStaticDragonInfo, now, toUsableVector3 } from "shared/data-utilities/helpers";
+import BuildingUtility from "shared/data-utilities/building";
 import HabitatUtility from "server/utilities/habitat";
 
 import { Events } from "server/network";

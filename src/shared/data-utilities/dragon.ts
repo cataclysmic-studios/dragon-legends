@@ -1,5 +1,5 @@
 import { Dragon } from "shared/data-models/dragons";
-import { toNearestFiveOrTen } from "shared/utilities/helpers";
+import { toNearestFiveOrTen } from "shared/data-utilities/helpers";
 import Utility from "./base-utility";
 
 const { floor, max } = math;

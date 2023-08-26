@@ -1,6 +1,6 @@
 export class Exception {
 	public constructor(
-		protected readonly name: string,
+		public readonly name: string,
 		public readonly message: string
 	) {
 		warn(this.toString());

@@ -7,7 +7,7 @@ type GlobalDataValue = PurchaseAnalytics;
 
 @Service()
 export class GlobalDataService {
-  private readonly scope = "TEST3";
+  private readonly scope = "TEST6";
   private readonly storage = DataStore.GetDataStore(this.scope + "_GameData");
 
   public set(key: GlobalDataKey, value: Maybe<GlobalDataValue>) {

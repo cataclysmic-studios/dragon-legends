@@ -6,7 +6,7 @@ import { PlayerDataService } from "server/services/data-management/player-data-s
 
 import { TimeInfo, TimerInfo } from "shared/data-models/time";
 import { Exception } from "shared/exceptions";
-import { Assets, toRemainingTime, now } from "shared/utilities/helpers";
+import { Assets, toRemainingTime, now } from "shared/data-utilities/helpers";
 import { Events } from "server/network";
 import { LevelService } from "server/services/data-management/level-service";
 

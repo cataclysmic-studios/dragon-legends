@@ -10,7 +10,7 @@ import { DragonInfo } from "shared/data-models/dragons";
 import { Habitat } from "shared/data-models/habitats";
 import { createDefaultDragon } from "shared/data-models/defaults";
 import { MissingBuildingException } from "shared/exceptions";
-import { Assets, Placable, toStorableVector3, toSeconds, getPlacedBuilding, newDragonModel } from "shared/utilities/helpers";
+import { Assets, Placable, toStorableVector3, toSeconds, getPlacedBuilding, newDragonModel } from "shared/data-utilities/helpers";
 import { Events } from "server/network";
 
 const { placeBuilding, placeDragon } = Events;

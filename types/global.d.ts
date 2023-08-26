@@ -2,7 +2,7 @@ type None = undefined | void;
 type Maybe<T> = T | undefined;
 
 interface Destroyable {
-  Destroy(): void;
+  destroy(): void;
 }
 
 type DeepReadonly<T> =

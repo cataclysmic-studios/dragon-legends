@@ -1,7 +1,7 @@
 import { Component, BaseComponent } from "@flamework/components";
 import { DataKey, DataValue } from "shared/data-models/generic";
 import { Dragon } from "shared/data-models/dragons";
-import { Assets, commaFormat, toSuffixedNumber } from "shared/utilities/helpers";
+import { Assets, commaFormat, toSuffixedNumber } from "shared/data-utilities/helpers";
 import { DataLinked } from "client/hooks";
 
 function removeDuplicates(dragons: Dragon[]): Dragon[] {

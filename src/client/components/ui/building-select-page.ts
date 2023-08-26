@@ -12,9 +12,9 @@ import { Building, Hatchery, UpgradableBuilding } from "shared/data-models/build
 import { Habitat } from "shared/data-models/habitats";
 import { Dragon } from "shared/data-models/dragons";
 import { MissingBuildingException } from "shared/exceptions";
-import { Assets, getPlacedBuilding, newDragonModel, newEggMesh, toSuffixedNumber } from "shared/utilities/helpers";
-import { tween } from "shared/utilities/ui";
-import BuildingUtility from "shared/utilities/building";
+import { Assets, getPlacedBuilding, newDragonModel, newEggMesh, toSuffixedNumber } from "shared/data-utilities/helpers";
+import { tween } from "shared/data-utilities/ui";
+import BuildingUtility from "shared/data-utilities/building";
 
 import { DataLinked } from "client/hooks";
 import { Events, Functions } from "client/network";

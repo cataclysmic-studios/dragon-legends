@@ -9,7 +9,7 @@ import { SchedulingService } from "../scheduling-service";
 
 import { Habitat } from "shared/data-models/habitats";
 import { MissingDataException } from "shared/exceptions";
-import { getPlacedBuilding } from "shared/utilities/helpers";
+import { getPlacedBuilding } from "shared/data-utilities/helpers";
 import { OnPlayerJoin } from "server/hooks";
 import { Events, Functions } from "server/network";
 import HabitatUtility from "server/utilities/habitat";

@@ -6,7 +6,7 @@ import StringUtils from "@rbxts/string-utils";
 
 import { SelectionController } from "client/controllers/selection-controller";
 
-import { toSuffixedNumber } from "shared/utilities/helpers";
+import { toSuffixedNumber } from "shared/data-utilities/helpers";
 import Log from "shared/logger";
 import repr from "shared/repr";
 

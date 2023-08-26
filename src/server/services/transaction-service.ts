@@ -4,7 +4,7 @@ import { MarketplaceService as Market, Players } from "@rbxts/services";
 import { PlayerDataService } from "./data-management/player-data-service";
 import { ProductType, PurchaseAnalyticsService } from "./purchase-analytics-service";
 import { OnPlayerJoin } from "server/hooks";
-import { getDevProducts } from "shared/utilities/helpers";
+import { getDevProducts } from "shared/data-utilities/helpers";
 
 const enum ProductIDs {
   Gold5000 = 1620635951,
@@ -64,6 +64,6 @@ export class TransactionService implements OnInit, OnPlayerJoin {
   }
 
   public onPlayerJoin(player: Player): void {
-    Market.PromptProductPurchase(player, 1620637847);
+    // Market.PromptProductPurchase(player, 1620637847);
   }
 }

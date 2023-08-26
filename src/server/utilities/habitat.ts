@@ -1,7 +1,7 @@
 import { Dependency } from "@flamework/core";
 import { DragonDataService } from "server/services/data-management/dragon-data-service";
 import { Habitat } from "shared/data-models/habitats";
-import Utility from "shared/utilities/base-utility";
+import Utility from "shared/data-utilities/base-utility";
 
 export default class HabitatUtility extends Utility<Habitat> {
   // server only

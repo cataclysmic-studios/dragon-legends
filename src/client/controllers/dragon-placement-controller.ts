@@ -10,7 +10,7 @@ import { NotificationController } from "./notification-controller";
 import { Element } from "shared/data-models/dragons";
 import { Habitat } from "shared/data-models/habitats";
 import { NotificationType } from "shared/notification-type";
-import { getStaticDragonInfo, newDragonModel } from "shared/utilities/helpers";
+import { getStaticDragonInfo, newDragonModel } from "shared/data-utilities/helpers";
 import { Events, Functions } from "client/network";
 
 const { placeDragon } = Events;
