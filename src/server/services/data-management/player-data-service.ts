@@ -15,7 +15,7 @@ import BanManager from "server/utilities/ban-manager";
 const { initializeData, setData, incrementData, dataLoaded, dataUpdated } = Events;
 const { getData, getRank } = Functions;
 
-@Service({ loadOrder: 0 })
+@Service({ loadOrder: 1 })
 export class PlayerDataService implements OnInit, OnPlayerLeave {
 	public onInit(): void {
 		DataStore2.Combine("DATA", ...DataKeys);
@@ -109,6 +109,6 @@ export class PlayerDataService implements OnInit, OnPlayerLeave {
 	}
 
 	private getDataStore<T extends DataValue = DataValue>(player: Player, key: DataKey): DataStore2<T> {
-		return DataStore2<T>("TEST20_" + key, player);
+		return DataStore2<T>("TEST22_" + key, player);
 	}
 }

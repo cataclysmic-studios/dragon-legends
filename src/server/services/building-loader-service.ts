@@ -20,11 +20,11 @@ const { floor } = math;
 
 type BuildingCategory = Exclude<keyof typeof Assets, keyof Folder | "UI" | "Eggs">;
 
-@Service({ loadOrder: 1 })
+@Service({ loadOrder: 0 })
 export class BuildingLoaderService implements OnInit {
-  public readonly onBuildingsLoaded = new Signal<(player: Player) => void>();
-
   private readonly janitor = new Janitor;
+
+  public readonly onBuildingsLoaded = new Signal<(player: Player) => void>();
 
   public constructor(
     private readonly data: PlayerDataService,

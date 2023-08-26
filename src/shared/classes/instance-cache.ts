@@ -17,7 +17,7 @@ export default class InstanceCache<T extends Instance = Instance> implements Des
   ) {
     if (precreated <= 0)
       throw new Exception("InvalidPrecreatedAmount", "InstanceCache#precreated must be more than 0!");
-    if (template.Archivable)
+    if (!template.Archivable)
       warn("The template's Archivable property has been set to false, which prevents it from being cloned. It will temporarily be set to true.");
 
     const archivable = template.Archivable;
@@ -59,7 +59,6 @@ export default class InstanceCache<T extends Instance = Instance> implements Des
 
     const instance = this.available.pop()!;
     this.unavailable.push(instance);
-
     return instance;
   }
 
@@ -82,7 +81,6 @@ export default class InstanceCache<T extends Instance = Instance> implements Des
     this.moveAway(instance);
     instance.Parent = this.parent;
 
-    Collection.RemoveTag(instance, "Cached");
     this.janitor.Add(instance);
     return instance;
   }

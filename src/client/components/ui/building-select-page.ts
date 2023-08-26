@@ -16,6 +16,7 @@ import { MissingBuildingException } from "shared/exceptions";
 import { Assets, getPlacedBuilding, newDragonModel, newEggMesh, toSuffixedNumber } from "shared/utilities/helpers";
 import { tween } from "shared/utilities/ui";
 import BuildingUtility from "shared/utilities/building";
+import InstanceCache from "shared/classes/instance-cache";
 
 import { DataLinked } from "client/hooks";
 import { Events, Functions } from "client/network";
@@ -44,9 +45,9 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
   private readonly janitor = new Janitor;
   private readonly buttonJanitors: Janitor[] = [];
   private readonly buttons = this.instance.BottomRight;
-  private readonly eggButtonCache;
-  private readonly dragonButtonCache;
 
+  private eggButtonCache?: InstanceCache<HatcheryEggButton>;
+  private dragonButtonCache?: InstanceCache<HabitatDragonButton>;
   private dragonButtonDebounce = false;
   private eggButtonDebounce = false;
 
@@ -57,11 +58,12 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
     private readonly caches: CacheController
   ) {
     super();
-    this.eggButtonCache = this.caches.getCache(Assets.UI.HatcheryEggButton);
-    this.dragonButtonCache = this.caches.getCache(Assets.UI.HabitatDragonButton);
   }
 
   public onStart(): void {
+    this.eggButtonCache = this.caches.get(Assets.UI.HatcheryEggButton);
+    this.dragonButtonCache = this.caches.get(Assets.UI.HabitatDragonButton);
+
     this.maid.GiveTask(
       this.selection.onSelectionChanged.Connect(async () => {
         this.updatePage();
@@ -96,7 +98,7 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
     for (const dragonID of dragonIDs)
       task.spawn(async () => {
         const dragon = <Dragon>await getDragonData(dragonID);
-        const button = this.dragonButtonCache.retrieve();
+        const button = this.dragonButtonCache!.retrieve();
         newDragonModel(dragon.name, {
           parent: button.Viewport
         });
@@ -139,7 +141,7 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
           const placed = await this.dragon.place(dragonName);
           if (placed) {
             removeEggFromHatchery(egg.id);
-            this.eggButtonCache.return(button);
+            this.eggButtonCache!.return(button);
           }
         }));
 
@@ -155,17 +157,19 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
 
   private removeExtraButtons(): void {
     this.janitor.Cleanup();
-    for (const janitor of this.buttonJanitors)
-      janitor.Destroy();
 
+    for (const janitor of this.buttonJanitors)
+      janitor.Cleanup();
+
+    this.buttonJanitors.clear();
     for (const button of this.buttons.GetChildren())
       task.spawn(() => {
         if (button.GetAttribute("DragonID")) {
           if (this.dragonButtonDebounce) return;
-          this.dragonButtonCache.return(<HabitatDragonButton>button);
+          this.dragonButtonCache!.return(<HabitatDragonButton>button);
         } else if (button.GetAttribute("EggID")) {
           if (this.eggButtonDebounce) return;
-          this.eggButtonCache.return(<HatcheryEggButton>button);
+          this.eggButtonCache!.return(<HatcheryEggButton>button);
         }
       });
   }
