@@ -1,28 +1,27 @@
 import { OnStart } from "@flamework/core";
-import { Component, BaseComponent } from "@flamework/components";
+import { Component, BaseComponent, Components } from "@flamework/components";
 import { TweenInfoBuilder } from "@rbxts/builders";
 import { Janitor } from "@rbxts/janitor";
 
-import { UIController } from "client/controllers/ui/ui-controller";
 import { SelectionController } from "client/controllers/selection-controller";
-import { DragonPlacementController } from "client/controllers/dragon-placement-controller";
 import { CacheController } from "client/controllers/cache-controller";
 
 import { DataKey } from "shared/data-models/generic";
 import { Building, Hatchery, UpgradableBuilding } from "shared/data-models/buildings";
 import { Habitat } from "shared/data-models/habitats";
-import { Dragon } from "shared/data-models/dragons";
 import { MissingBuildingException } from "shared/exceptions";
-import { Assets, getPlacedBuilding, newDragonModel, newEggMesh, toSuffixedNumber } from "shared/utilities/helpers";
+import { Assets, getPlacedBuilding, toSuffixedNumber } from "shared/utilities/helpers";
 import { tween } from "shared/utilities/ui";
 import BuildingUtility from "shared/utilities/building";
 import InstanceCache from "shared/classes/instance-cache";
 
 import { DataLinked } from "client/hooks";
 import { Events, Functions } from "client/network";
+import { HatcheryEggButtonComponent } from "./hatchery-egg-button";
+import { HabitatDragonButtonComponent } from "./habitat-dragon-button";
 
-const { timerFinished, removeEggFromHatchery, claimHabitatGold } = Events;
-const { getBuildingData, getDragonData, isTimerActive } = Functions;
+const { claimHabitatGold } = Events;
+const { getBuildingData } = Functions;
 
 interface Attributes {
   ID?: string;
@@ -42,8 +41,7 @@ interface BuildingSelectFrame extends Frame {
 
 @Component({ tag: "BuildingSelectPage" })
 export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelectFrame> implements OnStart, DataLinked {
-  private readonly janitor = new Janitor;
-  private readonly buttonJanitors: Janitor[] = [];
+  private readonly updateJanitor = new Janitor;
   private readonly buttons = this.instance.BottomRight;
 
   private eggButtonCache?: InstanceCache<HatcheryEggButton>;
@@ -52,13 +50,10 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
   private eggButtonDebounce = false;
 
   public constructor(
-    private readonly ui: UIController,
     private readonly selection: SelectionController,
-    private readonly dragon: DragonPlacementController,
-    private readonly caches: CacheController
-  ) {
-    super();
-  }
+    private readonly caches: CacheController,
+    private readonly components: Components
+  ) { super(); }
 
   public onStart(): void {
     this.eggButtonCache = this.caches.get(Assets.UI.HatcheryEggButton);
@@ -96,22 +91,12 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
 
     const janitor = new Janitor;
     for (const dragonID of dragonIDs)
-      task.spawn(async () => {
-        const dragon = <Dragon>await getDragonData(dragonID);
+      task.spawn(() => {
         const button = this.dragonButtonCache!.retrieve();
-        newDragonModel(dragon.name, {
-          parent: button.Viewport
-        });
-
-        // button.Boost
-        button.DragonName.Text = dragon.name;
+        const component = this.components.addComponent<HabitatDragonButtonComponent>(button);
+        component.update(dragonID);
+        janitor.Add(() => component.destroy());
         button.Parent = this.buttons;
-        button.SetAttribute("DragonID", dragonID);
-
-        janitor.Add(button.MouseButton1Click.Connect(() => {
-          this.ui.setScreenState("DragonInfo", { DragonID: dragonID });
-          this.ui.open("DragonInfo");
-        }));
       });
 
     return janitor;
@@ -123,78 +108,39 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
     task.delay(1, () => this.eggButtonDebounce = false);
 
     const janitor = new Janitor;
-    for (const egg of eggs)
-      task.spawn(async () => {
-        const button = Assets.UI.HatcheryEggButton.Clone();
-        newEggMesh(egg, {
-          parent: button.Viewport
-        });
-
-        let eggTimerFinished = !await isTimerActive(egg.id);
-        button.Parent = this.buttons;
-        button.Place.Visible = eggTimerFinished;
-        button.SetAttribute("EggID", egg.id);
-
-        janitor.Add(button.MouseButton1Click.Connect(async () => {
-          if (!eggTimerFinished) return;
-          const [dragonName] = egg.name.gsub(" Egg", "");
-          const placed = await this.dragon.place(dragonName);
-          if (placed) {
-            removeEggFromHatchery(egg.id);
-            this.eggButtonCache!.return(button);
-          }
-        }));
-
-        janitor.Add(timerFinished.connect(timer => {
-          if (timer.id !== egg.id) return;
-          eggTimerFinished = true;
-          button.Place.Visible = true;
-        }));
-      });
+    for (const egg of eggs) {
+      const button = this.eggButtonCache!.retrieve();
+      const component = this.components.addComponent<HatcheryEggButtonComponent>(button);
+      component.update(egg);
+      janitor.Add(() => component.destroy());
+      button.Parent = this.buttons;
+    }
 
     return janitor;
   }
 
-  private removeExtraButtons(): void {
-    this.janitor.Cleanup();
-
-    for (const janitor of this.buttonJanitors)
-      janitor.Cleanup();
-
-    this.buttonJanitors.clear();
-    for (const button of this.buttons.GetChildren())
-      task.spawn(() => {
-        if (button.GetAttribute("DragonID")) {
-          if (this.dragonButtonDebounce) return;
-          this.dragonButtonCache!.return(<HabitatDragonButton>button);
-        } else if (button.GetAttribute("EggID")) {
-          if (this.eggButtonDebounce) return;
-          this.eggButtonCache!.return(<HatcheryEggButton>button);
-        }
-      });
-  }
-
   private updateButtons(building: Building) {
+    this.updateJanitor.Cleanup();
+
     const buildingUtil = new BuildingUtility(building);
     this.buttons.CollectGold.Visible = buildingUtil.isHabitat();
     this.buttons.Upgrade.Visible = buildingUtil.isUpgradable();
 
-    this.removeExtraButtons();
     if (buildingUtil.isHabitat()) {
       const habitat = <Habitat>building;
       this.buttons.CollectGold.Amount.Text = toSuffixedNumber(habitat.gold);
-      this.janitor.Add(
+      this.updateJanitor.Add(
         this.buttons.CollectGold.MouseButton1Click
           .Connect(() => this.collectGoldFromBuilding(habitat))
       );
 
       const janitor = this.addDragonButtons(habitat);
       if (!janitor) return;
-      this.buttonJanitors.push(janitor);
+      this.updateJanitor.Add(janitor);
     } else if (buildingUtil.isHatchery()) {
       const janitor = this.addEggButtons(<Hatchery>building);
       if (!janitor) return;
-      this.buttonJanitors.push(janitor);
+      this.updateJanitor.Add(janitor);
     }
   }
 
@@ -212,22 +158,11 @@ export class BuildingSelectPage extends BaseComponent<Attributes, BuildingSelect
       .SetTime(3)
       .SetEasingStyle(Enum.EasingStyle.Sine);
 
-    tween(
-      collectedGoldUI.Amount, tweenInfo,
-      { TextTransparency: 1 }
-    );
-    tween(
-      collectedGoldUI.Amount.UIStroke, tweenInfo,
-      { Transparency: 1 }
-    );
-    tween(
-      collectedGoldUI.Icon, tweenInfo,
-      { ImageTransparency: 1 }
-    );
-    tween(
-      collectedGoldUI, tweenInfo,
-      { StudsOffsetWorldSpace: new Vector3(0, 5, 0) }
-    ).Completed.Once(() => collectedGoldUI.Destroy());
+    tween(collectedGoldUI.Amount, tweenInfo, { TextTransparency: 1 });
+    tween(collectedGoldUI.Amount.UIStroke, tweenInfo, { Transparency: 1 });
+    tween(collectedGoldUI.Icon, tweenInfo, { ImageTransparency: 1 });
+    tween(collectedGoldUI, tweenInfo, { StudsOffsetWorldSpace: new Vector3(0, 5, 0) })
+      .Completed.Once(() => collectedGoldUI.Destroy());
 
     claimHabitatGold(building.id);
   }
