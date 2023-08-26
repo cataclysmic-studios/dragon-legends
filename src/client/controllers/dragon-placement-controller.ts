@@ -3,9 +3,9 @@ import { Workspace as World } from "@rbxts/services";
 import { Janitor } from "@rbxts/janitor";
 import StringUtils from "@rbxts/string-utils";
 
-import { UIController } from "./ui-controller";
+import { UIController } from "./ui/ui-controller";
 import { MouseController } from "./mouse-controller";
-import { NotificationController } from "./notification-controller";
+import { NotificationController } from "./ui/notification-controller";
 
 import { Element } from "shared/data-models/dragons";
 import { Habitat } from "shared/data-models/habitats";

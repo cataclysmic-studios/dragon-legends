@@ -1,6 +1,6 @@
 import { OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
-import { UIController } from "client/controllers/ui-controller";
+import { UIController } from "client/controllers/ui/ui-controller";
 
 interface Attributes {
   To?: string;

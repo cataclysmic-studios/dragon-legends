@@ -2,9 +2,9 @@ import { OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
 import { CollectionService as Collection, HttpService as HTTP } from "@rbxts/services";
 import { BuildingPlacementController } from "client/controllers/building-placement-controller";
-import { NotificationController } from "client/controllers/notification-controller";
+import { NotificationController } from "client/controllers/ui/notification-controller";
 import { NotificationType } from "shared/notification-type";
-import { UIController } from "client/controllers/ui-controller";
+import { UIController } from "client/controllers/ui/ui-controller";
 
 import { Egg, InventoryItem } from "shared/data-models/inventory";
 import { Assets, Placable, getStaticDragonInfo, toSeconds, toSuffixedNumber } from "shared/data-utilities/helpers";

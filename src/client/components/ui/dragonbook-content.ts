@@ -1,6 +1,6 @@
 import { Component, BaseComponent } from "@flamework/components";
 import { Janitor } from "@rbxts/janitor";
-import { UIController } from "client/controllers/ui-controller";
+import { UIController } from "client/controllers/ui/ui-controller";
 
 import { DataValue, DataKey } from "shared/data-models/generic";
 import { Dragon, DragonInfo } from "shared/data-models/dragons";

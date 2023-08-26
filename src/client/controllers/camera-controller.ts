@@ -1,7 +1,7 @@
 import { Controller, OnInit, OnRender } from "@flamework/core";
 import { StarterGui, Workspace as World } from "@rbxts/services";
 
-import { UIController } from "./ui-controller";
+import { UIController } from "./ui/ui-controller";
 import { MouseController } from "./mouse-controller";
 import { BuildingPlacementController } from "./building-placement-controller";
 

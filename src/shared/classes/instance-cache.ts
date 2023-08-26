@@ -1,5 +1,5 @@
 import { Janitor } from "@rbxts/janitor";
-import { Workspace as World } from "@rbxts/services";
+import { CollectionService as Collection, Workspace as World } from "@rbxts/services";
 import { Exception } from "shared/exceptions";
 
 const FAR_AWAY = new CFrame(0, 10e8, 0);
@@ -82,6 +82,7 @@ export default class InstanceCache<T extends Instance = Instance> implements Des
     this.moveAway(instance);
     instance.Parent = this.parent;
 
+    Collection.RemoveTag(instance, "Cached");
     this.janitor.Add(instance);
     return instance;
   }

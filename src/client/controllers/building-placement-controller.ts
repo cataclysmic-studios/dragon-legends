@@ -2,7 +2,7 @@ import { Controller, OnInit, OnRender } from "@flamework/core";
 import { CollectionService as Collection, Lighting, Workspace as World } from "@rbxts/services";
 import { Janitor } from "@rbxts/janitor";
 
-import { UIController } from "./ui-controller";
+import { UIController } from "./ui/ui-controller";
 import { MouseController, MouseIcon } from "./mouse-controller";
 
 import { Assets, Placable, toRegion3 } from "shared/data-utilities/helpers";

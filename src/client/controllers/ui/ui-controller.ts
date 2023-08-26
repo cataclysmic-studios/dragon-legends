@@ -2,7 +2,7 @@ import { Controller } from "@flamework/core";
 import { CollectionService as Collection } from "@rbxts/services";
 import Object from "@rbxts/object-utils";
 
-import { PlayerController } from "./player-controller";
+import { PlayerController } from "../player-controller";
 
 @Controller()
 export class UIController {

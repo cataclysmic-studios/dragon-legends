@@ -2,7 +2,7 @@ import { Controller, OnInit } from "@flamework/core";
 import { CollectionService as Collection } from "@rbxts/services";
 import Signal from "@rbxts/signal";
 
-import { UIController } from "./ui-controller";
+import { UIController } from "./ui/ui-controller";
 import { MouseController } from "./mouse-controller";
 import { BuildingPlacementController } from "./building-placement-controller";
 

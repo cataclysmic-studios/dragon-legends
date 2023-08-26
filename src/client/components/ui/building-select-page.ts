@@ -3,7 +3,7 @@ import { Component, BaseComponent } from "@flamework/components";
 import { TweenInfoBuilder } from "@rbxts/builders";
 import { Janitor } from "@rbxts/janitor";
 
-import { UIController } from "client/controllers/ui-controller";
+import { UIController } from "client/controllers/ui/ui-controller";
 import { SelectionController } from "client/controllers/selection-controller";
 import { DragonPlacementController } from "client/controllers/dragon-placement-controller";
 
