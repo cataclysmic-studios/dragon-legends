@@ -3,7 +3,7 @@ import { Component, BaseComponent } from "@flamework/components";
 import { Workspace as World } from "@rbxts/services";
 import StringUtils from "@rbxts/string-utils";
 
-interface Attributes {}
+interface Attributes { }
 
 @Component({ tag: "Viewport" })
 export class Viewport extends BaseComponent<Attributes, ViewportFrame> implements OnStart {
@@ -22,5 +22,6 @@ export class Viewport extends BaseComponent<Attributes, ViewportFrame> implement
     viewportCamera.FieldOfView = this.fov;
     viewportCamera.Parent = this.instance;
     this.instance.CurrentCamera = viewportCamera;
+    this.maid.GiveTask(viewportCamera);
   }
 }
