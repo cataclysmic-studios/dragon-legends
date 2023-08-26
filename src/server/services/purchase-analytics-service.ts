@@ -4,7 +4,7 @@ import { GlobalDataService } from "./data-management/global-data-service";
 import { ApiService } from "./api-service";
 
 import { PurchaseAnalytics } from "shared/data-models/global";
-import { getDevProducts, toSuffixedNumber } from "shared/data-utilities/helpers";
+import { getDevProducts, toSuffixedNumber } from "shared/utilities/helpers";
 import { DiscordLogService, DiscordLogType } from "./discord-log-service";
 
 export const enum ProductType {

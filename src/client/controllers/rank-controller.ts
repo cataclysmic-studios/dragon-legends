@@ -1,5 +1,5 @@
 import { Controller, OnInit } from "@flamework/core";
-import { Player } from "shared/data-utilities/helpers";
+import { Player } from "shared/utilities/helpers";
 import { Rank } from "shared/rank";
 import { Functions } from "client/network";
 

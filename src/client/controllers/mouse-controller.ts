@@ -6,7 +6,7 @@ import { Axis, Union } from "@rbxts/gamejoy/out/Actions";
 import { StrictMap } from "@rbxts/strict-map";
 import StringUtils from "@rbxts/string-utils";
 
-import { Player } from "shared/data-utilities/helpers";
+import { Player } from "shared/utilities/helpers";
 
 const { abs } = math;
 

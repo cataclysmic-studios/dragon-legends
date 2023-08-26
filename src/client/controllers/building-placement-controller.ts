@@ -5,7 +5,7 @@ import { Janitor } from "@rbxts/janitor";
 import { UIController } from "./ui/ui-controller";
 import { MouseController, MouseIcon } from "./mouse-controller";
 
-import { Assets, Placable, toRegion3 } from "shared/data-utilities/helpers";
+import { Assets, Placable, toRegion3 } from "shared/utilities/helpers";
 import { Events } from "client/network";
 
 const { incrementData, placeBuilding } = Events;

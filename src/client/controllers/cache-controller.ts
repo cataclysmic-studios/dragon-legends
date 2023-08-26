@@ -11,10 +11,10 @@ export class CacheController {
     private readonly components: Components
   ) { }
 
-  public getCache<T extends Instance = Instance>(instance: Instance): InstanceCache<T> {
+  public getCache<T extends Instance = Instance>(instance: T): InstanceCache<T> {
     const component = this.components.getComponent<Cached>(instance);
     if (!component)
-      throw new Exception("MissingCachedComponent", `Instance "${instance.Name}" (${instance.GetFullName}) is missing the Cached component required to use CacheController#getCache()`);
+      throw new Exception("MissingCachedComponent", `Instance "${instance.Name}" (${instance.GetFullName()}) is missing the Cached component required to use CacheController#getCache()`);
 
     return <InstanceCache<T>>component.cache;
   }

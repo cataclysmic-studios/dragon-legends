@@ -4,7 +4,7 @@ import DataStore2 from "@rbxts/datastore2";
 import { DataKey, DataValue, DataKeys } from "shared/data-models/generic";
 import { TimeInfo } from "shared/data-models/time";
 import { Building, Hatchery } from "shared/data-models/buildings";
-import { Assets, now, toStorableVector3 } from "shared/data-utilities/helpers";
+import { Assets, now, toStorableVector3 } from "shared/utilities/helpers";
 import { Rank } from "shared/rank";
 import Log from "shared/logger";
 

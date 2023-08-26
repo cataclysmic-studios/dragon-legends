@@ -1,4 +1,4 @@
-import { toNearestFiveOrTen } from "shared/data-utilities/helpers";
+import { toNearestFiveOrTen } from "shared/utilities/helpers";
 import { Unique } from "./utility";
 
 export type CombatBadge = "None" |

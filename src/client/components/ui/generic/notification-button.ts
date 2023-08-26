@@ -1,6 +1,6 @@
 import { OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
-import { Assets } from "shared/data-utilities/helpers";
+import { Assets } from "shared/utilities/helpers";
 import { Events } from "client/network";
 
 const { addNotificationToButton } = Events;

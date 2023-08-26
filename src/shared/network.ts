@@ -5,7 +5,7 @@ import { Building } from "./data-models/buildings";
 import { TimerInfo } from "./data-models/time";
 import { Egg } from "./data-models/inventory";
 
-import { Placable } from "./data-utilities/helpers";
+import { Placable } from "./utilities/helpers";
 import { NotificationType } from "./notification-type";
 import { Rank } from "./rank";
 

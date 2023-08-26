@@ -170,3 +170,42 @@ interface HatcheryModel extends ModelWithMaximums {
 		"2": Part;
 	};
 }
+
+interface ClaimGui extends BillboardGui {
+	Button: TextButton;
+	Icon: ImageLabel;
+	Bubble: ImageLabel;
+}
+
+interface HatcheryEggButton extends ImageButton {
+	Viewport: ViewportFrame & {
+		UICorner: UICorner;
+	};
+	Place: TextLabel & {
+		UIStroke: UIStroke;
+	};
+	UIAspectRatioConstraint: UIAspectRatioConstraint;
+	shadowHolder: Frame & {
+		umbraShadow: ImageLabel;
+		ambientShadow: ImageLabel;
+		penumbraShadow: ImageLabel;
+	};
+}
+
+interface HabitatDragonButton extends ImageButton {
+	DragonName: TextLabel & {
+		UIStroke: UIStroke;
+	};
+	Viewport: ViewportFrame & {
+		UICorner: UICorner;
+	};
+	Boost: TextLabel & {
+		UIStroke: UIStroke;
+	};
+	UIAspectRatioConstraint: UIAspectRatioConstraint;
+	shadowHolder: Frame & {
+		umbraShadow: ImageLabel;
+		ambientShadow: ImageLabel;
+		penumbraShadow: ImageLabel;
+	};
+}

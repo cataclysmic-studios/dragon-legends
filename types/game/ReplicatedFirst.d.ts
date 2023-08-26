@@ -1,9 +1,3 @@
-interface ClaimGui extends BillboardGui {
-	Button: TextButton;
-	Icon: ImageLabel;
-	Bubble: ImageLabel;
-}
-
 interface ReplicatedFirst extends Instance {
 	Assets: Folder & {
 		Eggs: Folder;
@@ -21,6 +15,8 @@ interface ReplicatedFirst extends Instance {
 			InventoryCard: InventoryCard;
 			ItemCard: ItemCard;
 			DragonbookCard: DragonbookCard;
+			HatcheryEggButton: HatcheryEggButton;
+			HabitatDragonButton: HabitatDragonButton;
 			ClaimFood: ClaimGui;
 			ClaimGold: ClaimGui;
 			ClaimXP: ClaimGui;
@@ -30,37 +26,6 @@ interface ReplicatedFirst extends Instance {
 				};
 				Amount: TextLabel & {
 					UIStroke: UIStroke;
-				};
-			};
-			HatcheryEggButton: ImageButton & {
-				Viewport: ViewportFrame & {
-					UICorner: UICorner;
-				};
-				Place: TextLabel & {
-					UIStroke: UIStroke;
-				};
-				UIAspectRatioConstraint: UIAspectRatioConstraint;
-				shadowHolder: Frame & {
-					umbraShadow: ImageLabel;
-					ambientShadow: ImageLabel;
-					penumbraShadow: ImageLabel;
-				};
-			};
-			HabitatDragonButton: ImageButton & {
-				DragonName: TextLabel & {
-					UIStroke: UIStroke;
-				};
-				Viewport: ViewportFrame & {
-					UICorner: UICorner;
-				};
-				Boost: TextLabel & {
-					UIStroke: UIStroke;
-				};
-				UIAspectRatioConstraint: UIAspectRatioConstraint;
-				shadowHolder: Frame & {
-					umbraShadow: ImageLabel;
-					ambientShadow: ImageLabel;
-					penumbraShadow: ImageLabel;
 				};
 			};
 			ButtonNotification: Frame & {
